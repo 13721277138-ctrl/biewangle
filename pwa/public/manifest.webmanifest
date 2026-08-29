@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "别忘了",
+  "short_name": "别忘了",
+  "description": "无账号、离线可用的安心检查清单。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f3",
+  "theme_color": "#247463",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

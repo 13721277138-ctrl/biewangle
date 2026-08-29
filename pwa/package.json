@@ -1,0 +1,36 @@
+{
+  "name": "@biewangle/pwa",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4173",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "test": "vitest",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@biewangle/domain": "workspace:*",
+    "@biewangle/persistence-contract": "workspace:*",
+    "dexie": "4.4.5",
+    "lucide-react": "1.37.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.3",
+    "workbox-window": "7.4.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.6",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "fake-indexeddb": "6.2.5",
+    "jsdom": "30.0.1",
+    "vite": "8.2.2",
+    "vite-plugin-pwa": "1.3.0"
+  }
+}
