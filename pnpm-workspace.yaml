@@ -1,0 +1,12 @@
+packages:
+  - "packages/*"
+  - "pwa"
+
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - zod@4.5.2
+
+onlyBuiltDependencies:
+  - esbuild
