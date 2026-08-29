@@ -1,0 +1,401 @@
+{
+  "productId": "biewangle",
+  "contractVersion": 1,
+  "description": "V1.1跨端领域行为黄金用例。PWA与微信实现必须对相同fixture得到相同业务事实。",
+  "cases": [
+    {
+      "id": "RUN-001",
+      "title": "notNeeded不跨Run继承",
+      "given": {
+        "templateId": "official.daily_out",
+        "itemId": "daily.umbrella"
+      },
+      "when": [
+        "start run A",
+        "set item state to notNeeded",
+        "close run A",
+        "start run B from same template"
+      ],
+      "then": [
+        "run B item state is unchecked",
+        "official template unchanged"
+      ]
+    },
+    {
+      "id": "RUN-002",
+      "title": "模板修改不影响已开始Run",
+      "given": {
+        "run": "already started from personal template"
+      },
+      "when": [
+        "edit source template after run started"
+      ],
+      "then": [
+        "existing runTemplateSnapshot unchanged",
+        "future run may use updated template"
+      ]
+    },
+    {
+      "id": "RUN-003",
+      "title": "有unchecked不得completed",
+      "given": {
+        "status": "inProgress",
+        "items": [
+          "confirmed",
+          "unchecked"
+        ]
+      },
+      "when": [
+        "attempt normal completion"
+      ],
+      "then": [
+        "completed rejected",
+        "endedWithUnresolved path remains available"
+      ]
+    },
+    {
+      "id": "RUN-004",
+      "title": "未确认关键项结束必须二次确认",
+      "given": {
+        "status": "inProgress",
+        "unresolvedKeyCount": 1
+      },
+      "when": [
+        "user chooses end anyway"
+      ],
+      "then": [
+        "explicit second confirmation required",
+        "if confirmed status becomes endedWithUnresolved"
+      ]
+    },
+    {
+      "id": "RUN-005",
+      "title": "重开保留此前关闭事实",
+      "given": {
+        "status": "completed",
+        "withinReopenWindow": true
+      },
+      "when": [
+        "reopen"
+      ],
+      "then": [
+        "status becomes inProgress",
+        "reopenCount increments",
+        "previous closedEvent remains"
+      ]
+    },
+    {
+      "id": "RUN-006",
+      "title": "重开窗口后不能改写旧Run",
+      "given": {
+        "status": "completed",
+        "withinReopenWindow": false
+      },
+      "when": [
+        "user wants to use again"
+      ],
+      "then": [
+        "reopen unavailable",
+        "new CheckRun created via restart-from-history"
+      ]
+    },
+    {
+      "id": "RUN-007",
+      "title": "关键项视图不改变完成计算",
+      "given": {
+        "keyItems": "all handled",
+        "normalItems": "has unchecked"
+      },
+      "when": [
+        "view key-only filter"
+      ],
+      "then": [
+        "run cannot be completed",
+        "hidden unchecked normal item still counts"
+      ]
+    },
+    {
+      "id": "RUN-008",
+      "title": "同模板多个现实Run不能自动合并",
+      "given": {
+        "templateId": "official.international_travel",
+        "inProgressRuns": 2
+      },
+      "when": [
+        "open continue entry"
+      ],
+      "then": [
+        "specific run identity is shown",
+        "no auto-merge by templateId"
+      ]
+    },
+    {
+      "id": "PLAN-001",
+      "title": "计划创建后模板更新不改变计划快照",
+      "given": {
+        "plannedCheck": "created from official content v1"
+      },
+      "when": [
+        "official template updates to v2",
+        "start planned check"
+      ],
+      "then": [
+        "run starts from planned snapshot v1",
+        "no silent replacement"
+      ]
+    },
+    {
+      "id": "PLAN-002",
+      "title": "提前开始消费计划",
+      "given": {
+        "plannedStatus": "pending"
+      },
+      "when": [
+        "start before scheduled date/time"
+      ],
+      "then": [
+        "plannedStatus becomes consumed",
+        "startedCheckRunId set",
+        "plan removed from future list"
+      ]
+    },
+    {
+      "id": "PLAN-003",
+      "title": "仅日期计划不因时区漂移",
+      "given": {
+        "scheduledDate": "2026-09-05"
+      },
+      "when": [
+        "device timezone changes"
+      ],
+      "then": [
+        "displayed scheduledDate remains 2026-09-05"
+      ]
+    },
+    {
+      "id": "PLAN-004",
+      "title": "取消计划不再提醒",
+      "given": {
+        "plannedStatus": "pending"
+      },
+      "when": [
+        "cancel planned check"
+      ],
+      "then": [
+        "plannedStatus becomes canceled",
+        "not shown in upcoming",
+        "no further reminder from this plan"
+      ]
+    },
+    {
+      "id": "TPL-001",
+      "title": "修改官方模板生成个人副本",
+      "given": {
+        "templateId": "official.daily_out"
+      },
+      "when": [
+        "user permanently edits official-derived content"
+      ],
+      "then": [
+        "official template unchanged",
+        "personal template created with source metadata"
+      ]
+    },
+    {
+      "id": "TPL-002",
+      "title": "官方升级不覆盖个人衍生模板",
+      "given": {
+        "personalDerivedFrom": "official.daily_out v1"
+      },
+      "when": [
+        "official contentVersion increments"
+      ],
+      "then": [
+        "personal content unchanged",
+        "source metadata remains explanatory only"
+      ]
+    },
+    {
+      "id": "TPL-003",
+      "title": "个人副本删除不影响官方",
+      "given": {
+        "personalDerivedFrom": "official.business_trip"
+      },
+      "when": [
+        "soft delete personal template"
+      ],
+      "then": [
+        "official remains usable",
+        "personal can be restored within recovery policy"
+      ]
+    },
+    {
+      "id": "DATA-001",
+      "title": "写入失败不得静默成功",
+      "given": {
+        "itemState": "unchecked"
+      },
+      "when": [
+        "user confirms item",
+        "durable persistence write fails"
+      ],
+      "then": [
+        "UI rolls back or clearly marks unsaved",
+        "durable state remains truthful"
+      ]
+    },
+    {
+      "id": "DATA-002",
+      "title": "恢复失败不覆盖当前数据",
+      "given": {
+        "currentData": "valid",
+        "backup": "invalid"
+      },
+      "when": [
+        "attempt restore"
+      ],
+      "then": [
+        "restore rejected",
+        "current data unchanged"
+      ]
+    },
+    {
+      "id": "DATA-003",
+      "title": "未来backupFormatVersion拒绝",
+      "given": {
+        "supportedBackupFormatVersion": 1,
+        "incomingBackupFormatVersion": 2
+      },
+      "when": [
+        "attempt restore"
+      ],
+      "then": [
+        "unsupported-version error",
+        "current data unchanged"
+      ]
+    },
+    {
+      "id": "DATA-004",
+      "title": "migration失败保护旧数据",
+      "given": {
+        "oldSchemaData": "valid"
+      },
+      "when": [
+        "migration throws or validation fails"
+      ],
+      "then": [
+        "old data retained",
+        "new schema not committed"
+      ]
+    },
+    {
+      "id": "DATA-005",
+      "title": "重置前创建保护副本",
+      "given": {
+        "currentData": "non-empty"
+      },
+      "when": [
+        "confirm full reset"
+      ],
+      "then": [
+        "protective snapshot created before destructive reset"
+      ]
+    },
+    {
+      "id": "SEARCH-001",
+      "title": "护照命中出国旅行",
+      "given": {
+        "query": "护照"
+      },
+      "when": [
+        "search"
+      ],
+      "then": [
+        "official.international_travel included"
+      ]
+    },
+    {
+      "id": "SEARCH-002",
+      "title": "医保卡命中两张医疗模板",
+      "given": {
+        "query": "医保卡"
+      },
+      "when": [
+        "search"
+      ],
+      "then": [
+        "official.hospital_admission included",
+        "official.important_medical_visit included"
+      ]
+    },
+    {
+      "id": "SEARCH-003",
+      "title": "保险箱命中离开酒店",
+      "given": {
+        "query": "保险箱"
+      },
+      "when": [
+        "search"
+      ],
+      "then": [
+        "official.hotel_checkout included"
+      ]
+    },
+    {
+      "id": "HOME-001",
+      "title": "首页继续检查排序确定",
+      "given": {
+        "multipleInProgressRuns": true
+      },
+      "when": [
+        "one run linked to due/near plan",
+        "another run only has more recent interaction"
+      ],
+      "then": [
+        "due/near planned run wins per product ranking contract"
+      ]
+    },
+    {
+      "id": "HOME-002",
+      "title": "无计划优先时最近交互Run胜出",
+      "given": {
+        "multipleInProgressRuns": true,
+        "noDuePlannedAssociation": true
+      },
+      "when": [
+        "rank continue checks"
+      ],
+      "then": [
+        "latest lastInteractedAt wins",
+        "startedAt breaks tie"
+      ]
+    },
+    {
+      "id": "SHARE-001",
+      "title": "分享清单默认不带本次备注",
+      "given": {
+        "runHasOneTimeNote": true
+      },
+      "when": [
+        "share checklist"
+      ],
+      "then": [
+        "oneTimeNote excluded by default",
+        "user can see what will be shared"
+      ]
+    },
+    {
+      "id": "SHARE-002",
+      "title": "分享本次结果是显式独立动作",
+      "given": {
+        "runHasStatusesAndNotes": true
+      },
+      "when": [
+        "user shares normal checklist instead of run result"
+      ],
+      "then": [
+        "run statuses and private notes are not silently included"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1890 @@
+{
+  "productId": "biewangle",
+  "officialContentVersion": 1,
+  "derived": true,
+  "source": "docs/02_别忘了_官方模板内容库_V1.1.md",
+  "templates": [
+    {
+      "templateId": "official.daily_out",
+      "contentVersion": 1,
+      "title": "日常出门",
+      "applicability": "普通当天外出、通勤、吃饭、逛街等轻量场景。",
+      "targetDurationSec": [
+        20,
+        45
+      ],
+      "searchAliases": [
+        "普通出门",
+        "通勤",
+        "随身",
+        "出门"
+      ],
+      "featuredOrder": 1,
+      "editorialIntent": "高频模板必须极短，让用户在几十秒内完成一次可信的随身确认。",
+      "groups": [
+        {
+          "groupId": "core",
+          "title": "随身核心",
+          "items": [
+            {
+              "itemId": "daily.phone",
+              "importance": "key",
+              "title": "手机"
+            },
+            {
+              "itemId": "daily.keys",
+              "importance": "key",
+              "title": "钥匙 / 门禁"
+            },
+            {
+              "itemId": "daily.wallet",
+              "importance": "normal",
+              "title": "钱包",
+              "condition": "平时会携带实体钱包时"
+            },
+            {
+              "itemId": "daily.id",
+              "importance": "normal",
+              "title": "身份证件",
+              "condition": "当天办事或场所需要证件时"
+            },
+            {
+              "itemId": "daily.earphones",
+              "importance": "normal",
+              "title": "耳机"
+            }
+          ]
+        },
+        {
+          "groupId": "today",
+          "title": "当天需要",
+          "items": [
+            {
+              "itemId": "daily.power_bank",
+              "importance": "normal",
+              "title": "充电宝",
+              "condition": "外出时间较长或电量可能不足时"
+            },
+            {
+              "itemId": "daily.charge_cable",
+              "importance": "normal",
+              "title": "充电线",
+              "condition": "当天可能需要补电时"
+            },
+            {
+              "itemId": "daily.umbrella",
+              "importance": "normal",
+              "title": "雨伞",
+              "condition": "天气或行程需要时"
+            },
+            {
+              "itemId": "daily.sun",
+              "importance": "normal",
+              "title": "防晒用品",
+              "condition": "有较多户外暴晒时"
+            },
+            {
+              "itemId": "daily.water",
+              "importance": "normal",
+              "title": "水杯",
+              "condition": "当天需要时"
+            },
+            {
+              "itemId": "daily.tissue",
+              "importance": "normal",
+              "title": "纸巾或湿巾"
+            },
+            {
+              "itemId": "daily.meds",
+              "importance": "normal",
+              "title": "常用药",
+              "condition": "当天可能需要时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.important_errand",
+      "contentVersion": 1,
+      "title": "重要办事 / 会议出门",
+      "applicability": "重要会议、面试、签约、证照办理、线下重要办事。",
+      "targetDurationSec": [
+        40,
+        75
+      ],
+      "searchAliases": [
+        "面试",
+        "签约",
+        "会议",
+        "办证",
+        "证照",
+        "材料办理",
+        "商务拜访"
+      ],
+      "featuredOrder": 2,
+      "editorialIntent": "优先确认会直接导致办事失败的时间、地点、联系人、证件和材料。",
+      "groups": [
+        {
+          "groupId": "event",
+          "title": "先确认“事”",
+          "items": [
+            {
+              "itemId": "errand.when_where",
+              "importance": "key",
+              "title": "时间与地点"
+            },
+            {
+              "itemId": "errand.contact",
+              "importance": "key",
+              "title": "联系人 / 联系方式"
+            },
+            {
+              "itemId": "errand.required_id",
+              "importance": "key",
+              "title": "必须携带的证件"
+            },
+            {
+              "itemId": "errand.required_materials",
+              "importance": "key",
+              "title": "必须提交或签署的材料"
+            }
+          ]
+        },
+        {
+          "groupId": "tools",
+          "title": "再确认“工具”",
+          "items": [
+            {
+              "itemId": "errand.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "errand.work_device",
+              "importance": "normal",
+              "title": "电脑或平板",
+              "condition": "现场需要使用电子设备时"
+            },
+            {
+              "itemId": "errand.device_power",
+              "importance": "normal",
+              "title": "设备电源 / 充电器",
+              "condition": "携带电脑或平板时"
+            },
+            {
+              "itemId": "errand.power_bank",
+              "importance": "normal",
+              "title": "充电宝",
+              "condition": "当天可能长时间在外时"
+            },
+            {
+              "itemId": "errand.pen",
+              "importance": "normal",
+              "title": "纸笔"
+            },
+            {
+              "itemId": "errand.offline_backup",
+              "importance": "normal",
+              "title": "演示或关键文件的离线备份",
+              "condition": "现场依赖电子材料时"
+            }
+          ]
+        },
+        {
+          "groupId": "departure",
+          "title": "出门前",
+          "items": [
+            {
+              "itemId": "errand.route",
+              "importance": "normal",
+              "title": "交通路线 / 停车方案"
+            },
+            {
+              "itemId": "errand.access_req",
+              "importance": "normal",
+              "title": "着装或门禁要求",
+              "condition": "场所有特殊要求时"
+            },
+            {
+              "itemId": "errand.buffer",
+              "importance": "normal",
+              "title": "预留到达时间"
+            }
+          ]
+        }
+      ],
+      "userTip": "重要材料建议前一晚完成第一轮准备，当天只做最后确认。"
+    },
+    {
+      "templateId": "official.business_trip",
+      "contentVersion": 1,
+      "title": "出差",
+      "applicability": "国内短期工作出差，覆盖工作、住宿和基本随身物品。",
+      "targetDurationSec": [
+        60,
+        100
+      ],
+      "searchAliases": [
+        "工作出差",
+        "商务出差",
+        "差旅"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "把工作失败风险放在前面，生活用品保持克制；离家高风险事项不在本模板无限展开。",
+      "groups": [
+        {
+          "groupId": "travel",
+          "title": "证件与行程",
+          "items": [
+            {
+              "itemId": "trip.id",
+              "importance": "key",
+              "title": "身份证件"
+            },
+            {
+              "itemId": "trip.ticket",
+              "importance": "key",
+              "title": "车票 / 航班 / 行程信息"
+            },
+            {
+              "itemId": "trip.hotel",
+              "importance": "normal",
+              "title": "酒店信息"
+            },
+            {
+              "itemId": "trip.expense_policy",
+              "importance": "normal",
+              "title": "报销或公司凭证要求",
+              "condition": "本次出差涉及报销时"
+            }
+          ]
+        },
+        {
+          "groupId": "work",
+          "title": "工作",
+          "items": [
+            {
+              "itemId": "trip.work_device",
+              "importance": "key",
+              "title": "电脑 / 工作设备"
+            },
+            {
+              "itemId": "trip.key_files",
+              "importance": "key",
+              "title": "关键文件 / 合同 / 演示材料"
+            },
+            {
+              "itemId": "trip.device_power",
+              "importance": "normal",
+              "title": "电脑或工作设备电源"
+            },
+            {
+              "itemId": "trip.phone_charger",
+              "importance": "normal",
+              "title": "手机充电器"
+            },
+            {
+              "itemId": "trip.power_bank",
+              "importance": "normal",
+              "title": "充电宝"
+            },
+            {
+              "itemId": "trip.offline_backup",
+              "importance": "normal",
+              "title": "关键文件离线备份",
+              "condition": "现场依赖电子文件时"
+            }
+          ]
+        },
+        {
+          "groupId": "life",
+          "title": "生活",
+          "items": [
+            {
+              "itemId": "trip.clothes",
+              "importance": "normal",
+              "title": "换洗衣物"
+            },
+            {
+              "itemId": "trip.toiletries",
+              "importance": "normal",
+              "title": "洗漱用品"
+            },
+            {
+              "itemId": "trip.meds",
+              "importance": "normal",
+              "title": "常用药",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "trip.umbrella",
+              "importance": "normal",
+              "title": "雨伞",
+              "condition": "天气需要时"
+            },
+            {
+              "itemId": "trip.earphones",
+              "importance": "normal",
+              "title": "耳机"
+            },
+            {
+              "itemId": "trip.water",
+              "importance": "normal",
+              "title": "水杯",
+              "condition": "需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "home",
+          "title": "离家前",
+          "items": [
+            {
+              "itemId": "trip.windows_doors",
+              "importance": "normal",
+              "title": "门窗已确认"
+            },
+            {
+              "itemId": "trip.household_arrangements",
+              "importance": "normal",
+              "title": "离家期间需要交代的事项已安排",
+              "condition": "有需要交代事项时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.domestic_travel",
+      "contentVersion": 1,
+      "title": "国内旅行",
+      "applicability": "国内过夜旅行，不含出境手续，也不专门覆盖带娃。",
+      "targetDurationSec": [
+        60,
+        100
+      ],
+      "searchAliases": [
+        "旅游",
+        "国内游",
+        "旅行",
+        "度假"
+      ],
+      "featuredOrder": 3,
+      "editorialIntent": "覆盖普通国内过夜旅行的常见高频遗漏，不把带娃、自驾或长期离家全部揉进来。",
+      "groups": [
+        {
+          "groupId": "travel",
+          "title": "证件与行程",
+          "items": [
+            {
+              "itemId": "domestic.id",
+              "importance": "key",
+              "title": "身份证件"
+            },
+            {
+              "itemId": "domestic.ticket",
+              "importance": "key",
+              "title": "车票 / 航班 / 行程信息"
+            },
+            {
+              "itemId": "domestic.hotel",
+              "importance": "normal",
+              "title": "酒店 / 民宿确认信息"
+            },
+            {
+              "itemId": "domestic.local_transport",
+              "importance": "normal",
+              "title": "目的地交通信息",
+              "condition": "需要提前准备时"
+            }
+          ]
+        },
+        {
+          "groupId": "carry",
+          "title": "随身",
+          "items": [
+            {
+              "itemId": "domestic.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "domestic.wallet",
+              "importance": "normal",
+              "title": "钱包 / 备用支付方式"
+            },
+            {
+              "itemId": "domestic.phone_charger",
+              "importance": "normal",
+              "title": "手机充电器"
+            },
+            {
+              "itemId": "domestic.power_bank",
+              "importance": "normal",
+              "title": "充电宝"
+            },
+            {
+              "itemId": "domestic.earphones",
+              "importance": "normal",
+              "title": "耳机"
+            },
+            {
+              "itemId": "domestic.water",
+              "importance": "normal",
+              "title": "水杯",
+              "condition": "需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "luggage",
+          "title": "行李",
+          "items": [
+            {
+              "itemId": "domestic.clothes",
+              "importance": "normal",
+              "title": "换洗衣物"
+            },
+            {
+              "itemId": "domestic.sleepwear",
+              "importance": "normal",
+              "title": "睡衣"
+            },
+            {
+              "itemId": "domestic.toiletries",
+              "importance": "normal",
+              "title": "洗漱用品"
+            },
+            {
+              "itemId": "domestic.care",
+              "importance": "normal",
+              "title": "个人护理用品",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "domestic.meds",
+              "importance": "normal",
+              "title": "常用药",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "domestic.umbrella",
+              "importance": "normal",
+              "title": "雨具",
+              "condition": "天气需要时"
+            },
+            {
+              "itemId": "domestic.sun",
+              "importance": "normal",
+              "title": "防晒用品",
+              "condition": "户外活动需要时"
+            },
+            {
+              "itemId": "domestic.vision",
+              "importance": "normal",
+              "title": "眼镜 / 隐形用品",
+              "condition": "需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "home",
+          "title": "出门前",
+          "items": [
+            {
+              "itemId": "domestic.windows_doors",
+              "importance": "normal",
+              "title": "家中门窗已确认"
+            },
+            {
+              "itemId": "domestic.trash_food",
+              "importance": "normal",
+              "title": "垃圾和易腐食品已处理",
+              "condition": "离家时间较长时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.international_travel",
+      "contentVersion": 1,
+      "title": "出国旅行",
+      "applicability": "普通境外旅行，在旅行基础上强化证件、入境、支付、通信与关键备份。",
+      "targetDurationSec": [
+        90,
+        160
+      ],
+      "searchAliases": [
+        "境外",
+        "出境",
+        "护照",
+        "签证",
+        "国际旅行",
+        "国外旅游"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "围绕出境失败、入境失败、支付通信中断和不可低成本补救的关键遗漏设计。",
+      "groups": [
+        {
+          "groupId": "entry",
+          "title": "证件与入境",
+          "items": [
+            {
+              "itemId": "intl.passport",
+              "importance": "key",
+              "title": "护照"
+            },
+            {
+              "itemId": "intl.visa",
+              "importance": "key",
+              "title": "签证 / 入境许可",
+              "condition": "目的地或个人情况需要时"
+            },
+            {
+              "itemId": "intl.ticket",
+              "importance": "key",
+              "title": "机票 / 行程信息"
+            },
+            {
+              "itemId": "intl.lodging_address",
+              "importance": "key",
+              "title": "住宿信息 / 入境可能需要的地址"
+            },
+            {
+              "itemId": "intl.domestic_id",
+              "importance": "normal",
+              "title": "身份证"
+            },
+            {
+              "itemId": "intl.insurance",
+              "importance": "normal",
+              "title": "旅行保险资料",
+              "condition": "已购买或目的地要求时"
+            }
+          ]
+        },
+        {
+          "groupId": "money_comms",
+          "title": "钱与通信",
+          "items": [
+            {
+              "itemId": "intl.payment",
+              "importance": "normal",
+              "title": "可境外使用的银行卡 / 支付方式"
+            },
+            {
+              "itemId": "intl.cash",
+              "importance": "normal",
+              "title": "少量当地现金",
+              "condition": "目的地或行程需要时"
+            },
+            {
+              "itemId": "intl.mobile_data",
+              "importance": "normal",
+              "title": "国际漫游 / eSIM / SIM方案"
+            },
+            {
+              "itemId": "intl.account_auth",
+              "importance": "normal",
+              "title": "重要账号的境外验证方式可用"
+            },
+            {
+              "itemId": "intl.emergency_contact",
+              "importance": "normal",
+              "title": "紧急联系人信息"
+            }
+          ]
+        },
+        {
+          "groupId": "electronics",
+          "title": "电子设备",
+          "items": [
+            {
+              "itemId": "intl.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "intl.phone_charger",
+              "importance": "normal",
+              "title": "手机充电器"
+            },
+            {
+              "itemId": "intl.power_bank",
+              "importance": "normal",
+              "title": "充电宝"
+            },
+            {
+              "itemId": "intl.adapter",
+              "importance": "normal",
+              "title": "转换插头",
+              "condition": "目的地插头标准需要时"
+            },
+            {
+              "itemId": "intl.extra_device",
+              "importance": "normal",
+              "title": "电脑 / 相机等额外电子设备",
+              "condition": "本次需要携带时"
+            },
+            {
+              "itemId": "intl.extra_device_power",
+              "importance": "normal",
+              "title": "额外电子设备电源",
+              "condition": "携带相应设备时"
+            }
+          ]
+        },
+        {
+          "groupId": "health",
+          "title": "行李与健康",
+          "items": [
+            {
+              "itemId": "intl.clothes",
+              "importance": "normal",
+              "title": "换洗衣物"
+            },
+            {
+              "itemId": "intl.toiletries",
+              "importance": "normal",
+              "title": "洗漱用品"
+            },
+            {
+              "itemId": "intl.prescription_meds",
+              "importance": "key",
+              "title": "必须持续使用的处方药 / 长期用药",
+              "condition": "有长期用药时"
+            },
+            {
+              "itemId": "intl.usual_meds",
+              "importance": "normal",
+              "title": "常用药",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "intl.vision",
+              "importance": "normal",
+              "title": "眼镜 / 隐形用品",
+              "condition": "需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "backup",
+          "title": "最后备份",
+          "items": [
+            {
+              "itemId": "intl.passport_copy",
+              "importance": "normal",
+              "title": "护照资料页电子备份"
+            },
+            {
+              "itemId": "intl.offline_orders",
+              "importance": "normal",
+              "title": "重要订单 / 地址离线保存"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.hotel_checkout",
+      "contentVersion": 1,
+      "title": "离开酒店",
+      "applicability": "退房前最后一次房间扫描，重点防止物品遗落在临时放置点。",
+      "targetDurationSec": [
+        30,
+        65
+      ],
+      "searchAliases": [
+        "退房",
+        "酒店遗落",
+        "酒店检查",
+        "保险箱",
+        "离店"
+      ],
+      "featuredOrder": 4,
+      "editorialIntent": "典型空间流模板：按真实房间扫描路径减少中断后的跳项。",
+      "groups": [
+        {
+          "groupId": "carry",
+          "title": "身上与台面",
+          "items": [
+            {
+              "itemId": "hotel.phone",
+              "importance": "key",
+              "title": "手机"
+            },
+            {
+              "itemId": "hotel.documents",
+              "importance": "key",
+              "title": "证件"
+            },
+            {
+              "itemId": "hotel.wallet",
+              "importance": "key",
+              "title": "钱包 / 备用支付物品"
+            },
+            {
+              "itemId": "hotel.work_device",
+              "importance": "normal",
+              "title": "电脑 / 平板",
+              "condition": "携带时"
+            },
+            {
+              "itemId": "hotel.charger",
+              "importance": "normal",
+              "title": "充电器"
+            },
+            {
+              "itemId": "hotel.charge_cable",
+              "importance": "normal",
+              "title": "充电线"
+            },
+            {
+              "itemId": "hotel.earphones",
+              "importance": "normal",
+              "title": "耳机"
+            }
+          ]
+        },
+        {
+          "groupId": "scan",
+          "title": "按空间扫一遍",
+          "items": [
+            {
+              "itemId": "hotel.bed_area",
+              "importance": "normal",
+              "title": "床上 / 枕头下 / 床头柜已扫过"
+            },
+            {
+              "itemId": "hotel.outlets",
+              "importance": "normal",
+              "title": "所有插座已扫过"
+            },
+            {
+              "itemId": "hotel.desk",
+              "importance": "normal",
+              "title": "桌面 / 抽屉已扫过"
+            },
+            {
+              "itemId": "hotel.wardrobe",
+              "importance": "normal",
+              "title": "衣柜 / 衣架已扫过"
+            },
+            {
+              "itemId": "hotel.safe",
+              "importance": "key",
+              "title": "保险箱已扫过"
+            },
+            {
+              "itemId": "hotel.bathroom",
+              "importance": "normal",
+              "title": "卫生间 / 淋浴区已扫过"
+            },
+            {
+              "itemId": "hotel.fridge",
+              "importance": "normal",
+              "title": "冰箱 / 小吧台已扫过"
+            },
+            {
+              "itemId": "hotel.sofa_window",
+              "importance": "normal",
+              "title": "窗边 / 沙发 / 椅子已扫过"
+            },
+            {
+              "itemId": "hotel.luggage_area",
+              "importance": "normal",
+              "title": "行李架周围已扫过"
+            }
+          ]
+        },
+        {
+          "groupId": "leave",
+          "title": "出门前",
+          "items": [
+            {
+              "itemId": "hotel.room_card",
+              "importance": "normal",
+              "title": "房卡 / 退房要求已处理"
+            },
+            {
+              "itemId": "hotel.luggage_count",
+              "importance": "normal",
+              "title": "行李件数已重新确认"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.self_drive",
+      "contentVersion": 1,
+      "title": "自驾出发",
+      "applicability": "自驾长途、周边游或较重要的驾车出行。",
+      "targetDurationSec": [
+        45,
+        80
+      ],
+      "searchAliases": [
+        "自驾",
+        "开车",
+        "长途驾驶",
+        "高速",
+        "汽车出行"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "先确认合法驾驶与能源，再确认路线、支付和途中必需品。",
+      "groups": [
+        {
+          "groupId": "person_vehicle",
+          "title": "人与证件",
+          "items": [
+            {
+              "itemId": "drive.license",
+              "importance": "key",
+              "title": "驾驶证 / 所需电子凭证可用"
+            },
+            {
+              "itemId": "drive.vehicle_docs",
+              "importance": "key",
+              "title": "车辆必要证件 / 信息可用"
+            },
+            {
+              "itemId": "drive.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "drive.wallet",
+              "importance": "normal",
+              "title": "钱包 / 支付方式"
+            }
+          ]
+        },
+        {
+          "groupId": "vehicle",
+          "title": "车况与能源",
+          "items": [
+            {
+              "itemId": "drive.energy",
+              "importance": "key",
+              "title": "油量 / 电量足够"
+            },
+            {
+              "itemId": "drive.tires",
+              "importance": "normal",
+              "title": "轮胎无明显异常"
+            },
+            {
+              "itemId": "drive.route",
+              "importance": "normal",
+              "title": "目的地路线已确认"
+            },
+            {
+              "itemId": "drive.energy_stop",
+              "importance": "normal",
+              "title": "关键充电 / 加油点已确认",
+              "condition": "长途或能源余量不足时"
+            },
+            {
+              "itemId": "drive.toll",
+              "importance": "normal",
+              "title": "ETC / 高速支付可用",
+              "condition": "需要走收费道路时"
+            }
+          ]
+        },
+        {
+          "groupId": "onroad",
+          "title": "随车与路上",
+          "items": [
+            {
+              "itemId": "drive.car_charger",
+              "importance": "normal",
+              "title": "车充 / 充电线"
+            },
+            {
+              "itemId": "drive.water",
+              "importance": "normal",
+              "title": "水"
+            },
+            {
+              "itemId": "drive.tissue",
+              "importance": "normal",
+              "title": "纸巾或湿巾"
+            },
+            {
+              "itemId": "drive.meds",
+              "importance": "normal",
+              "title": "常用药",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "drive.rain",
+              "importance": "normal",
+              "title": "雨具",
+              "condition": "天气需要时"
+            },
+            {
+              "itemId": "drive.child_seat",
+              "importance": "normal",
+              "title": "儿童安全座椅",
+              "condition": "带需要安全座椅的孩子时"
+            }
+          ]
+        },
+        {
+          "groupId": "departure",
+          "title": "出发前",
+          "items": [
+            {
+              "itemId": "drive.trunk",
+              "importance": "normal",
+              "title": "行李舱物品已确认"
+            },
+            {
+              "itemId": "drive.closed",
+              "importance": "normal",
+              "title": "车门 / 后备箱已关好"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.child_day_out",
+      "contentVersion": 1,
+      "title": "带娃出门",
+      "applicability": "带婴幼儿或学龄前儿童当天外出，重点覆盖途中即时需求。",
+      "targetDurationSec": [
+        45,
+        80
+      ],
+      "searchAliases": [
+        "带宝宝",
+        "带孩子出门",
+        "遛娃",
+        "婴儿出门",
+        "宝宝用品"
+      ],
+      "featuredOrder": 5,
+      "editorialIntent": "覆盖当天出门的喂养、换洗、药物与安抚，不把旅行级内容全部塞进来。",
+      "groups": [
+        {
+          "groupId": "child_core",
+          "title": "孩子核心",
+          "items": [
+            {
+              "itemId": "childout.docs",
+              "importance": "key",
+              "title": "孩子当天需要的证件 / 就诊卡",
+              "condition": "当天场景需要时"
+            },
+            {
+              "itemId": "childout.water",
+              "importance": "normal",
+              "title": "孩子的水"
+            },
+            {
+              "itemId": "childout.feeding",
+              "importance": "normal",
+              "title": "奶 / 喂养用品",
+              "condition": "孩子需要时"
+            },
+            {
+              "itemId": "childout.tissue",
+              "importance": "normal",
+              "title": "纸巾或湿巾"
+            },
+            {
+              "itemId": "childout.diaper",
+              "importance": "normal",
+              "title": "尿不湿 / 拉拉裤",
+              "condition": "孩子需要时"
+            },
+            {
+              "itemId": "childout.spare_clothes",
+              "importance": "normal",
+              "title": "换洗衣物一套"
+            },
+            {
+              "itemId": "childout.snack",
+              "importance": "normal",
+              "title": "小零食",
+              "condition": "孩子需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "health_comfort",
+          "title": "健康与舒适",
+          "items": [
+            {
+              "itemId": "childout.required_meds",
+              "importance": "key",
+              "title": "必须按时使用的药物",
+              "condition": "孩子有当日必须用药时"
+            },
+            {
+              "itemId": "childout.sun",
+              "importance": "normal",
+              "title": "防晒用品",
+              "condition": "户外暴晒时"
+            },
+            {
+              "itemId": "childout.hat",
+              "importance": "normal",
+              "title": "帽子",
+              "condition": "天气需要时"
+            },
+            {
+              "itemId": "childout.warm",
+              "importance": "normal",
+              "title": "外套 / 保暖用品",
+              "condition": "温差或天气需要时"
+            },
+            {
+              "itemId": "childout.comfort",
+              "importance": "normal",
+              "title": "安抚玩具 / 熟悉小物",
+              "condition": "孩子需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "adult",
+          "title": "大人",
+          "items": [
+            {
+              "itemId": "childout.phone",
+              "importance": "key",
+              "title": "手机"
+            },
+            {
+              "itemId": "childout.keys",
+              "importance": "normal",
+              "title": "钥匙 / 门禁"
+            },
+            {
+              "itemId": "childout.power_bank",
+              "importance": "normal",
+              "title": "充电宝",
+              "condition": "外出时间较长时"
+            },
+            {
+              "itemId": "childout.stroller_carrier",
+              "importance": "normal",
+              "title": "婴儿车或背带",
+              "condition": "需要时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.child_travel",
+      "contentVersion": 1,
+      "title": "带娃旅行",
+      "applicability": "带孩子过夜旅行，在普通旅行基础上强化喂养、睡眠、换洗、药物和安抚。",
+      "targetDurationSec": [
+        90,
+        170
+      ],
+      "searchAliases": [
+        "亲子旅行",
+        "带宝宝旅行",
+        "带孩子旅游",
+        "婴幼儿旅行"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "聚焦孩子的不可替代需求，避免把所有成人旅行项目与自驾项目无限叠加。",
+      "groups": [
+        {
+          "groupId": "travel",
+          "title": "证件与行程",
+          "items": [
+            {
+              "itemId": "childtravel.adult_docs",
+              "importance": "key",
+              "title": "大人所需证件"
+            },
+            {
+              "itemId": "childtravel.child_docs",
+              "importance": "key",
+              "title": "孩子所需证件"
+            },
+            {
+              "itemId": "childtravel.ticket",
+              "importance": "key",
+              "title": "车票 / 航班 / 行程信息"
+            },
+            {
+              "itemId": "childtravel.hotel",
+              "importance": "normal",
+              "title": "酒店信息"
+            },
+            {
+              "itemId": "childtravel.child_facility",
+              "importance": "normal",
+              "title": "儿童票 / 座位 / 婴儿设施已确认",
+              "condition": "相应交通或住宿需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "daily",
+          "title": "孩子日常",
+          "items": [
+            {
+              "itemId": "childtravel.clothes",
+              "importance": "normal",
+              "title": "足量衣物"
+            },
+            {
+              "itemId": "childtravel.sleepwear",
+              "importance": "normal",
+              "title": "睡衣"
+            },
+            {
+              "itemId": "childtravel.sleepbag",
+              "importance": "normal",
+              "title": "睡袋",
+              "condition": "孩子平时需要时"
+            },
+            {
+              "itemId": "childtravel.diaper",
+              "importance": "normal",
+              "title": "尿不湿 / 拉拉裤",
+              "condition": "孩子需要时"
+            },
+            {
+              "itemId": "childtravel.wipes",
+              "importance": "normal",
+              "title": "湿巾 / 纸巾"
+            },
+            {
+              "itemId": "childtravel.feeding",
+              "importance": "normal",
+              "title": "奶 / 奶瓶 / 辅食用品",
+              "condition": "孩子需要时"
+            },
+            {
+              "itemId": "childtravel.cup",
+              "importance": "normal",
+              "title": "水杯"
+            },
+            {
+              "itemId": "childtravel.snack",
+              "importance": "normal",
+              "title": "小零食",
+              "condition": "孩子需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "health",
+          "title": "健康",
+          "items": [
+            {
+              "itemId": "childtravel.required_meds",
+              "importance": "key",
+              "title": "孩子必须使用的药物",
+              "condition": "有长期或本次必须用药时"
+            },
+            {
+              "itemId": "childtravel.thermometer",
+              "importance": "normal",
+              "title": "体温计"
+            },
+            {
+              "itemId": "childtravel.family_meds",
+              "importance": "normal",
+              "title": "家庭既有的常用应急药品",
+              "condition": "家庭平时已有明确使用方案时"
+            },
+            {
+              "itemId": "childtravel.sun",
+              "importance": "normal",
+              "title": "防晒用品",
+              "condition": "户外活动需要时"
+            },
+            {
+              "itemId": "childtravel.mosquito",
+              "importance": "normal",
+              "title": "驱蚊用品",
+              "condition": "环境需要时"
+            },
+            {
+              "itemId": "childtravel.warm",
+              "importance": "normal",
+              "title": "保暖用品",
+              "condition": "天气或温差需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "comfort",
+          "title": "安抚与途中",
+          "items": [
+            {
+              "itemId": "childtravel.comfort",
+              "importance": "normal",
+              "title": "安抚玩具 / 熟悉小物"
+            },
+            {
+              "itemId": "childtravel.toys",
+              "importance": "normal",
+              "title": "绘本 / 小玩具",
+              "condition": "途中需要时"
+            },
+            {
+              "itemId": "childtravel.stroller_carrier",
+              "importance": "normal",
+              "title": "婴儿车或背带",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "childtravel.child_seat",
+              "importance": "normal",
+              "title": "儿童安全座椅",
+              "condition": "自驾且孩子需要安全座椅时"
+            }
+          ]
+        },
+        {
+          "groupId": "adult",
+          "title": "大人",
+          "items": [
+            {
+              "itemId": "childtravel.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "childtravel.phone_charger",
+              "importance": "normal",
+              "title": "手机充电器"
+            },
+            {
+              "itemId": "childtravel.adult_clothes",
+              "importance": "normal",
+              "title": "大人换洗衣物"
+            },
+            {
+              "itemId": "childtravel.adult_meds",
+              "importance": "normal",
+              "title": "大人常用药",
+              "condition": "需要时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.away_from_home",
+      "contentVersion": 1,
+      "title": "离家数日",
+      "applicability": "全家或个人离开住所数天，重点防家中无人期间的水、电、燃气、门窗和易腐物问题。",
+      "targetDurationSec": [
+        45,
+        95
+      ],
+      "searchAliases": [
+        "长期外出",
+        "全家出门",
+        "家里没人",
+        "离家",
+        "出远门"
+      ],
+      "featuredOrder": 6,
+      "editorialIntent": "优先控制无人状态下的高后果家庭风险，再处理垃圾、宠物和上门事项。",
+      "groups": [
+        {
+          "groupId": "risk",
+          "title": "家中风险",
+          "items": [
+            {
+              "itemId": "away.gas_fire",
+              "importance": "key",
+              "title": "燃气 / 明火风险已确认"
+            },
+            {
+              "itemId": "away.water",
+              "importance": "key",
+              "title": "水龙头 / 需要关闭的水源已处理"
+            },
+            {
+              "itemId": "away.windows",
+              "importance": "normal",
+              "title": "门窗已关闭"
+            },
+            {
+              "itemId": "away.appliances",
+              "importance": "normal",
+              "title": "不需要持续运行的电器已断电"
+            },
+            {
+              "itemId": "away.climate",
+              "importance": "normal",
+              "title": "空调 / 地暖已按计划设置",
+              "condition": "家中有相关设备且需要调整时"
+            }
+          ]
+        },
+        {
+          "groupId": "food",
+          "title": "食物与垃圾",
+          "items": [
+            {
+              "itemId": "away.trash",
+              "importance": "normal",
+              "title": "垃圾已带走"
+            },
+            {
+              "itemId": "away.perishables",
+              "importance": "normal",
+              "title": "易腐食物已处理"
+            },
+            {
+              "itemId": "away.fridge",
+              "importance": "normal",
+              "title": "冰箱是否继续通电已确认"
+            }
+          ]
+        },
+        {
+          "groupId": "care",
+          "title": "照护与家庭事项",
+          "items": [
+            {
+              "itemId": "away.pet",
+              "importance": "key",
+              "title": "宠物照护已安排",
+              "condition": "家中有宠物时"
+            },
+            {
+              "itemId": "away.plants",
+              "importance": "normal",
+              "title": "植物浇水已安排",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "away.deliveries",
+              "importance": "normal",
+              "title": "快递 / 重要上门事项已处理",
+              "condition": "预计离家期间会发生时"
+            },
+            {
+              "itemId": "away.contact",
+              "importance": "normal",
+              "title": "必要联系人已知道你的安排",
+              "condition": "确有需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "leave",
+          "title": "最后离开",
+          "items": [
+            {
+              "itemId": "away.keys",
+              "importance": "normal",
+              "title": "钥匙已带"
+            },
+            {
+              "itemId": "away.lock",
+              "importance": "key",
+              "title": "门锁已确认"
+            },
+            {
+              "itemId": "away.vehicle",
+              "importance": "normal",
+              "title": "车辆 / 车位安排已确认",
+              "condition": "需要时"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.move_out_final",
+      "contentVersion": 1,
+      "title": "搬家前最后检查",
+      "applicability": "旧住所彻底离开前最后扫描，重点防遗落、漏抄表、漏关设施和钥匙交接。",
+      "targetDurationSec": [
+        90,
+        170
+      ],
+      "searchAliases": [
+        "搬家",
+        "退租",
+        "交房",
+        "旧房最后检查"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "空间扫空与房屋交接分开；水、电、燃气等独立高后果动作不合并成一个勾。",
+      "groups": [
+        {
+          "groupId": "important",
+          "title": "重要物品",
+          "items": [
+            {
+              "itemId": "move.documents",
+              "importance": "key",
+              "title": "证件"
+            },
+            {
+              "itemId": "move.valuables",
+              "importance": "key",
+              "title": "贵重物品"
+            },
+            {
+              "itemId": "move.computer",
+              "importance": "normal",
+              "title": "电脑"
+            },
+            {
+              "itemId": "move.data",
+              "importance": "key",
+              "title": "硬盘 / 重要资料"
+            },
+            {
+              "itemId": "move.meds",
+              "importance": "normal",
+              "title": "药品",
+              "condition": "有需要携带的药品时"
+            },
+            {
+              "itemId": "move.keys_access",
+              "importance": "normal",
+              "title": "个人钥匙 / 门禁卡"
+            }
+          ]
+        },
+        {
+          "groupId": "scan",
+          "title": "按空间扫空",
+          "items": [
+            {
+              "itemId": "move.cabinets",
+              "importance": "normal",
+              "title": "所有柜子 / 抽屉已扫空"
+            },
+            {
+              "itemId": "move.wardrobe",
+              "importance": "normal",
+              "title": "衣柜顶部和底部已扫过"
+            },
+            {
+              "itemId": "move.under_furniture",
+              "importance": "normal",
+              "title": "床下 / 沙发下已扫过"
+            },
+            {
+              "itemId": "move.balcony",
+              "importance": "normal",
+              "title": "阳台已扫过"
+            },
+            {
+              "itemId": "move.kitchen",
+              "importance": "normal",
+              "title": "厨房橱柜已扫空"
+            },
+            {
+              "itemId": "move.fridge",
+              "importance": "normal",
+              "title": "冰箱已扫空并按交接要求处理"
+            },
+            {
+              "itemId": "move.bathroom",
+              "importance": "normal",
+              "title": "卫生间柜体已扫空"
+            },
+            {
+              "itemId": "move.storage",
+              "importance": "normal",
+              "title": "储物间 / 地下室 / 车库已扫过",
+              "condition": "有相应空间时"
+            },
+            {
+              "itemId": "move.outlets",
+              "importance": "normal",
+              "title": "所有插座和充电设备已扫过"
+            }
+          ]
+        },
+        {
+          "groupId": "handover",
+          "title": "房屋交接",
+          "items": [
+            {
+              "itemId": "move.water",
+              "importance": "key",
+              "title": "用水事项已按约定处理"
+            },
+            {
+              "itemId": "move.electricity",
+              "importance": "key",
+              "title": "用电事项已按约定处理"
+            },
+            {
+              "itemId": "move.gas",
+              "importance": "key",
+              "title": "燃气事项已按约定处理",
+              "condition": "房屋有燃气时"
+            },
+            {
+              "itemId": "move.meter",
+              "importance": "normal",
+              "title": "水电燃气表读数 / 照片已留存",
+              "condition": "交接需要时"
+            },
+            {
+              "itemId": "move.photos",
+              "importance": "normal",
+              "title": "房屋现状照片已留存",
+              "condition": "需要留存交接证据时"
+            },
+            {
+              "itemId": "move.trash",
+              "importance": "normal",
+              "title": "垃圾已清空"
+            },
+            {
+              "itemId": "move.windows_doors",
+              "importance": "normal",
+              "title": "门窗已确认"
+            },
+            {
+              "itemId": "move.key_handover",
+              "importance": "key",
+              "title": "钥匙 / 门禁已正式交接"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "official.hospital_admission",
+      "contentVersion": 1,
+      "title": "住院准备",
+      "applicability": "计划住院前准备身份、既有医疗资料、长期用药信息和住院生活用品；不替代医院或医生的个体化要求。",
+      "targetDurationSec": [
+        90,
+        170
+      ],
+      "searchAliases": [
+        "住院",
+        "入院",
+        "医保卡",
+        "住院资料",
+        "住院用品"
+      ],
+      "featuredOrder": null,
+      "editorialIntent": "只负责住院前资料与用品防遗漏，不替代医生判断；说明文字不做成checkbox。",
+      "groups": [
+        {
+          "groupId": "identity",
+          "title": "身份与办理",
+          "items": [
+            {
+              "itemId": "admit.id",
+              "importance": "key",
+              "title": "身份证件"
+            },
+            {
+              "itemId": "admit.insurance",
+              "importance": "key",
+              "title": "医保凭证 / 就诊卡"
+            },
+            {
+              "itemId": "admit.notice",
+              "importance": "key",
+              "title": "住院通知 / 入院信息"
+            },
+            {
+              "itemId": "admit.payment",
+              "importance": "normal",
+              "title": "支付方式 / 必要押金安排",
+              "condition": "医院需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "medical",
+          "title": "医疗资料",
+          "items": [
+            {
+              "itemId": "admit.reports",
+              "importance": "key",
+              "title": "医院要求的关键检查报告"
+            },
+            {
+              "itemId": "admit.imaging",
+              "importance": "key",
+              "title": "医院要求的关键影像资料",
+              "condition": "本次入院需要时"
+            },
+            {
+              "itemId": "admit.med_list",
+              "importance": "key",
+              "title": "当前用药清单",
+              "hint": "尽量包含药名、剂量、频次"
+            },
+            {
+              "itemId": "admit.allergies",
+              "importance": "key",
+              "title": "过敏信息"
+            },
+            {
+              "itemId": "admit.history",
+              "importance": "normal",
+              "title": "重要病史 / 手术资料",
+              "condition": "本次入院需要时"
+            },
+            {
+              "itemId": "admit.doctor_docs",
+              "importance": "normal",
+              "title": "医生特别要求携带的资料",
+              "condition": "医生有额外要求时"
+            }
+          ]
+        },
+        {
+          "groupId": "meds",
+          "title": "药物",
+          "items": [
+            {
+              "itemId": "admit.essential_meds",
+              "importance": "key",
+              "title": "不能随意中断的长期用药",
+              "condition": "有长期用药时"
+            },
+            {
+              "itemId": "admit.med_packaging",
+              "importance": "normal",
+              "title": "药品原包装 / 处方信息",
+              "condition": "医院要求携带时"
+            }
+          ]
+        },
+        {
+          "groupId": "living",
+          "title": "住院生活",
+          "items": [
+            {
+              "itemId": "admit.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "admit.charger",
+              "importance": "normal",
+              "title": "充电器"
+            },
+            {
+              "itemId": "admit.toiletries",
+              "importance": "normal",
+              "title": "洗漱用品"
+            },
+            {
+              "itemId": "admit.cup",
+              "importance": "normal",
+              "title": "水杯"
+            },
+            {
+              "itemId": "admit.slippers",
+              "importance": "normal",
+              "title": "拖鞋"
+            },
+            {
+              "itemId": "admit.clothes",
+              "importance": "normal",
+              "title": "适量换洗衣物"
+            },
+            {
+              "itemId": "admit.aids",
+              "importance": "normal",
+              "title": "眼镜 / 助听等个人必需用品",
+              "condition": "需要时"
+            }
+          ]
+        },
+        {
+          "groupId": "family",
+          "title": "家属与安排",
+          "items": [
+            {
+              "itemId": "admit.primary_contact",
+              "importance": "normal",
+              "title": "主要联系人已确认"
+            },
+            {
+              "itemId": "admit.escort",
+              "importance": "normal",
+              "title": "陪护 / 交通安排已确认",
+              "condition": "需要时"
+            },
+            {
+              "itemId": "admit.home_arrangements",
+              "importance": "normal",
+              "title": "住院期间的重要家庭事项已安排",
+              "condition": "需要时"
+            }
+          ]
+        }
+      ],
+      "userTip": "自带药物是否可继续使用，以医院和医生当次要求为准。"
+    },
+    {
+      "templateId": "official.important_medical_visit",
+      "contentVersion": 1,
+      "title": "重要就医",
+      "applicability": "重要门诊、复诊、专家就诊或需要集中沟通病情的就医场景；不替代医生诊断。",
+      "targetDurationSec": [
+        60,
+        125
+      ],
+      "searchAliases": [
+        "复诊",
+        "专家门诊",
+        "看医生",
+        "医保卡",
+        "病历",
+        "影像",
+        "就医"
+      ],
+      "featuredOrder": 7,
+      "editorialIntent": "把身份、预约、关键资料和最重要问题放在前面，帮助用户把有限就诊沟通时间用在真正重要的事项上。",
+      "groups": [
+        {
+          "groupId": "appointment",
+          "title": "身份与预约",
+          "items": [
+            {
+              "itemId": "visit.id",
+              "importance": "key",
+              "title": "身份证件"
+            },
+            {
+              "itemId": "visit.insurance",
+              "importance": "key",
+              "title": "医保凭证 / 就诊卡"
+            },
+            {
+              "itemId": "visit.appointment",
+              "importance": "key",
+              "title": "预约时间、院区、科室、医生"
+            },
+            {
+              "itemId": "visit.route",
+              "importance": "normal",
+              "title": "路线 / 停车方案"
+            },
+            {
+              "itemId": "visit.buffer",
+              "importance": "normal",
+              "title": "提前到达时间已预留"
+            }
+          ]
+        },
+        {
+          "groupId": "records",
+          "title": "资料",
+          "items": [
+            {
+              "itemId": "visit.report",
+              "importance": "key",
+              "title": "本次最关键的检查报告"
+            },
+            {
+              "itemId": "visit.imaging",
+              "importance": "key",
+              "title": "本次最关键的影像资料",
+              "condition": "本次就诊需要时"
+            },
+            {
+              "itemId": "visit.history",
+              "importance": "normal",
+              "title": "既往重要病历 / 出院资料",
+              "condition": "本次就诊需要时"
+            },
+            {
+              "itemId": "visit.med_list",
+              "importance": "normal",
+              "title": "当前用药清单"
+            },
+            {
+              "itemId": "visit.allergies",
+              "importance": "normal",
+              "title": "过敏史"
+            },
+            {
+              "itemId": "visit.symptoms",
+              "importance": "normal",
+              "title": "近期关键症状和变化记录"
+            }
+          ]
+        },
+        {
+          "groupId": "questions",
+          "title": "要问医生的事",
+          "items": [
+            {
+              "itemId": "visit.top_questions",
+              "importance": "key",
+              "title": "本次最想解决的1—3个问题"
+            },
+            {
+              "itemId": "visit.next_step",
+              "importance": "normal",
+              "title": "需要确认的下一步检查 / 治疗"
+            },
+            {
+              "itemId": "visit.med_changes",
+              "importance": "normal",
+              "title": "药物如何继续、停或调整",
+              "condition": "本次涉及药物方案时"
+            },
+            {
+              "itemId": "visit.red_flags",
+              "importance": "normal",
+              "title": "什么情况需要提前复诊或急诊",
+              "condition": "本次需要明确风险边界时"
+            }
+          ]
+        },
+        {
+          "groupId": "carry",
+          "title": "随身",
+          "items": [
+            {
+              "itemId": "visit.phone",
+              "importance": "normal",
+              "title": "手机"
+            },
+            {
+              "itemId": "visit.charger",
+              "importance": "normal",
+              "title": "充电设备",
+              "condition": "就诊时间较长时"
+            },
+            {
+              "itemId": "visit.water",
+              "importance": "normal",
+              "title": "水",
+              "condition": "医院允许且需要时"
+            },
+            {
+              "itemId": "visit.notes",
+              "importance": "normal",
+              "title": "纸笔或手机记录工具"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
