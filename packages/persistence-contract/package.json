@@ -1,0 +1,12 @@
+{
+  "name": "@biewangle/persistence-contract",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@biewangle/domain": "workspace:*"
+  }
+}

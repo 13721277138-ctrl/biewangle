@@ -53,5 +53,13 @@ describe("V1.1 golden contract registry", () => {
     expect(TASK_TWO_CASE_IDS).toHaveLength(22);
   });
 
-  it.todo("executes DATA-001 through DATA-005 after the durable-store gate lands");
+  it("activates DATA-001 through DATA-005 in the durable-store gate", () => {
+    expect(TASK_THREE_CASE_IDS).toEqual([
+      "DATA-001",
+      "DATA-002",
+      "DATA-003",
+      "DATA-004",
+      "DATA-005",
+    ]);
+  });
 });

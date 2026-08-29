@@ -27,6 +27,12 @@ importers:
         specifier: 4.5.2
         version: 4.5.2
 
+  packages/persistence-contract:
+    dependencies:
+      '@biewangle/domain':
+        specifier: workspace:*
+        version: link:../domain
+
 packages:
 
   '@esbuild/aix-ppc64@0.28.2':

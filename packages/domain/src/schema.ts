@@ -192,6 +192,21 @@ export const AppSnapshotSchema = z
   })
   .strict();
 
+export const SourcePlatformSchema = z.enum(["pwa", "wechat"]);
+
+export const BackupEnvelopeSchema = z
+  .object({
+    productId: z.literal("biewangle"),
+    appVersion: z.string().min(1),
+    schemaVersion: z.literal(1),
+    backupFormatVersion: z.literal(1),
+    sourcePlatform: SourcePlatformSchema,
+    officialContentVersion: z.literal(1),
+    exportedAt: IsoDateTimeSchema,
+    data: AppSnapshotSchema,
+  })
+  .strict();
+
 export type Importance = z.infer<typeof ImportanceSchema>;
 export type OfficialTemplateItem = z.infer<
   typeof OfficialTemplateItemSchema
@@ -215,3 +230,5 @@ export type ClosedEvent = z.infer<typeof ClosedEventSchema>;
 export type CheckRun = z.infer<typeof CheckRunSchema>;
 export type AppSettings = z.infer<typeof AppSettingsSchema>;
 export type AppSnapshot = z.infer<typeof AppSnapshotSchema>;
+export type SourcePlatform = z.infer<typeof SourcePlatformSchema>;
+export type BackupEnvelope = z.infer<typeof BackupEnvelopeSchema>;
