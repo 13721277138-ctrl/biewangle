@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#247463" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <title>别忘了 G0 浏览器能力尖峰</title>
+  </head>
+  <body>
+    <h1>别忘了 G0 浏览器能力尖峰</h1>
+    <pre id="result">检测中…</pre>
+    <script type="module">
+      const result = document.querySelector("#result");
+      const capabilities = {
+        userAgent: navigator.userAgent,
+        secureContext: window.isSecureContext,
+        standaloneMedia: matchMedia("(display-mode: standalone)").matches,
+        serviceWorkerApi: "serviceWorker" in navigator,
+        indexedDbApi: "indexedDB" in window,
+        storageManagerApi: "storage" in navigator,
+        storagePersistedApi:
+          "storage" in navigator && "persisted" in navigator.storage,
+        storagePersistApi: "storage" in navigator && "persist" in navigator.storage,
+        webShareApi: "share" in navigator,
+        fileInputApi: "files" in document.createElement("input"),
+        showOpenFilePickerApi: "showOpenFilePicker" in window,
+        notificationApi: "Notification" in window,
+      };
+
+      try {
+        const request = indexedDB.open("biewangle-g0-probe", 1);
+        request.onupgradeneeded = () => {
+          request.result.createObjectStore("facts");
+        };
+        const database = await new Promise((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+        const transaction = database.transaction("facts", "readwrite");
+        transaction.objectStore("facts").put("durable", "probe");
+        await new Promise((resolve, reject) => {
+          transaction.oncomplete = resolve;
+          transaction.onerror = () => reject(transaction.error);
+        });
+        const readTransaction = database.transaction("facts", "readonly");
+        const readRequest = readTransaction.objectStore("facts").get("probe");
+        capabilities.indexedDbRoundTrip = await new Promise((resolve, reject) => {
+          readRequest.onsuccess = () => resolve(readRequest.result === "durable");
+          readRequest.onerror = () => reject(readRequest.error);
+        });
+        database.close();
+        indexedDB.deleteDatabase("biewangle-g0-probe");
+      } catch (error) {
+        capabilities.indexedDbRoundTrip = false;
+        capabilities.indexedDbError = String(error);
+      }
+
+      if (capabilities.storagePersistedApi) {
+        capabilities.storagePersisted = await navigator.storage.persisted();
+      }
+      if (capabilities.storagePersistApi) {
+        capabilities.storagePersistRequest = await navigator.storage.persist();
+      }
+
+      if (capabilities.serviceWorkerApi) {
+        try {
+          const registration = await navigator.serviceWorker.register("./sw.js");
+          await navigator.serviceWorker.ready;
+          capabilities.serviceWorkerRoundTrip = true;
+          capabilities.serviceWorkerScope = registration.scope;
+        } catch (error) {
+          capabilities.serviceWorkerRoundTrip = false;
+          capabilities.serviceWorkerError = String(error);
+        }
+      }
+
+      result.textContent = JSON.stringify(capabilities, null, 2);
+      document.documentElement.dataset.probe = "complete";
+    </script>
+  </body>
+</html>

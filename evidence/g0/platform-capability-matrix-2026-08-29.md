@@ -13,7 +13,7 @@
 | 微信开发者工具 | 未安装 | `requires-user-action`（下载后仍需扫码/AppID） |
 | Node | Codex bundled Node 可用；系统 PATH 未直接暴露 `node` | `supported` |
 | pnpm | Codex bundled pnpm 11.19.0 | `supported` |
-| Git | 2.39.2；当前目录已是空仓库，main 尚无提交 | `supported` |
+| Git | 2.39.2；仓库已初始化，基线提交与 `codex/v1.1-implementation` 开发分支已建立 | `supported` |
 | GitHub CLI | gh 2.97.0，尚未登录 | `requires-user-action`（到远端阶段登录） |
 | Codex desktop project | “忘了吗”已登记为本地 Git 项目 | `supported` |
 | Codex Cloud CLI | `codex cloud` 命令存在；云仓库仍需 GitHub/GitLab 远端 | `degraded` |
@@ -25,12 +25,12 @@
 | Web App Manifest | 现代浏览器与 iOS 主屏 Web App 支持 | `supported` | 提供 id、name、icons、standalone、theme/background color |
 | iPhone 添加到主屏 | Apple 当前用户指南支持 | `supported` | 真实 iPhone 操作仍需用户终端 |
 | Mac Safari Add to Dock | Apple 要求 macOS Sonoma 14+；当前是 13.3.1 | `blocked` | 完成 Safari 网页形态，本机升级/另一台 Sonoma+ 后补独立 Web App 实测 |
-| IndexedDB | 浏览器核心本地数据库能力 | `supported` | Dexie + 事务 + failure injection |
-| StorageManager persisted/persist | 浏览器差异存在 | `degraded` | 运行时 feature detect；拒绝/不支持不阻断使用，数据页诚实显示 |
-| Service Worker 离线冷启动 | PWA 核心可实现 | `supported` | Workbox precache + navigation fallback + 离线 E2E |
+| IndexedDB | 2026-08-30 在 Chromium 151 本地探针完成真实写入/读回 | `supported` | Dexie + 事务 + failure injection |
+| StorageManager persisted/persist | 同一探针确认 API 存在，但 `persist()` 返回 `false` | `degraded` | 运行时 feature detect；拒绝/不支持不阻断使用，数据页诚实显示 |
+| Service Worker 离线冷启动 | 同一探针完成真实注册与 ready round-trip；完整离线冷启动留到 G3 E2E | `supported` | Workbox precache + navigation fallback + 离线 E2E |
 | SW 更新与活跃 Run | 可由应用控制 | `supported` | 不在活跃 Run 中无条件 skipWaiting/reload |
 | 文件导入/导出 | file input、Blob download 可实现 | `supported` | JSON 备份恢复 + Markdown/TXT 下载 |
-| Web Share | 平台差异存在 | `degraded` | feature detect；失败回退到剪贴板/下载 |
+| Web Share | Chromium 151 本地探针确认 API 存在；实际系统分享仍依赖运行环境 | `degraded` | feature detect；失败回退到剪贴板/下载 |
 | 系统日历 | 浏览器无统一可靠直接写入 | `degraded` | 生成 `.ics` 作为 L1 导出 |
 | Web Push | iOS/iPadOS 16.4+ 主屏 Web App 支持，但发送需要服务端/推送订阅基础设施 | `requires-backend` | V1 保持 L0 应用内计划提示，不引入后端 |
 
@@ -49,6 +49,15 @@
 | 更新机制 | `wx.getUpdateManager` | `supported` | 提示更新；活跃 Run 先持久化，避免突然丢状态 |
 | 开发者工具/真机/体验版 | 需要官方工具、扫码、AppID 与账号权限 | `requires-user-action` | 代码与自动测试先做到头，阻塞点只请求最小授权 |
 
+## 本地浏览器探针留证
+
+- 探针页面：`evidence/g0/browser-probe/index.html`
+- 原始结果：`evidence/g0/browser-probe-result-2026-08-30.json`
+- 运行环境：Codex 内置 Chromium 151，`http://127.0.0.1:4170/`；loopback 被视为安全上下文。
+- 控制台告警/错误：0。
+- 已真实通过：Service Worker 注册、IndexedDB 写入/读回、文件输入 API、Web Share API、StorageManager API 检测。
+- 已真实观察的降级：持久存储请求被拒绝，普通标签页不是 standalone。
+
 ## 官方来源
 
 - OpenAI Codex Cloud 设置：[Codex cloud](https://learn.chatgpt.com/docs/cloud)
@@ -65,4 +74,3 @@
 - 微信系统日历：[wx.addPhoneCalendar](https://developers.weixin.qq.com/miniprogram/dev/api/device/calendar/wx.addPhoneCalendar.html)
 - 微信订阅授权：[wx.requestSubscribeMessage](https://developers.weixin.qq.com/miniprogram/dev/api/open-api/subscribe-message/wx.requestSubscribeMessage.html)
 - 微信更新管理：[wx.getUpdateManager](https://developers.weixin.qq.com/miniprogram/dev/api/base/update/wx.getUpdateManager.html)
-

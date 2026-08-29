@@ -1,0 +1,9 @@
+{
+  "id": "/g0-browser-probe/",
+  "name": "别忘了 G0 浏览器能力尖峰",
+  "short_name": "别忘了 G0",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f7f3",
+  "theme_color": "#247463"
+}

@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-08-30",
+  "target": "http://127.0.0.1:4170/",
+  "browser": "Codex in-app browser / Chromium 151",
+  "consoleWarningsOrErrors": [],
+  "capabilities": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "secureContext": true,
+    "standaloneMedia": false,
+    "serviceWorkerApi": true,
+    "indexedDbApi": true,
+    "storageManagerApi": true,
+    "storagePersistedApi": true,
+    "storagePersistApi": true,
+    "webShareApi": true,
+    "fileInputApi": true,
+    "showOpenFilePickerApi": true,
+    "notificationApi": true,
+    "indexedDbRoundTrip": true,
+    "storagePersisted": false,
+    "storagePersistRequest": false,
+    "serviceWorkerRoundTrip": true,
+    "serviceWorkerScope": "http://127.0.0.1:4170/"
+  },
+  "interpretation": {
+    "localSecureContext": "loopback is treated as a secure context",
+    "storagePersistence": "API exists but the browser declined persistence, so the product must expose the degraded state",
+    "offlinePrimitives": "service worker registration and IndexedDB read/write both completed successfully",
+    "standalone": "ordinary browser tab, not an installed PWA"
+  }
+}
