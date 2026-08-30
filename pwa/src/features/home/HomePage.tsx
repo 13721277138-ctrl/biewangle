@@ -4,18 +4,20 @@ import {
   startPlannedCheck,
   startRun,
   type AppSnapshot,
-  type OfficialTemplate,
+  type StartableTemplate,
 } from "@biewangle/domain";
 import {
   ArrowRight,
   CalendarClock,
   ChevronRight,
   Clock3,
+  Plus,
   Play,
+  Search,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { verticalSliceTemplates } from "../../content/official-content.js";
+import { officialTemplates } from "../../content/official-content.js";
 import { useAppStore } from "../../data/use-app-store.js";
 
 function replacePlanAndAppendRun(
@@ -48,8 +50,23 @@ export function HomePage() {
     runtime.localNow(),
   );
   const upcomingPlans = rankUpcomingPlans(snapshot.plannedChecks).slice(0, 3);
+  const featuredTemplates = officialTemplates
+    .filter(
+      (template) =>
+        template.featuredOrder !== null &&
+        !snapshot.settings.hiddenOfficialTemplateIds.includes(template.templateId),
+    )
+    .sort((left, right) => left.featuredOrder! - right.featuredOrder!);
+  const commonTemplates: StartableTemplate[] = [
+    ...officialTemplates.filter(
+      (template) =>
+        snapshot.settings.favoriteTemplateIds.includes(template.templateId) &&
+        !snapshot.settings.hiddenOfficialTemplateIds.includes(template.templateId),
+    ),
+    ...snapshot.personalTemplates.filter((template) => !template.deletedAt),
+  ];
 
-  const startTemplate = async (template: OfficialTemplate) => {
+  const startTemplate = async (template: StartableTemplate) => {
     const now = runtime.now();
     const checkRunId = runtime.newId("run");
     const run = startRun(template, now, { checkRunId });
@@ -84,6 +101,14 @@ export function HomePage() {
         <p className="eyebrow">今天的记忆入口</p>
         <h1>今天，有什么要确认的？</h1>
         <p className="lede">选择场景，直接开始。每一次检查都只记录在当前设备。</p>
+        <div className="hero-actions">
+          <Link className="primary-button link-button" to="/search">
+            <Search size={18} /> 搜索场景
+          </Link>
+          <Link className="secondary-button link-button" to="/templates/new">
+            <Plus size={18} /> 新建模板
+          </Link>
+        </div>
       </div>
 
       {continueRuns[0] ? (
@@ -109,7 +134,9 @@ export function HomePage() {
             <span className="round-icon"><Play size={19} fill="currentColor" /></span>
           </button>
           {continueRuns.length > 1 ? (
-            <p className="quiet-note">另有 {continueRuns.length - 1} 次进行中的检查</p>
+            <Link className="quiet-link" to="/runs">
+              另有 {continueRuns.length - 1} 次进行中的检查 · 查看全部
+            </Link>
           ) : null}
         </section>
       ) : null}
@@ -121,6 +148,7 @@ export function HomePage() {
               <p className="section-kicker">最多显示三项</p>
               <h2 id="upcoming-heading">接下来</h2>
             </div>
+            <Link to="/plans">查看全部计划</Link>
           </div>
           <div className="plan-list">
             {upcomingPlans.map((plan) => (
@@ -147,16 +175,47 @@ export function HomePage() {
         </section>
       ) : null}
 
+      {commonTemplates.length > 0 ? (
+        <section className="home-section" aria-labelledby="common-heading">
+          <div className="section-heading-row">
+            <div>
+              <p className="section-kicker">当前设备</p>
+              <h2 id="common-heading">我的常用</h2>
+            </div>
+            <Link to="/templates">管理模板</Link>
+          </div>
+          <div className="quick-template-row">
+            {commonTemplates.slice(0, 6).map((template) => {
+              const identity = "templateId" in template
+                ? template.templateId
+                : template.personalTemplateId;
+              return (
+                <button
+                  type="button"
+                  key={identity}
+                  aria-label={`开始 ${template.title}`}
+                  disabled={pending}
+                  onClick={() => void startTemplate(template)}
+                >
+                  <span>{template.title}</span>
+                  <ArrowRight size={17} />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
       <section className="home-section" aria-labelledby="featured-heading">
         <div className="section-heading-row">
           <div>
-            <p className="section-kicker">代表性纵切</p>
-            <h2 id="featured-heading">马上开始</h2>
+            <p className="section-kicker">7 个精选场景</p>
+            <h2 id="featured-heading">官方精选</h2>
           </div>
-          <span className="section-meta"><Clock3 size={16} /> 约 1 分钟</span>
+          <Link to="/templates" className="section-meta"><Clock3 size={16} /> 浏览全部 13 个</Link>
         </div>
         <div className="template-grid">
-          {verticalSliceTemplates.map((template, index) => (
+          {featuredTemplates.map((template, index) => (
             <article className="template-card" key={template.templateId}>
               <div className="template-card-top">
                 <span className="template-index">

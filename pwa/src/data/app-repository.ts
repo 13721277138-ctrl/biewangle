@@ -6,5 +6,6 @@ export interface AppRepository {
   initialize(initial: AppSnapshot): Promise<AppSnapshot>;
   load(): Promise<AppSnapshot>;
   commitCommand(command: AppCommand): Promise<AppSnapshot>;
+  replaceSnapshot(next: AppSnapshot): Promise<AppSnapshot>;
   protectiveCopy(label: string): Promise<void>;
 }

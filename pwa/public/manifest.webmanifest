@@ -9,12 +9,45 @@
   "display": "standalone",
   "background_color": "#f7f7f3",
   "theme_color": "#247463",
+  "categories": ["utilities", "productivity"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "选择模板",
+      "short_name": "模板",
+      "url": "/templates",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "查看计划",
+      "short_name": "计划",
+      "url": "/plans",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

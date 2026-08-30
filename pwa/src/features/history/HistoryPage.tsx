@@ -32,7 +32,11 @@ export function HistoryPage() {
             const event = run.closedEvents.at(-1);
             const completed = run.status === "completed";
             return (
-              <article className="history-card" key={run.checkRunId}>
+              <Link
+                className="history-card"
+                key={run.checkRunId}
+                to={`/history/${run.checkRunId}`}
+              >
                 <span className={completed ? "history-status success" : "history-status warning"}>
                   {completed ? <CheckCircle2 /> : <CircleAlert />}
                 </span>
@@ -45,7 +49,7 @@ export function HistoryPage() {
                       : `${event?.unresolvedCount ?? 0} 项未确认 · ${event?.unresolvedKeyCount ?? 0} 项关键`}
                   </small>
                 </div>
-              </article>
+              </Link>
             );
           })}
         </div>

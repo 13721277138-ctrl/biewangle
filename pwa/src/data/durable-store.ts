@@ -122,6 +122,36 @@ export class DexieAppRepository implements AppRepository {
     }
   }
 
+  async replaceSnapshot(candidate: AppSnapshot): Promise<AppSnapshot> {
+    try {
+      return await this.database.transaction(
+        "rw",
+        this.database.snapshots,
+        async () => {
+          const current = await this.database.snapshots.get("primary");
+          if (!current) throw new Error("primary snapshot is missing");
+          assertWriterCompatible(current.value, 1);
+          const next = validateBusinessInvariants(structuredClone(candidate));
+          await this.hooks.beforeCommit?.(structuredClone(next));
+          await this.database.snapshots.put({ id: "primary", value: next });
+          return structuredClone(next);
+        },
+      );
+    } catch (error) {
+      if (
+        error instanceof DurableOperationError &&
+        error.operation === "writerCompatibility"
+      ) {
+        throw error;
+      }
+      throw new DurableOperationError(
+        "commit",
+        "未保存，请重试。",
+        { cause: error },
+      );
+    }
+  }
+
   async protectiveCopy(label: string): Promise<void> {
     try {
       await this.database.transaction(

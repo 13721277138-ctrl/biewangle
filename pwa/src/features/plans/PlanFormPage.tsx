@@ -1,25 +1,37 @@
 import { createPlannedCheck } from "@biewangle/domain";
 import { ArrowLeft, CalendarPlus } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import {
-  findOfficialTemplate,
-  verticalSliceTemplates,
-} from "../../content/official-content.js";
+import { findOfficialTemplate, officialTemplates } from "../../content/official-content.js";
 import { useAppStore } from "../../data/use-app-store.js";
 
 export function PlanFormPage() {
-  const { runtime, commitCommand, pending } = useAppStore();
+  const { snapshot, runtime, commitCommand, pending } = useAppStore();
   const navigate = useNavigate();
-  const [templateId, setTemplateId] = useState("official.daily_out");
+  const [searchParams] = useSearchParams();
+  const requested = searchParams.get("template");
+  const initialTemplateId = requested?.startsWith("official:")
+    ? requested.slice("official:".length)
+    : requested?.startsWith("personal:")
+      ? requested
+      : "official.daily_out";
+  const [templateId, setTemplateId] = useState(initialTemplateId);
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const now = runtime.now();
-    const plannedCheck = createPlannedCheck(findOfficialTemplate(templateId), {
+    const source = templateId.startsWith("personal:")
+      ? snapshot.personalTemplates.find(
+          (template) =>
+            template.personalTemplateId === templateId.slice("personal:".length) &&
+            !template.deletedAt,
+        )
+      : findOfficialTemplate(templateId);
+    if (!source) return;
+    const plannedCheck = createPlannedCheck(source, {
       plannedCheckId: runtime.newId("plan"),
       scheduledDate,
       ...(scheduledTime ? { scheduledTime } : {}),
@@ -56,11 +68,21 @@ export function PlanFormPage() {
             value={templateId}
             onChange={(event) => setTemplateId(event.target.value)}
           >
-            {verticalSliceTemplates.map((template) => (
+            {officialTemplates.map((template) => (
               <option key={template.templateId} value={template.templateId}>
                 {template.title}
               </option>
             ))}
+            {snapshot.personalTemplates
+              .filter((template) => !template.deletedAt)
+              .map((template) => (
+                <option
+                  key={template.personalTemplateId}
+                  value={`personal:${template.personalTemplateId}`}
+                >
+                  我的 · {template.title}
+                </option>
+              ))}
           </select>
         </label>
         <div className="form-grid">

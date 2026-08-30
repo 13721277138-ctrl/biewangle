@@ -3,9 +3,12 @@ import {
   closeRun,
   filterRunItems,
   markNotNeeded,
+  reorderRunItems,
+  setOneTimeNote,
   toggleConfirmed,
   type AppSnapshot,
   type CheckRun,
+  type CheckRunItem,
   type CloseRunOptions,
   type CloseRunResult,
   type RunItemView,
@@ -14,11 +17,15 @@ import {
   AlertTriangle,
   ArrowLeft,
   Check,
+  ChevronDown,
+  ChevronUp,
   Circle,
   KeyRound,
   ListFilter,
   Minus,
+  NotebookPen,
   Plus,
+  Trash2,
 } from "lucide-react";
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -59,10 +66,52 @@ function ClosedRun({ run }: { run: CheckRun }) {
           : `仍有 ${lastEvent?.unresolvedCount ?? 0} 项未确认，其中 ${lastEvent?.unresolvedKeyCount ?? 0} 项为关键项。`}
       </p>
       <div className="completion-actions">
-        <Link className="primary-button link-button" to="/history">查看历史</Link>
+        <Link className="primary-button link-button" to={`/history/${run.checkRunId}`}>查看本次事实</Link>
+        <Link className="secondary-button link-button" to="/history">查看历史</Link>
         <Link className="secondary-button link-button" to="/">回到首页</Link>
       </div>
     </section>
+  );
+}
+
+function RunItemTools({
+  item,
+  pending,
+  onSaveNote,
+  onMove,
+}: {
+  item: CheckRunItem;
+  pending: boolean;
+  onSaveNote(note: string): Promise<void>;
+  onMove(delta: -1 | 1): Promise<void>;
+}) {
+  const [note, setNote] = useState(item.oneTimeNote ?? "");
+  return (
+    <details className="run-item-tools">
+      <summary><NotebookPen size={15} /> 备注与本次排序</summary>
+      <label>
+        <span>本次备注（默认不会分享）</span>
+        <textarea
+          rows={2}
+          maxLength={500}
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+        />
+      </label>
+      <div className="item-tool-actions">
+        <button
+          type="button"
+          disabled={pending || note === (item.oneTimeNote ?? "")}
+          onClick={() => void onSaveNote(note.trim())}
+        >保存备注</button>
+        <button type="button" aria-label={`上移 ${item.title}`} disabled={pending} onClick={() => void onMove(-1)}>
+          <ChevronUp size={16} /> 上移
+        </button>
+        <button type="button" aria-label={`下移 ${item.title}`} disabled={pending} onClick={() => void onMove(1)}>
+          <ChevronDown size={16} /> 下移
+        </button>
+      </div>
+    </details>
   );
 }
 
@@ -74,6 +123,7 @@ export function RunPage() {
   const [closeState, setCloseState] = useState<
     | { kind: "unresolved"; unresolvedCount: number; unresolvedKeyCount: number }
     | { kind: "keyConfirmation"; unresolvedCount: number; unresolvedKeyCount: number }
+    | { kind: "discardConfirmation"; unresolvedCount: number; unresolvedKeyCount: number }
     | null
   >(null);
   const run = snapshot.checkRuns.find((candidate) => candidate.checkRunId === runId);
@@ -109,6 +159,18 @@ export function RunPage() {
     } catch {
       // UI stays on the last durable snapshot and the provider shows an alert.
     }
+  };
+
+  const moveItem = async (runItemId: string, delta: -1 | 1) => {
+    await update((current, now) => {
+      const ordered = filterRunItems(current, "all");
+      const index = ordered.findIndex((item) => item.runItemId === runItemId);
+      const nextIndex = index + delta;
+      if (index < 0 || nextIndex < 0 || nextIndex >= ordered.length) return current;
+      const ids = ordered.map((item) => item.runItemId);
+      [ids[index], ids[nextIndex]] = [ids[nextIndex]!, ids[index]!];
+      return reorderRunItems(current, ids, now);
+    });
   };
 
   const commitClose = async (
@@ -260,6 +322,21 @@ export function RunPage() {
               <Minus size={15} aria-hidden="true" />
               {item.state === "notNeeded" ? "本次不需要" : "不需要"}
             </button>
+            <RunItemTools
+              item={item}
+              pending={pending}
+              onSaveNote={(note) =>
+                update((current, now) =>
+                  setOneTimeNote(
+                    current,
+                    item.runItemId,
+                    note || undefined,
+                    now,
+                  ),
+                )
+              }
+              onMove={(delta) => moveItem(item.runItemId, delta)}
+            />
           </article>
         ))}
       </div>
@@ -285,18 +362,28 @@ export function RunPage() {
           <AlertTriangle aria-hidden="true" />
           <div>
             <strong>
-              {closeState.kind === "keyConfirmation"
+              {closeState.kind === "discardConfirmation"
+                ? "丢弃这次检查？"
+                : closeState.kind === "keyConfirmation"
                 ? "关键项仍未确认"
                 : `仍有${closeState.unresolvedCount}项未确认`}
             </strong>
             <p>
-              其中 {closeState.unresolvedKeyCount} 项为关键项。你可以继续检查，也可以诚实结束并保留这个事实。
+              {closeState.kind === "discardConfirmation"
+                ? "丢弃不会删除历史；本次将以 discarded 状态保留。"
+                : `其中 ${closeState.unresolvedKeyCount} 项为关键项。你可以继续检查，也可以诚实结束并保留这个事实。`}
             </p>
             <div className="inline-actions">
               <button type="button" className="secondary-button" onClick={() => setCloseState(null)}>
                 继续检查
               </button>
-              {closeState.kind === "keyConfirmation" ? (
+              {closeState.kind === "discardConfirmation" ? (
+                <button
+                  type="button"
+                  className="warning-button"
+                  onClick={() => void commitClose("discard")}
+                >确认丢弃并保留事实</button>
+              ) : closeState.kind === "keyConfirmation" ? (
                 <button
                   type="button"
                   className="warning-button"
@@ -316,12 +403,28 @@ export function RunPage() {
 
       <div className="run-footer">
         <p>只有全部项目都“已确认”或“本次不需要”，才会记为完成。</p>
-        <button
-          type="button"
-          className="primary-button"
-          disabled={pending}
-          onClick={attemptComplete}
-        >完成检查</button>
+        <div className="inline-actions">
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={pending}
+            onClick={() =>
+              setCloseState({
+                kind: "discardConfirmation",
+                unresolvedCount: run.items.filter((item) => item.state === "unchecked").length,
+                unresolvedKeyCount: run.items.filter(
+                  (item) => item.state === "unchecked" && item.importance === "key",
+                ).length,
+              })
+            }
+          ><Trash2 size={17} /> 丢弃本次</button>
+          <button
+            type="button"
+            className="primary-button"
+            disabled={pending}
+            onClick={attemptComplete}
+          >完成检查</button>
+        </div>
       </div>
     </section>
   );

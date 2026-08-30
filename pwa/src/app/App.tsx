@@ -3,9 +3,12 @@ import {
   CalendarDays,
   Database,
   Home,
+  LibraryBig,
   Layers3,
+  Search,
+  Settings as SettingsIcon,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import {
   BrowserRouter,
   NavLink,
@@ -13,25 +16,74 @@ import {
   Routes,
 } from "react-router-dom";
 
-import { DataPage } from "../features/data/DataPage.js";
-import { HistoryPage } from "../features/history/HistoryPage.js";
-import { HomePage } from "../features/home/HomePage.js";
-import { PlanFormPage } from "../features/plans/PlanFormPage.js";
-import { RunPage } from "../features/run/RunPage.js";
 import { DexieAppRepository } from "../data/durable-store.js";
+import type { AppRepository } from "../data/app-repository.js";
 import { AppStoreProvider, useAppStore } from "../data/use-app-store.js";
 import { browserRuntime, type AppRuntime } from "./runtime.js";
 import { UpdatePrompt } from "./UpdatePrompt.js";
 
 const defaultRepository = new DexieAppRepository();
 
+const HomePage = lazy(() =>
+  import("../features/home/HomePage.js").then((module) => ({ default: module.HomePage })),
+);
+const RunPage = lazy(() =>
+  import("../features/run/RunPage.js").then((module) => ({ default: module.RunPage })),
+);
+const RunsPage = lazy(() =>
+  import("../features/run/RunsPage.js").then((module) => ({ default: module.RunsPage })),
+);
+const TemplatesPage = lazy(() =>
+  import("../features/templates/TemplatesPage.js").then((module) => ({ default: module.TemplatesPage })),
+);
+const TemplateDetailPage = lazy(() =>
+  import("../features/templates/TemplateDetailPage.js").then((module) => ({ default: module.TemplateDetailPage })),
+);
+const TemplateEditorPage = lazy(() =>
+  import("../features/templates/TemplateEditorPage.js").then((module) => ({ default: module.TemplateEditorPage })),
+);
+const SearchPage = lazy(() =>
+  import("../features/search/SearchPage.js").then((module) => ({ default: module.SearchPage })),
+);
+const PlansPage = lazy(() =>
+  import("../features/plans/PlansPage.js").then((module) => ({ default: module.PlansPage })),
+);
+const PlanFormPage = lazy(() =>
+  import("../features/plans/PlanFormPage.js").then((module) => ({ default: module.PlanFormPage })),
+);
+const HistoryPage = lazy(() =>
+  import("../features/history/HistoryPage.js").then((module) => ({ default: module.HistoryPage })),
+);
+const HistoryDetailPage = lazy(() =>
+  import("../features/history/HistoryDetailPage.js").then((module) => ({ default: module.HistoryDetailPage })),
+);
+const SharePage = lazy(() =>
+  import("../features/share/SharePage.js").then((module) => ({ default: module.SharePage })),
+);
+const DataPage = lazy(() =>
+  import("../features/data/DataPage.js").then((module) => ({ default: module.DataPage })),
+);
+const SettingsPage = lazy(() =>
+  import("../features/settings/SettingsPage.js").then((module) => ({ default: module.SettingsPage })),
+);
+
 function Shell({ children }: { children: ReactNode }) {
   const { error, clearError } = useAppStore();
-  const navItems = [
+  const desktopNavItems = [
     { to: "/", label: "首页", icon: Home, end: true },
-    { to: "/plans/new", label: "计划", icon: CalendarDays, end: false },
+    { to: "/templates", label: "模板", icon: LibraryBig, end: false },
+    { to: "/runs", label: "进行中", icon: Layers3, end: true },
+    { to: "/plans", label: "计划", icon: CalendarDays, end: false },
     { to: "/history", label: "历史", icon: Archive, end: false },
     { to: "/data", label: "数据", icon: Database, end: false },
+    { to: "/settings", label: "设置", icon: SettingsIcon, end: false },
+  ];
+  const bottomNavItems = [
+    { to: "/", label: "首页", icon: Home, end: true },
+    { to: "/templates", label: "模板", icon: LibraryBig, end: false },
+    { to: "/runs", label: "进行中", icon: Layers3, end: true },
+    { to: "/plans", label: "计划", icon: CalendarDays, end: false },
+    { to: "/history", label: "历史", icon: Archive, end: false },
   ];
   return (
     <div className="app-shell">
@@ -40,7 +92,15 @@ function Shell({ children }: { children: ReactNode }) {
           <span className="brand-mark" aria-hidden="true">✓</span>
           <span>别忘了</span>
         </NavLink>
-        <span className="local-only-pill">仅存本机</span>
+        <div className="topbar-actions">
+          <NavLink className="topbar-icon-link" to="/search" aria-label="搜索">
+            <Search size={19} />
+          </NavLink>
+          <NavLink className="topbar-icon-link" to="/settings" aria-label="设置">
+            <SettingsIcon size={19} />
+          </NavLink>
+          <span className="local-only-pill">仅存本机</span>
+        </div>
       </header>
       {error ? (
         <div className="save-error" role="alert">
@@ -52,7 +112,7 @@ function Shell({ children }: { children: ReactNode }) {
       <div className="shell-body">
         <aside className="desktop-sidebar" aria-label="主导航">
           <p className="sidebar-kicker">安心检查</p>
-          {navItems.map(({ to, label, icon: Icon, end }) => (
+          {desktopNavItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -69,7 +129,7 @@ function Shell({ children }: { children: ReactNode }) {
         <main className="main-content">{children}</main>
       </div>
       <nav className="bottom-nav" aria-label="主导航">
-        {navItems.map(({ to, label, icon: Icon, end }) => (
+        {bottomNavItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
@@ -87,14 +147,15 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-function ComingSoon({ title }: { title: string }) {
+function NotFound() {
   return (
     <section className="page narrow-page">
       <p className="eyebrow">本地清单</p>
-      <h1>{title}</h1>
+      <h1>这里没有内容</h1>
       <div className="empty-card">
         <Layers3 aria-hidden="true" />
-        <p>这部分会在完整 V1 页面阶段接入同一套领域合同。</p>
+        <p>这个地址不存在，当前本地数据没有受到影响。</p>
+        <NavLink className="primary-button link-button" to="/">返回首页</NavLink>
       </div>
     </section>
   );
@@ -103,14 +164,27 @@ function ComingSoon({ title }: { title: string }) {
 export function AppRoutes() {
   return (
     <Shell>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/runs/:runId" element={<RunPage />} />
-        <Route path="/plans/new" element={<PlanFormPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="/data" element={<DataPage />} />
-        <Route path="*" element={<ComingSoon title="这里还没有内容" />} />
-      </Routes>
+      <Suspense fallback={<div className="route-loading" role="status">正在打开本地页面…</div>}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/runs" element={<RunsPage />} />
+          <Route path="/runs/:runId" element={<RunPage />} />
+          <Route path="/templates" element={<TemplatesPage />} />
+          <Route path="/templates/new" element={<TemplateEditorPage />} />
+          <Route path="/templates/personal/:templateId/edit" element={<TemplateEditorPage />} />
+          <Route path="/templates/:kind/:templateId" element={<TemplateDetailPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/plans" element={<PlansPage />} />
+          <Route path="/plans/new" element={<PlanFormPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/history/:runId" element={<HistoryDetailPage />} />
+          <Route path="/share/run/:runId" element={<SharePage />} />
+          <Route path="/share/template/:kind/:templateId" element={<SharePage />} />
+          <Route path="/data" element={<DataPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </Shell>
   );
 }
@@ -119,7 +193,7 @@ export function App({
   repository = defaultRepository,
   runtime = browserRuntime,
 }: {
-  repository?: DexieAppRepository;
+  repository?: AppRepository;
   runtime?: AppRuntime;
 }) {
   return (

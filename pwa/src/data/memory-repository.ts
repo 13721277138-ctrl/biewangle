@@ -54,6 +54,20 @@ export class MemoryAppRepository implements AppRepository {
     return structuredClone(next);
   }
 
+  async replaceSnapshot(candidate: AppSnapshot): Promise<AppSnapshot> {
+    assertWriterCompatible(this.snapshot, 1);
+    const next = validateBusinessInvariants(structuredClone(candidate));
+    if (this.nextFailure !== undefined) {
+      const cause = this.nextFailure;
+      this.nextFailure = undefined;
+      throw new DurableOperationError("commit", "未保存，请重试。", {
+        cause,
+      });
+    }
+    this.snapshot = structuredClone(next);
+    return structuredClone(next);
+  }
+
   async protectiveCopy(label: string): Promise<void> {
     this.protectiveCopies.push({
       label,
