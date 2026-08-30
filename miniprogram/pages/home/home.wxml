@@ -1,0 +1,58 @@
+<view class="page">
+  <view class="hero">
+    <text class="eyebrow">安心检查</text>
+    <view class="title">今天，有什么要确认的？</view>
+    <view class="subtitle">把容易反复回想的事，变成一次有事实记录的检查。</view>
+    <view class="trust-pill">仅存本机 · 无账号 · 核心离线可用</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在读取本地清单…</view>
+
+  <block wx:else>
+    <view class="quick-nav">
+      <button class="secondary-button small-button" bindtap="openPlans">计划</button>
+      <button class="secondary-button small-button" bindtap="openHistory">历史</button>
+      <button class="secondary-button small-button" bindtap="openData">数据</button>
+    </view>
+
+    <view wx:if="{{activeRuns.length}}" class="section">
+      <view class="section-heading">
+        <text class="section-title">继续检查</text>
+        <text class="muted">{{activeRuns.length}} 个现实 Run</text>
+      </view>
+      <view wx:for="{{activeRuns}}" wx:key="checkRunId" class="card continue-card">
+        <view class="row-between">
+          <view>
+            <view class="card-title">{{item.title}}</view>
+            <view class="card-copy">{{item.uncheckedCount}} 项尚未确认 · {{item.statusLabel}}</view>
+          </view>
+          <button class="primary-button small-button" data-run-id="{{item.checkRunId}}" bindtap="openRun">继续</button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{pendingPlans.length}}" class="section">
+      <view class="section-heading">
+        <text class="section-title">接下来的计划</text>
+      </view>
+      <view wx:for="{{pendingPlans}}" wx:key="plannedCheckId" class="card compact-card">
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-copy">{{item.when}}</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-heading">
+        <text class="section-title">四个代表场景</text>
+        <text class="muted">G4 原生纵切</text>
+      </view>
+      <view wx:for="{{templates}}" wx:key="templateId" class="card template-card">
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-copy">{{item.applicability}}</view>
+        <view class="template-meta">{{item.itemCount}} 个检查项 · 开始后冻结本次快照</view>
+        <button class="primary-button" data-template-id="{{item.templateId}}" bindtap="startTemplate">开始检查</button>
+      </view>
+    </view>
+  </block>
+</view>

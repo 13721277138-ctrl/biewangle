@@ -1,0 +1,29 @@
+.plan-form {
+  border-color: #b9d2ca;
+}
+
+.calendar-row {
+  margin: 22rpx 0;
+  gap: 20rpx;
+}
+
+.calendar-row > view {
+  flex: 1;
+}
+
+.plan-when {
+  margin-top: 12rpx;
+  color: #247463;
+  font-size: 28rpx;
+  font-weight: 680;
+}
+
+.note-link {
+  min-height: 58rpx;
+  margin: 8rpx 0 0;
+  padding: 0;
+  background: transparent;
+  color: #496d64;
+  font-size: 23rpx;
+  text-align: left;
+}

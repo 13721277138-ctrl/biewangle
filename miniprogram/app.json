@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/run/run",
+    "pages/plans/plans",
+    "pages/history/history",
+    "pages/data/data"
+  ],
+  "window": {
+    "backgroundColor": "#f5f3ec",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#f5f3ec",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "别忘了"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

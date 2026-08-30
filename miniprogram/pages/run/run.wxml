@@ -1,0 +1,65 @@
+<view class="page">
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在恢复本次检查…</view>
+
+  <block wx:elif="{{run}}">
+    <view class="hero run-hero">
+      <text class="eyebrow">现实 Run · {{run.statusLabel}}</text>
+      <view class="title">{{run.runTemplateSnapshot.title}}</view>
+      <view class="subtitle">{{run.unresolvedCount}} 项未确认，其中 {{run.unresolvedKeyCount}} 个关键项</view>
+      <view class="trust-pill">每次操作先持久化成功，再更新页面事实</view>
+    </view>
+
+    <view class="section">
+      <view wx:for="{{run.items}}" wx:key="runItemId" class="card item-card {{item.state}}">
+        <view class="row-between item-heading">
+          <view class="item-title-wrap">
+            <text wx:if="{{item.isKey}}" class="key-badge">关键</text>
+            <text class="card-title">{{item.title}}</text>
+          </view>
+          <text class="state-label">{{item.stateLabel}}</text>
+        </view>
+        <view wx:if="{{item.condition}}" class="card-copy">条件：{{item.condition}}</view>
+        <view wx:if="{{item.hint}}" class="card-copy">提示：{{item.hint}}</view>
+        <view wx:if="{{item.isTemporary}}" class="temporary-label">本次临时项</view>
+        <view wx:if="{{item.oneTimeNote}}" class="private-note">私密本次备注：{{item.oneTimeNote}}</view>
+
+        <view wx:if="{{run.isInProgress}}" class="button-row item-actions">
+          <button class="{{item.isConfirmed ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{item.runItemId}}" bindtap="toggleConfirmed" loading="{{busy}}">{{item.isConfirmed ? '撤销确认' : '确认'}}</button>
+          <button class="{{item.isNotNeeded ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{item.runItemId}}" bindtap="markNotNeeded" loading="{{busy}}">{{item.isNotNeeded ? '恢复待查' : '本次不需要'}}</button>
+        </view>
+        <button wx:if="{{run.isInProgress && editingItemId != item.runItemId}}" class="note-link" data-item-id="{{item.runItemId}}" bindtap="beginNote">{{item.oneTimeNote ? '编辑私密备注' : '添加本次私密备注'}}</button>
+        <view wx:if="{{run.isInProgress && editingItemId == item.runItemId}}" class="note-editor">
+          <textarea class="textarea" maxlength="500" value="{{editingNote}}" placeholder="仅留在本机；分享摘要默认不包含" bindinput="updateNote"></textarea>
+          <view class="button-row">
+            <button class="secondary-button small-button" bindtap="cancelNote">取消</button>
+            <button class="primary-button small-button" bindtap="saveNote" loading="{{busy}}">保存备注</button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{run.isInProgress}}" class="card add-card">
+      <view class="card-title">添加本次临时项</view>
+      <input class="input" maxlength="80" value="{{tempTitle}}" placeholder="例如：再看一眼门窗" bindinput="updateTempTitle" />
+      <view class="row-between switch-row">
+        <text>标记为关键项</text>
+        <switch checked="{{tempIsKey}}" color="#247463" bindchange="updateTempImportance" />
+      </view>
+      <button class="secondary-button" bindtap="addTemporaryItem" loading="{{busy}}">加入本次检查</button>
+    </view>
+
+    <view class="card truth-card">
+      <view class="card-title">结束语义</view>
+      <view class="card-copy">只有全部处理后才会记为“已完成”；否则会明确记录未确认数量，关键项还需二次确认。</view>
+      <view wx:if="{{run.isInProgress}}" class="button-stack">
+        <button class="primary-button" bindtap="finishRun" loading="{{busy}}">结束本次检查</button>
+        <button class="danger-button" bindtap="discardRun" loading="{{busy}}">放弃本次检查</button>
+      </view>
+      <view class="button-row">
+        <button class="secondary-button small-button" bindtap="copySummary">复制无备注摘要</button>
+        <button class="secondary-button small-button" open-type="share">微信分享入口</button>
+      </view>
+    </view>
+  </block>
+</view>

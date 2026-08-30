@@ -8,8 +8,8 @@
     "node": ">=24 <25"
   },
   "scripts": {
-    "content:generate": "tsx scripts/generate-official-templates.ts",
-    "content:check": "tsx scripts/check-official-templates.ts",
+    "content:generate": "tsx scripts/generate-official-templates.ts && tsx scripts/generate-miniprogram-content.ts",
+    "content:check": "tsx scripts/check-official-templates.ts && tsx scripts/check-miniprogram-content.ts",
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",

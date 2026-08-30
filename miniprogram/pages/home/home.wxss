@@ -1,0 +1,25 @@
+.quick-nav {
+  display: flex;
+  margin: 0 -8rpx 16rpx;
+}
+
+.quick-nav button {
+  flex: 1;
+  margin: 0 8rpx;
+}
+
+.continue-card {
+  border-color: #abd0c5;
+  background: #f0f8f4;
+}
+
+.compact-card {
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+}
+
+.template-meta {
+  margin: 18rpx 0 20rpx;
+  color: #357262;
+  font-size: 24rpx;
+}

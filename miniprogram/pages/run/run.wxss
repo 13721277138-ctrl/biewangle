@@ -1,0 +1,94 @@
+.run-hero {
+  margin-bottom: 14rpx;
+}
+
+.item-card {
+  padding: 24rpx;
+  border-left: 8rpx solid #c4cbc7;
+}
+
+.item-card.confirmed {
+  border-left-color: #247463;
+  background: #f3faf6;
+}
+
+.item-card.notNeeded {
+  border-left-color: #9a9589;
+  background: #f8f7f2;
+}
+
+.item-heading {
+  align-items: flex-start;
+}
+
+.item-title-wrap {
+  flex: 1;
+  padding-right: 18rpx;
+}
+
+.key-badge {
+  display: inline-block;
+  margin-right: 12rpx;
+  padding: 5rpx 10rpx;
+  border-radius: 10rpx;
+  background: #fff0d5;
+  color: #8a5b0b;
+  font-size: 20rpx;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.state-label {
+  color: #357262;
+  font-size: 23rpx;
+  white-space: nowrap;
+}
+
+.temporary-label {
+  display: inline-block;
+  margin-top: 12rpx;
+  color: #7a5d2b;
+  font-size: 22rpx;
+}
+
+.private-note {
+  margin-top: 14rpx;
+  padding: 16rpx;
+  border-radius: 16rpx;
+  background: #f0eef7;
+  color: #554c6a;
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+
+.item-actions button {
+  min-height: 74rpx;
+}
+
+.note-link {
+  min-height: 58rpx;
+  margin-top: 12rpx;
+  padding: 0;
+  background: transparent;
+  color: #496d64;
+  font-size: 23rpx;
+  text-align: left;
+}
+
+.note-editor {
+  margin-top: 14rpx;
+}
+
+.add-card .input {
+  margin-top: 18rpx;
+}
+
+.switch-row {
+  min-height: 84rpx;
+  color: #334b45;
+  font-size: 26rpx;
+}
+
+.truth-card {
+  border-color: #b9d2ca;
+}

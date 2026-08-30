@@ -1,0 +1,33 @@
+.history-card {
+  border-left: 8rpx solid #9abeb4;
+}
+
+.history-heading {
+  flex: 1;
+}
+
+.history-status {
+  margin-top: 8rpx;
+  color: #247463;
+  font-size: 24rpx;
+  font-weight: 680;
+}
+
+.fact-count {
+  color: #244d43;
+  font-size: 36rpx;
+  font-weight: 760;
+}
+
+.fact-line {
+  margin-top: 14rpx;
+  padding: 14rpx 16rpx;
+  border-radius: 14rpx;
+  background: #f2f4f1;
+  color: #4d5e59;
+  font-size: 24rpx;
+}
+
+.reopen-button {
+  margin-top: 16rpx;
+}

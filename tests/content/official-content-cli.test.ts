@@ -7,6 +7,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { afterEach, describe, expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 
@@ -20,6 +21,7 @@ const contractPath = join(
   "contracts/official-templates.v1.1.json",
 );
 const tempDirectories: string[] = [];
+const require = createRequire(import.meta.url);
 
 afterEach(() => {
   for (const directory of tempDirectories.splice(0)) {
@@ -69,5 +71,29 @@ describe("official content command-line workflow", () => {
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("官方模板派生资产发生漂移");
     expect(readFileSync(outputPath, "utf8")).toBe("{}\n");
+  });
+
+  it("generates a CommonJS content module for the native mini program", () => {
+    const directory = mkdtempSync(join(tmpdir(), "biewangle-content-"));
+    tempDirectories.push(directory);
+    const outputPath = join(directory, "official.cjs");
+
+    const result = runScript("generate-miniprogram-content.ts", outputPath);
+
+    expect(result.status).toBe(0);
+    expect(result.stderr).toBe("");
+    expect(require(outputPath)).toEqual(JSON.parse(readFileSync(contractPath, "utf8")));
+  });
+
+  it("fails the native content check when its committed module drifts", () => {
+    const directory = mkdtempSync(join(tmpdir(), "biewangle-content-"));
+    tempDirectories.push(directory);
+    const outputPath = join(directory, "official.cjs");
+    writeFileSync(outputPath, "module.exports = {};\n", "utf8");
+
+    const result = runScript("check-miniprogram-content.ts", outputPath);
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("微信官方模板派生资产发生漂移");
   });
 });

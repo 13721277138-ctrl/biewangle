@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="hero">
+    <text class="eyebrow">本地数据岛</text>
+    <view class="title">你的事实，默认只在这里</view>
+    <view class="subtitle">微信端与 PWA 是两个独立本地数据岛，没有“别忘了”账号，也不会偷偷云同步。</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在检查本地数据…</view>
+
+  <block wx:else>
+    <view class="notice">
+      双槽持久化可降低一次写入中断造成的损坏风险，但它不是备份。卸载、清除微信数据、换设备或设备丢失仍可能让本地数据消失。
+    </view>
+
+    <view class="card">
+      <view class="card-title">当前事实概览</view>
+      <view class="fact-grid">
+        <view><text>{{facts.checkRuns}}</text><label>检查 Run</label></view>
+        <view><text>{{facts.plannedChecks}}</text><label>计划</label></view>
+        <view><text>{{facts.personalTemplates}}</text><label>个人模板</label></view>
+      </view>
+      <view class="card-copy">schema v{{facts.schemaVersion}} · 最近事实写入 {{facts.updatedAt}}</view>
+    </view>
+
+    <view class="card backup-card">
+      <view class="card-title">完整 Backup Envelope</view>
+      <view class="card-copy">包含全部本地事实与独立版本标记。微信端 sourcePlatform 固定为 wechat，可供跨端合同校验。</view>
+      <view class="button-stack">
+        <button class="primary-button" bindtap="shareBackupFile">作为 JSON 文件分享</button>
+        <button class="secondary-button" bindtap="copyBackup">复制完整备份文本</button>
+      </view>
+      <view wx:if="{{preview}}" class="backup-receipt">
+        <view>刚刚生成（不等于已异地保存）</view>
+        <text>{{preview.exportedAt}}</text>
+        <text>source={{preview.sourcePlatform}} · schema={{preview.schemaVersion}} · content={{preview.officialContentVersion}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">平台能力实况</view>
+      <view class="capability-row"><text>复制</text><text>{{capabilities.clipboard ? '可用' : '不可用'}}</text></view>
+      <view class="capability-row"><text>文件分享</text><text>{{capabilities.fileShare ? '可用' : '不可用，使用复制'}}</text></view>
+      <view class="capability-row"><text>系统日历</text><text>{{capabilities.calendar ? '可尝试' : '不可用，计划仍留本机'}}</text></view>
+      <view class="capability-row"><text>订阅消息</text><text>未配置，不伪装可用</text></view>
+    </view>
+  </block>
+</view>
