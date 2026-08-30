@@ -32,7 +32,7 @@ PLAYWRIGHT_BASE_URL=http://127.0.0.1:4173/biewangle/ pnpm --filter @biewangle/pw
 
 ## GitHub Pages 发布
 
-自动工作流监听 `main` 与 `codex/v1.1-implementation`。仓库需要把 Pages 构建来源设为 GitHub Actions；工作流仅使用 GitHub 自动下发的短期 `GITHUB_TOKEN` 和 OIDC 权限，不保存长期部署密钥。
+自动工作流只监听受保护的发布分支 `main`，也允许在 Actions 页面手动触发。仓库需要把 Pages 构建来源设为 GitHub Actions；工作流仅使用 GitHub 自动下发的短期 `GITHUB_TOKEN` 和 OIDC 权限，不保存长期部署密钥。
 
 完成 GitHub 登录后，Codex 将负责创建远端、设置 Pages、推送分支、观察工作流、取得 HTTPS URL，并在真实 URL 上重跑关键 E2E。用户只需要完成 GitHub 网页登录/授权这一项不可替代账号动作。
 
