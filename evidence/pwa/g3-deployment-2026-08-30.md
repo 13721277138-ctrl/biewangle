@@ -4,10 +4,11 @@
 
 - 本地完整 PWA 基线提交：`b35f0f4`。
 - 生产边界扫描、Lighthouse、GitHub Pages 子路径构建与完整 Chrome E2E：已通过。
-- GitHub Pages 工作流与深层地址回退：已在仓库准备。
-- 真实公网 HTTPS URL：等待 GitHub 网页登录这一项不可替代账号授权；取得 URL 后必须继续跑远端验收，本文件才可改为已部署。
+- GitHub 仓库：`https://github.com/13721277138-ctrl/biewangle`，公开仓库，默认分支 `main`。
+- GitHub Pages：`https://13721277138-ctrl.github.io/biewangle/`，GitHub Actions 构建，强制 HTTPS。
+- 公网完整 Chrome E2E、离线冷启动、manifest / Service Worker / 安装性与 Lighthouse：已通过。
 
-记录时间：2026-08-30 11:14 CST（Asia/Shanghai）。
+最后复验时间：2026-08-30 11:56 CST（Asia/Shanghai）。
 
 ## Lighthouse 13.4.1
 
@@ -18,12 +19,23 @@
 | Mobile | 96 | 100 | 100 | 2.1 s | 2.5 s | 10 ms | 0 |
 | Desktop | 100 | 100 | 100 | 0.4 s | 0.6 s | 0 ms | 0 |
 
+公网 HTTPS 地址复验：
+
+| 形态 | Performance | Accessibility | Best Practices | FCP | LCP | TBT | CLS |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Public Mobile | 98 | 100 | 100 | 1.8 s | 1.9 s | 0 ms | 0 |
+| Public Desktop | 99 | 100 | 100 | 0.6 s | 0.7 s | 0 ms | 0 |
+
 原始、可复核报告：
 
 - `evidence/pwa/lighthouse/local-mobile.report.json`
 - `evidence/pwa/lighthouse/local-mobile.report.html`
 - `evidence/pwa/lighthouse/local-desktop.report.json`
 - `evidence/pwa/lighthouse/local-desktop.report.html`
+- `evidence/pwa/lighthouse/public-mobile.report.json`
+- `evidence/pwa/lighthouse/public-mobile.report.html`
+- `evidence/pwa/lighthouse/public-desktop.report.json`
+- `evidence/pwa/lighthouse/public-desktop.report.html`
 
 Lighthouse 13 不再提供旧版单独 PWA 分类；安装图标、manifest、Service Worker、离线冷启动、导航回退由生产构建检查、浏览器 E2E 和真实浏览器验收分别覆盖，不能拿 Performance 分数代替安装/离线事实。
 
@@ -63,7 +75,7 @@ vite 8.2.2
 
 覆盖 WCAG A/AA、键盘与 reduced-motion、个人模板/隐私备注/历史/备份恢复、离线冷启动、375/390/1440 响应式和可信纵切。第一次复验暴露“旧预览进程仍按根路径提供静态资源”的测试环境错误；以同一个 `VITE_BASE_PATH` 重新启动生产预览后，资源 MIME 正确且 8/8 全绿。这也证明构建与预览必须共享部署 base path。
 
-## GitHub / 部署权限边界
+## GitHub / 真实部署
 
 只读检查结果：
 
@@ -77,13 +89,50 @@ NETLIFY_AUTH_TOKEN=absent
 CLOUDFLARE_API_TOKEN=absent
 ```
 
-因此当前没有可冒用的托管凭据。下一步只请求用户完成一次 `gh auth login` 网页授权；随后由 Codex 创建远端、配置 Pages 为 GitHub Actions、推送、观察部署并在真实 HTTPS URL 上复验。
+因此当时没有可冒用的托管凭据。用户只完成了一次 GitHub 官方设备授权；凭据由 GitHub CLI 写入 macOS keyring，没有进入仓库、源码、环境文件或证据包。随后 Codex 完成了：
 
-## 公网发布后必须追加
+1. 创建公开仓库 `13721277138-ctrl/biewangle`；
+2. 推送 `main` 与 `codex/v1.1-implementation`；
+3. 把 Pages 构建来源设为 GitHub Actions 并强制 HTTPS；
+4. 观察云端门禁、修正分支发布策略并完成公网验收。
 
-- GitHub 仓库 URL；
-- Pages 工作流 run URL 与结论；
-- 实际 HTTPS URL；
-- manifest、Service Worker、图标响应状态与 MIME；
-- 远端关键 E2E、深层地址首开、离线冷启动结果；
-- 真实浏览器安装入口/能力边界。
+第一次工作流 `33290226201` 的 build 全绿，但 GitHub 默认 `github-pages` 环境只允许 `main`，因此 deploy 被生产保护规则拒绝。没有放宽环境保护；工作流改为只从 `main` 发布，并将已验证 G3 检查点快进至 `main`。
+
+成功工作流：`https://github.com/13721277138-ctrl/biewangle/actions/runs/33291162436`
+
+```text
+headSha: 7c4c57c384db42945033e4690e5df037d8cffb0a
+build: success (1m12s)
+deploy: success (10s)
+conclusion: success
+```
+
+## 公网端点与浏览器验收
+
+| 端点 | HTTP | MIME / 行为 |
+|---|---:|---|
+| `/biewangle/` | 200 | `text/html; charset=utf-8` |
+| `/biewangle/manifest.webmanifest` | 200 | `application/manifest+json; charset=utf-8` |
+| `/biewangle/sw.js` | 200 | `application/javascript; charset=utf-8` |
+| `/biewangle/icons/icon-192.png` | 200 | `image/png` |
+| 首次直开 `/biewangle/templates/new` | 404 文档后客户端恢复 | GitHub Pages 无服务端 rewrite；仓库 `404.html` 安全回到入口并恢复原深层路径，公网 E2E 已证明最终页面正确 |
+
+远端执行全部 8 条 Chrome E2E：
+
+```text
+PLAYWRIGHT_BASE_URL=https://13721277138-ctrl.github.io/biewangle/
+8 passed (1.3m)
+```
+
+其中 `full-v1` 从深层地址 `/templates/new` 首开，证明 404 回退恢复；`offline` 证明公网安装 Service Worker 后断网冷启动仍能读取 IndexedDB 中的未完成 Run。
+
+Chrome DevTools Protocol 在独立持久浏览器 profile 上的安装性结果：
+
+```text
+manifestErrors: []
+installabilityErrors: []
+serviceWorker.scope: https://13721277138-ctrl.github.io/biewangle/
+serviceWorker.active: activated
+```
+
+当前 Mac 是 macOS 13.3.1，Safari 的 Add to Dock 需要 macOS Sonoma 14 或更高，因此本机无法把 Safari 菜单点击伪装成已验收；Chrome 安装性、manifest 与 Service Worker 已真实验证，iPhone 主屏添加仍属于真实 iPhone 可用时的终端验收边界。
