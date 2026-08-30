@@ -5,10 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#247463" />
     <meta name="description" content="无账号、离线可用的安心检查清单。" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <link rel="icon" href="%BASE_URL%icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%BASE_URL%icons/apple-touch-icon.png" />
     <title>别忘了 · 安心检查</title>
+    <script>
+      // Restore a deep route redirected by the GitHub Pages 404 fallback.
+      (function restoreSpaRoute(location) {
+        if (!location.search.startsWith("?/")) return;
+        var route = location.search
+          .slice(2)
+          .split("&")
+          .map(function decodeRoutePart(part) { return part.replace(/~and~/g, "&"); })
+          .join("?");
+        window.history.replaceState(null, "", location.pathname + route + location.hash);
+      })(window.location);
+    </script>
   </head>
   <body>
     <div id="root"></div>

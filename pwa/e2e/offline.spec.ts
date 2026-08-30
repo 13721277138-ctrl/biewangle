@@ -4,7 +4,7 @@ test("offline cold start resumes the durable run from IndexedDB and precache", a
   context,
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("./");
   await page.getByRole("button", { name: "开始 日常出门" }).click();
   await page.getByRole("button", { name: "确认 手机" }).click();
   await expect(page.getByRole("button", { name: "确认 手机" })).toHaveAttribute(

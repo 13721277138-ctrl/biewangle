@@ -10,7 +10,7 @@ for (const viewport of mobileViewports) {
     page,
   }) => {
     await page.setViewportSize(viewport);
-    for (const route of ["/", "/templates", "/templates/new", "/data"]) {
+    for (const route of ["./", "./templates", "./templates/new", "./data"]) {
       await page.goto(route);
       await expect(page.locator("body")).toBeVisible();
       const geometry = await page.evaluate(() => ({
@@ -32,9 +32,9 @@ test("responsive: desktop exposes management columns instead of stretching the p
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const [route, selector] of [
-    ["/templates", ".management-layout"],
-    ["/templates/new", ".editor-layout"],
-    ["/data", ".data-management-layout"],
+    ["./templates", ".management-layout"],
+    ["./templates/new", ".editor-layout"],
+    ["./data", ".data-management-layout"],
   ] as const) {
     await page.goto(route);
     const columns = await page.locator(selector).evaluate((node) =>

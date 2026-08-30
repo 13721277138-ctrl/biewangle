@@ -21,8 +21,11 @@ import type { AppRepository } from "../data/app-repository.js";
 import { AppStoreProvider, useAppStore } from "../data/use-app-store.js";
 import { browserRuntime, type AppRuntime } from "./runtime.js";
 import { UpdatePrompt } from "./UpdatePrompt.js";
+import { normalizeRouterBasename } from "./base-path.js";
 
 const defaultRepository = new DexieAppRepository();
+const routerBasename = normalizeRouterBasename(import.meta.env.BASE_URL);
+const browserRouterProps = routerBasename ? { basename: routerBasename } : {};
 
 const HomePage = lazy(() =>
   import("../features/home/HomePage.js").then((module) => ({ default: module.HomePage })),
@@ -198,7 +201,7 @@ export function App({
 }) {
   return (
     <AppStoreProvider repository={repository} runtime={runtime}>
-      <BrowserRouter>
+      <BrowserRouter {...browserRouterProps}>
         <AppRoutes />
       </BrowserRouter>
     </AppStoreProvider>

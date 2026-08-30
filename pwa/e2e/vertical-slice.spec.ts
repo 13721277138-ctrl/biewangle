@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("vertical slice: direct start, three states, temporary item, truthful close", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("./");
   await expect(page).toHaveTitle("别忘了 · 安心检查");
   await expect(
     page.getByRole("heading", { name: "今天，有什么要确认的？" }),

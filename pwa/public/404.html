@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>正在返回别忘了…</title>
+  </head>
+  <body>
+    <p>正在打开本地清单…</p>
+    <script>
+      (function redirectToSpa(location) {
+        var projectSegments = location.hostname.endsWith(".github.io") ? 1 : 0;
+        var pathParts = location.pathname.split("/");
+        var basePath = pathParts.slice(0, projectSegments + 1).join("/");
+        var route = pathParts.slice(projectSegments + 1).join("/").replace(/&/g, "~and~");
+        var query = location.search ? "&" + location.search.slice(1).replace(/&/g, "~and~") : "";
+        location.replace(location.origin + basePath + "/?/" + route + query + location.hash);
+      })(window.location);
+    </script>
+  </body>
+</html>

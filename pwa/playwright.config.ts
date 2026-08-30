@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const localBaseURL = new URL(process.env.VITE_BASE_PATH || "/", "http://127.0.0.1:4173/").href;
+const baseURL = externalBaseURL ?? localBaseURL;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -7,7 +11,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"]],
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: baseURL.endsWith("/") ? baseURL : `${baseURL}/`,
     locale: "zh-CN",
     timezoneId: "Asia/Shanghai",
     trace: "retain-on-failure",
@@ -22,10 +26,12 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: "pnpm preview",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: true,
-    timeout: 30_000,
-  },
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command: "pnpm preview",
+        url: localBaseURL,
+        reuseExistingServer: true,
+        timeout: 30_000,
+      },
 });

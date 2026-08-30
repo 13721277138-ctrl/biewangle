@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "build": "pnpm -r --if-present build",
     "e2e": "pnpm --filter @biewangle/pwa e2e",
+    "verify:boundaries": "node scripts/verify-runtime-boundaries.mjs",
     "miniprogram:verify": "node scripts/verify-miniprogram.mjs"
   },
   "devDependencies": {

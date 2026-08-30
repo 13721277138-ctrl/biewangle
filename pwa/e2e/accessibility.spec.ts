@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test("accessibility: primary pages have no WCAG A/AA violations", async ({ page }) => {
-  for (const route of ["/", "/templates", "/templates/new", "/plans", "/history", "/data", "/settings"]) {
+  for (const route of ["./", "./templates", "./templates/new", "./plans", "./history", "./data", "./settings"]) {
     await page.goto(route);
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -18,7 +18,7 @@ test("accessibility: keyboard focus is visible and reduced-motion disables trans
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await page.goto("./");
   await page.locator(".brand").focus();
   await page.keyboard.press("Tab");
   await expect(page.locator(":focus-visible")).toBeVisible();
