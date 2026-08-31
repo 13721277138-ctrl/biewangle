@@ -1,5 +1,5 @@
-<view class="page">
-  <view class="hero">
+<view class="page history-page">
+  <view class="hero compact-hero">
     <text class="eyebrow">事实历史</text>
     <view class="title">发生过什么，就记录成什么</view>
     <view class="subtitle">“已完成”“有未确认项结束”“已放弃”互不混淆；历史不会被模板后续变化改写。</view>
@@ -10,21 +10,23 @@
 
   <block wx:else>
     <view wx:if="{{!runs.length}}" class="empty">还没有已结束的检查。</view>
-    <view wx:for="{{runs}}" wx:key="checkRunId" class="card history-card">
-      <view class="row-between">
-        <view class="history-heading">
-          <view class="card-title">{{item.title}}</view>
-          <view class="history-status">{{item.statusLabel}}</view>
+    <view wx:else class="list-surface history-list">
+      <view wx:for="{{runs}}" wx:key="checkRunId" class="list-row history-row">
+        <view class="list-row-main">
+          <view class="row-content">
+            <view class="row-title">{{item.title}}</view>
+            <view class="history-status">{{item.statusLabel}}</view>
+          </view>
+          <view class="fact-count">{{item.totalCount - item.unresolvedCount}} / {{item.totalCount}}</view>
         </view>
-        <view class="fact-count">{{item.totalCount - item.unresolvedCount}} / {{item.totalCount}}</view>
+        <view class="row-copy">结束于 {{item.closedAt}}</view>
+        <view class="fact-line">未确认 {{item.unresolvedCount}} 项 · 关键 {{item.unresolvedKeyCount}} 项</view>
+        <view class="history-actions">
+          <button class="secondary-button small-button" data-run-id="{{item.checkRunId}}" bindtap="openRun">查看事实</button>
+          <button class="text-button" data-run-id="{{item.checkRunId}}" bindtap="copySummary">复制摘要</button>
+        </view>
+        <button wx:if="{{item.isReopenableStatus}}" class="text-button reopen-button" data-run-id="{{item.checkRunId}}" bindtap="reopenRun" loading="{{busy}}">2 小时内重新打开</button>
       </view>
-      <view class="card-copy">结束于 {{item.closedAt}}</view>
-      <view class="fact-line">未确认 {{item.unresolvedCount}} 项 · 关键 {{item.unresolvedKeyCount}} 项</view>
-      <view class="button-row">
-        <button class="secondary-button small-button" data-run-id="{{item.checkRunId}}" bindtap="openRun">查看事实</button>
-        <button class="secondary-button small-button" data-run-id="{{item.checkRunId}}" bindtap="copySummary">复制摘要</button>
-      </view>
-      <button wx:if="{{item.isReopenableStatus}}" class="primary-button reopen-button" data-run-id="{{item.checkRunId}}" bindtap="reopenRun" loading="{{busy}}">2 小时内重新打开</button>
     </view>
   </block>
 </view>

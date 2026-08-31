@@ -1,5 +1,5 @@
-<view class="page">
-  <view class="hero">
+<view class="page template-edit-page">
+  <view class="hero compact-hero">
     <text class="eyebrow">只修改个人副本</text>
     <view class="title">{{modeLabel}}</view>
     <view class="subtitle">官方原件、既有计划和已开始 Run 都不会被这次编辑追溯改写。</view>
@@ -9,16 +9,16 @@
   <view wx:if="{{loading}}" class="loading">正在准备本地编辑器…</view>
 
   <block wx:else>
-    <view class="card preview-card theme-{{themeColor}}">
+    <view class="preview-surface theme-{{themeColor}}">
       <text class="preview-icon">{{icon}}</text>
-      <view>
-        <view class="card-title">{{title || '未命名模板'}}</view>
-        <view class="card-copy">{{itemCount}} 个检查项 · 仅保存在当前设备</view>
+      <view class="preview-copy">
+        <view class="row-title">{{title || '未命名模板'}}</view>
+        <view class="row-copy">{{itemCount}} 个检查项 · 仅保存在当前设备</view>
       </view>
     </view>
 
-    <view class="card editor-card">
-      <view class="field">
+    <view class="editor-surface">
+      <view class="field first-field">
         <text class="label">模板名称</text>
         <input class="input" maxlength="80" value="{{title}}" placeholder="例如：晨间出门" bindinput="updateTitle" />
       </view>

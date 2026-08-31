@@ -1,33 +1,57 @@
-.history-card {
-  border-left: 8rpx solid #9abeb4;
+.history-page {
+  padding-top: 20rpx;
 }
 
-.history-heading {
-  flex: 1;
+.compact-hero {
+  margin-bottom: 18rpx;
+}
+
+.history-row {
+  border-left: 6rpx solid #9abeb4;
+  padding-bottom: 12rpx;
 }
 
 .history-status {
-  margin-top: 8rpx;
+  margin-top: 5rpx;
   color: #247463;
-  font-size: 24rpx;
+  font-size: 23rpx;
   font-weight: 600;
+  line-height: 1.45;
 }
 
 .fact-count {
+  flex-shrink: 0;
+  margin-left: 18rpx;
   color: #244d43;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .fact-line {
-  margin-top: 14rpx;
-  padding: 14rpx 16rpx;
-  border-radius: 14rpx;
-  background: #f2f4f1;
+  margin-top: 8rpx;
   color: #4d5e59;
-  font-size: 24rpx;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.history-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 6rpx;
+}
+
+.history-actions .secondary-button {
+  flex: 1;
+}
+
+.history-actions .text-button {
+  width: 160rpx;
+  flex-shrink: 0;
 }
 
 .reopen-button {
-  margin-top: 16rpx;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0;
 }

@@ -1,59 +1,112 @@
+.history-detail-page {
+  padding-top: 20rpx;
+}
+
+.compact-hero {
+  margin-bottom: 18rpx;
+}
+
 .fact-card {
-  border-color: #b7d1c9;
-  background: #f2f8f5;
   text-align: center;
 }
 
 .fact-score {
   color: #247463;
-  font-size: 58rpx;
+  font-size: 48rpx;
   font-weight: 700;
+  line-height: 1.2;
+}
+
+.history-group {
+  margin-top: 18rpx;
+}
+
+.history-group:first-child {
+  margin-top: 0;
+}
+
+.history-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4rpx 10rpx;
+}
+
+.history-group-title {
+  color: #247463;
+  font-size: 25rpx;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.history-group-count {
+  color: #66716e;
+  font-size: 22rpx;
+  line-height: 1.45;
 }
 
 .history-item {
-  border-left: 8rpx solid #c1c8c4;
+  border-left: 6rpx solid #c8d0cc;
 }
 
 .history-item.confirmed {
   border-left-color: #247463;
+  background: #f8fbf9;
 }
 
 .history-item.notNeeded {
   border-left-color: #8f8a7d;
+  background: #f7f7f3;
 }
 
 .history-item-title {
+  display: flex;
+  min-width: 0;
   flex: 1;
+  align-items: center;
   color: #233631;
   font-size: 28rpx;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .state {
+  flex-shrink: 0;
+  margin-left: 14rpx;
   color: #397062;
   font-size: 23rpx;
+  line-height: 1.45;
+  white-space: nowrap;
 }
 
 .key-badge {
+  flex-shrink: 0;
   background: #fff0d5;
   color: #8a5b0b;
 }
 
 .temporary {
-  margin-top: 10rpx;
+  margin-top: 8rpx;
   color: #80622c;
   font-size: 22rpx;
+  line-height: 1.4;
 }
 
 .private-note {
-  margin-top: 14rpx;
-  padding: 14rpx;
+  margin-top: 10rpx;
+  padding: 12rpx 14rpx;
   border-radius: 14rpx;
   background: #f0eef7;
   color: #554c6a;
   font-size: 23rpx;
+  line-height: 1.45;
 }
 
-.action-card button {
-  margin-top: 16rpx;
+.action-card {
+  margin-top: 28rpx;
+}
+
+.action-card > button {
+  margin-top: 12rpx;
+  width: 100%;
 }

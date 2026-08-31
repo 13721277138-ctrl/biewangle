@@ -1,50 +1,86 @@
+.search-page {
+  padding-top: 20rpx;
+}
+
 .search-hero {
-  margin-bottom: 22rpx;
+  margin-bottom: 18rpx;
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  padding: 8rpx 10rpx 8rpx 22rpx;
+  padding: 4rpx 8rpx 4rpx 20rpx;
   border: 2rpx solid #9abeb4;
-  border-radius: 26rpx;
+  border-radius: 24rpx;
   background: #ffffff;
 }
 
 .search-input {
+  min-width: 0;
+  min-height: 80rpx;
   flex: 1;
-  min-height: 78rpx;
-  font-size: 29rpx;
+  color: #17201e;
+  font-size: 27rpx;
+  line-height: 1.4;
 }
 
 .clear-button {
   width: 100rpx;
+  flex-shrink: 0;
 }
 
 .search-empty {
-  margin-top: 26rpx;
-}
-
-.create-button {
   margin-top: 22rpx;
 }
 
-.result-count {
-  margin: 28rpx 0 16rpx;
-  color: #52645e;
-  font-size: 25rpx;
+.create-button {
+  margin-top: 18rpx;
 }
 
-.result-title {
-  margin-top: 16rpx;
+.result-count {
+  margin: 24rpx 0 12rpx;
+  color: #52645e;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.result-row {
+  padding-bottom: 12rpx;
+}
+
+.result-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
 }
 
 .match-label {
+  margin-left: 14rpx;
   color: #60716b;
   font-size: 21rpx;
+  line-height: 1.4;
+}
+
+.result-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 6rpx;
+}
+
+.result-actions .primary-button {
+  flex: 1;
+}
+
+.result-actions .text-button {
+  width: 150rpx;
+  flex-shrink: 0;
 }
 
 .personal-result {
-  border-color: #afd0c7;
-  background: #f6fbf8;
+  background: #f8fbf9;
+}
+
+.personal-title {
+  margin-top: 8rpx;
 }

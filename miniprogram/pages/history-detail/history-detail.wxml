@@ -1,16 +1,16 @@
-<view class="page">
+<view class="page history-detail-page">
   <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
   <view wx:if="{{loading}}" class="loading">正在读取冻结的历史事实…</view>
 
   <block wx:elif="{{run}}">
-    <view class="hero">
+    <view class="hero compact-hero">
       <text class="eyebrow">历史事实 · {{run.statusLabel}}</text>
       <view class="title">{{run.runTemplateSnapshot.title}}</view>
       <view class="subtitle">结束于 {{run.closedAt}}</view>
       <view class="trust-pill">既有历史只读；重新开始会创建不同 ID 的新 Run</view>
     </view>
 
-    <view class="card fact-card">
+    <view class="card fact-card soft-surface">
       <view class="fact-score">{{run.totalCount - run.uncheckedCount}} / {{run.totalCount}}</view>
       <view class="card-copy">未确认 {{run.uncheckedCount}} 项，其中关键 {{run.uncheckedKeyCount}} 项</view>
       <view class="card-copy">原 Run ID：{{run.checkRunId}}</view>
@@ -20,18 +20,26 @@
       <view class="section-heading">
         <text class="section-title">逐项事实</text>
       </view>
-      <view wx:for="{{run.items}}" wx:key="runItemId" class="card history-item {{item.state}}">
-        <view class="row-between">
-          <view class="history-item-title">
-            <text wx:if="{{item.isKey}}" class="badge key-badge">关键</text>
-            <text>{{item.title}}</text>
-          </view>
-          <text class="state">{{item.stateLabel}}</text>
+      <view wx:for="{{run.groups}}" wx:for-item="group" wx:key="renderKey" class="history-group">
+        <view class="history-group-heading">
+          <text class="history-group-title">{{group.title}}</text>
+          <text class="history-group-count">已处理 {{group.handledCount}} / {{group.itemCount}}</text>
         </view>
-        <view wx:if="{{item.condition}}" class="card-copy">条件：{{item.condition}}</view>
-        <view wx:if="{{item.hint}}" class="card-copy">提示：{{item.hint}}</view>
-        <view wx:if="{{item.isTemporary}}" class="temporary">本次临时项</view>
-        <view wx:if="{{item.oneTimeNote}}" class="private-note">本机私密备注：{{item.oneTimeNote}}</view>
+        <view class="list-surface history-items">
+          <view wx:for="{{group.items}}" wx:for-item="checkItem" wx:key="runItemId" class="list-row history-item {{checkItem.state}}">
+            <view class="list-row-main">
+              <view class="history-item-title">
+                <text wx:if="{{checkItem.isKey}}" class="badge key-badge">关键</text>
+                <text>{{checkItem.title}}</text>
+              </view>
+              <text class="state">{{checkItem.stateLabel}}</text>
+            </view>
+            <view wx:if="{{checkItem.condition}}" class="row-copy">条件：{{checkItem.condition}}</view>
+            <view wx:if="{{checkItem.hint}}" class="row-copy">提示：{{checkItem.hint}}</view>
+            <view wx:if="{{checkItem.isTemporary}}" class="temporary">本次临时项</view>
+            <view wx:if="{{checkItem.oneTimeNote}}" class="private-note">本机私密备注：{{checkItem.oneTimeNote}}</view>
+          </view>
+        </view>
       </view>
     </view>
 

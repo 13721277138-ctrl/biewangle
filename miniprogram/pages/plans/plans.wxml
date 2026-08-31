@@ -1,5 +1,5 @@
-<view class="page">
-  <view class="hero">
+<view class="page plans-page">
+  <view class="hero compact-hero">
     <text class="eyebrow">Planned Check</text>
     <view class="title">到时候，再按现在的清单检查</view>
     <view class="subtitle">创建计划时会冻结模板快照；以后官方内容变化，也不会悄悄改写这项计划。</view>
@@ -28,16 +28,16 @@
         <picker mode="time" value="{{scheduledTime}}" bindchange="selectTime">
           <view class="picker-value">{{scheduledTime || '不指定具体时间'}}</view>
         </picker>
-        <button wx:if="{{scheduledTime}}" class="note-link" bindtap="clearTime">清除具体时间</button>
+        <button wx:if="{{scheduledTime}}" class="text-button note-link" bindtap="clearTime">清除具体时间</button>
       </view>
-      <view class="row-between calendar-row">
-        <view>
+      <view class="calendar-row">
+        <view class="calendar-copy">
           <view class="label">保存后尝试写入系统日历</view>
           <view class="card-copy">能力不可用时会如实提示，计划仍已安全留在本机。</view>
         </view>
         <switch checked="{{addToCalendar}}" color="#247463" bindchange="toggleCalendar" />
       </view>
-      <button class="primary-button" bindtap="createPlan" loading="{{busy}}">保存计划</button>
+      <button class="primary-button save-plan-button" bindtap="createPlan" loading="{{busy}}">保存计划</button>
     </view>
 
     <view class="section">
@@ -46,13 +46,15 @@
         <text class="muted">{{plans.length}} 项</text>
       </view>
       <view wx:if="{{!plans.length}}" class="empty">还没有待处理计划。</view>
-      <view wx:for="{{plans}}" wx:key="plannedCheckId" class="card">
-        <view class="card-title">{{item.plannedTemplateSnapshot.title}}</view>
-        <view class="plan-when">{{item.when}}</view>
-        <view class="card-copy">快照已冻结 · 创建时区 {{item.createdTimeZoneId}}</view>
-        <view class="button-row">
-          <button class="primary-button small-button" data-plan-id="{{item.plannedCheckId}}" bindtap="startPlan" loading="{{busy}}">开始检查</button>
-          <button class="danger-button small-button" data-plan-id="{{item.plannedCheckId}}" bindtap="cancelPlan" loading="{{busy}}">取消计划</button>
+      <view wx:else class="list-surface plan-list">
+        <view wx:for="{{plans}}" wx:key="plannedCheckId" class="list-row planned-row">
+          <view class="row-title">{{item.plannedTemplateSnapshot.title}}</view>
+          <view class="plan-when">{{item.when}}</view>
+          <view class="row-copy">快照已冻结 · 创建时区 {{item.createdTimeZoneId}}</view>
+          <view class="plan-actions">
+            <button class="primary-button small-button" data-plan-id="{{item.plannedCheckId}}" bindtap="startPlan" loading="{{busy}}">开始检查</button>
+            <button class="text-button cancel-plan-button" data-plan-id="{{item.plannedCheckId}}" bindtap="cancelPlan" loading="{{busy}}">取消计划</button>
+          </view>
         </view>
       </view>
     </view>

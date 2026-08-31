@@ -49,4 +49,18 @@ describe("native WeChat presentation structure", () => {
     expect(libraryHandlers.filter((handler) => governanceHandlers.includes(handler))).toEqual([]);
     expect(detailHandlers).toEqual(expect.arrayContaining(governanceHandlers));
   });
+
+  it("uses the shared open-list hierarchy for secondary native flows", () => {
+    const listPages = [
+      "miniprogram/pages/more-runs/more-runs.wxml",
+      "miniprogram/pages/plans/plans.wxml",
+      "miniprogram/pages/history/history.wxml",
+      "miniprogram/pages/history-detail/history-detail.wxml",
+      "miniprogram/pages/search/search.wxml",
+    ];
+
+    for (const path of listPages) {
+      expect(markup(path), path).toContain('class="list-surface');
+    }
+  });
 });

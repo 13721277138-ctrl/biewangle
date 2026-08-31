@@ -1,16 +1,11 @@
 const app = getApp();
+const { projectRunView } = require("../../lib/run-view.js");
 
 function statusLabel(status) {
   if (status === "completed") return "已完成";
   if (status === "endedWithUnresolved") return "有未确认项结束";
   if (status === "discarded") return "已放弃";
   return "进行中";
-}
-
-function stateLabel(state) {
-  if (state === "confirmed") return "已确认";
-  if (state === "notNeeded") return "本次不需要";
-  return "未确认";
 }
 
 function unavailableReason(reason) {
@@ -40,15 +35,7 @@ Page({
       await app.ready;
       const run = app.service.getRun(this.checkRunId);
       const close = run.closedEvents[run.closedEvents.length - 1];
-      const items = run.items
-        .slice()
-        .sort((left, right) => left.runSortOrder - right.runSortOrder)
-        .map((item) => ({
-          ...item,
-          isKey: item.importance === "key",
-          stateLabel: stateLabel(item.state),
-        }));
-      const unchecked = items.filter((item) => item.state === "unchecked");
+      const projection = projectRunView(run, "all");
       this.setData({
         error: "",
         loading: false,
@@ -56,11 +43,12 @@ Page({
           ...run,
           canReopen: run.status === "completed" || run.status === "endedWithUnresolved",
           closedAt: close ? close.closedAt : run.lastInteractedAt,
-          items,
+          groups: projection.groups,
+          items: projection.visibleItems,
           statusLabel: statusLabel(run.status),
-          totalCount: items.length,
-          uncheckedCount: unchecked.length,
-          uncheckedKeyCount: unchecked.filter((item) => item.importance === "key").length,
+          totalCount: projection.allItems.length,
+          uncheckedCount: projection.unresolvedCount,
+          uncheckedKeyCount: projection.unresolvedKeyCount,
         },
       });
     } catch (error) {

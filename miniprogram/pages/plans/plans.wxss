@@ -1,29 +1,67 @@
+.plans-page {
+  padding-top: 20rpx;
+}
+
+.compact-hero {
+  margin-bottom: 18rpx;
+}
+
 .plan-form {
   border-color: #b9d2ca;
 }
 
 .calendar-row {
-  margin: 22rpx 0;
-  gap: 20rpx;
+  display: flex;
+  min-height: 104rpx;
+  align-items: center;
+  margin: 18rpx 0;
 }
 
-.calendar-row > view {
+.calendar-copy {
+  min-width: 0;
   flex: 1;
+  padding-right: 18rpx;
+}
+
+.calendar-copy .label {
+  margin-bottom: 0;
+}
+
+.save-plan-button {
+  width: 100%;
 }
 
 .plan-when {
-  margin-top: 12rpx;
+  margin-top: 6rpx;
   color: #247463;
-  font-size: 28rpx;
+  font-size: 25rpx;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .note-link {
-  min-height: 58rpx;
-  margin: 8rpx 0 0;
+  width: 100%;
+  justify-content: flex-start;
   padding: 0;
-  background: transparent;
-  color: #496d64;
-  font-size: 23rpx;
   text-align: left;
+}
+
+.planned-row {
+  padding-bottom: 12rpx;
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 6rpx;
+}
+
+.plan-actions .primary-button {
+  flex: 1;
+}
+
+.cancel-plan-button {
+  width: 170rpx;
+  flex-shrink: 0;
+  color: #98453b;
 }

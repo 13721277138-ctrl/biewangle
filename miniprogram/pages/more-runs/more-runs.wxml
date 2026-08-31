@@ -1,5 +1,5 @@
-<view class="page">
-  <view class="hero">
+<view class="page more-runs-page">
+  <view class="hero compact-hero">
     <text class="eyebrow">现实 Run</text>
     <view class="title">进行中的检查</view>
     <view class="subtitle">排序优先考虑 24 小时内到期计划，其次按最近交互；不会把多个 Run 合并成一个。</view>
@@ -13,16 +13,22 @@
       <view>现在没有进行中的检查。</view>
       <button class="primary-button empty-action" bindtap="openTemplates">选择模板开始</button>
     </view>
-    <view wx:for="{{runs}}" wx:key="checkRunId" class="card run-card {{item.isPrioritized ? 'prioritized' : ''}}">
-      <view>
-        <text wx:if="{{item.isPrioritized}}" class="badge">首页优先继续</text>
-        <text wx:if="{{item.isStale}}" class="badge stale-badge">超过 24 小时未交互</text>
+    <view wx:else class="list-surface run-list">
+      <view wx:for="{{runs}}" wx:key="checkRunId" class="list-row run-row {{item.isPrioritized ? 'prioritized' : ''}}">
+        <view class="run-badges">
+          <text wx:if="{{item.isPrioritized}}" class="badge">首页优先继续</text>
+          <text wx:if="{{item.isStale}}" class="badge stale-badge">超过 24 小时未交互</text>
+        </view>
+        <view class="list-row-main">
+          <view class="row-content">
+            <view class="row-title">{{item.title}}</view>
+            <view class="progress-line">已处理 {{item.totalCount - item.uncheckedCount}} / {{item.totalCount}}</view>
+            <view class="row-copy">未确认 {{item.uncheckedCount}} 项 · 关键 {{item.uncheckedKeyCount}} 项</view>
+            <view class="row-copy">最近交互 {{item.lastInteractedAt}}</view>
+          </view>
+          <button class="primary-button small-button continue-button" data-run-id="{{item.checkRunId}}" bindtap="openRun">继续</button>
+        </view>
       </view>
-      <view class="card-title run-title">{{item.title}}</view>
-      <view class="progress-line">已处理 {{item.totalCount - item.uncheckedCount}} / {{item.totalCount}}</view>
-      <view class="card-copy">未确认 {{item.uncheckedCount}} 项 · 关键 {{item.uncheckedKeyCount}} 项</view>
-      <view class="card-copy">最近交互 {{item.lastInteractedAt}}</view>
-      <button class="primary-button continue-button" data-run-id="{{item.checkRunId}}" bindtap="openRun">继续这个 Run</button>
     </view>
   </block>
 </view>

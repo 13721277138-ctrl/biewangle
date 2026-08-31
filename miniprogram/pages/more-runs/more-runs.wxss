@@ -1,10 +1,22 @@
-.run-card {
-  border-left: 8rpx solid #c1cbc6;
+.more-runs-page {
+  padding-top: 20rpx;
 }
 
-.run-card.prioritized {
+.compact-hero {
+  margin-bottom: 18rpx;
+}
+
+.run-row {
+  border-left: 6rpx solid #c8d0cc;
+}
+
+.run-row.prioritized {
   border-left-color: #247463;
-  background: #f2f9f5;
+  background: #f0f4f1;
+}
+
+.run-badges {
+  margin-bottom: 8rpx;
 }
 
 .stale-badge {
@@ -12,18 +24,19 @@
   color: #865d18;
 }
 
-.run-title {
-  margin-top: 16rpx;
-}
-
 .progress-line {
-  margin-top: 14rpx;
+  margin-top: 6rpx;
   color: #247463;
-  font-size: 28rpx;
-  font-weight: 700;
+  font-size: 25rpx;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.continue-button,
+.continue-button {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
 .empty-action {
-  margin-top: 20rpx;
+  margin-top: 18rpx;
 }
