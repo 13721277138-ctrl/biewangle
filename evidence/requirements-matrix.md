@@ -108,5 +108,15 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 - 微信完整 V1：[`wechat/g5-full-v1-2026-08-30.md`](wechat/g5-full-v1-2026-08-30.md)
 - 微信数据语义专项：[`wechat/g5-semantic-audit-2026-08-31.md`](wechat/g5-semantic-audit-2026-08-31.md)
 - 平台能力矩阵：[`g0/platform-capability-matrix-2026-08-29.md`](g0/platform-capability-matrix-2026-08-29.md)
+- 最终交付状态：[`final-delivery-report.md`](final-delivery-report.md)
+
+## GitHub / Codex Cloud 复现状态
+
+- `codex/v1.1-implementation` 分支 CI `33355270381`：success；
+- `main` CI `33355365538`：success；
+- `main` Pages build/deploy `33355365530`：success，annotation 0；
+- 最新公网完整 E2E：8/8；
+- 默认分支包含 `AGENTS.md`、lockfile、CI、复现与证据文档；
+- `codex cloud list` 返回 `No tasks found`，Codex Web 环境页未登录，因此 Cloud Environment 状态仍为 `blocked-external`，没有误标为已连接。
 
 未完成的 B 类真实终端动作会继续保留 `partial-external` / `blocked-external`，不因 26 项自动不变量全绿而改写为“全终端完成”。

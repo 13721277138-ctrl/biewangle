@@ -35,7 +35,9 @@ pnpm e2e
 
 ## 当前真实边界
 
-本机 `codex cloud list` 能访问 Cloud 命令面并返回 `No tasks found`，但这只能证明 CLI 可访问服务，不能证明本仓库已经被 Codex Cloud 授权或已创建环境。仓库选择和 GitHub 授权属于用户账号范围，不能通过本地 Git remote 或 GitHub CLI 登录态推定完成。
+截至 2026-08-31，远端默认分支 `main` 已包含根级 `AGENTS.md`、`pnpm-lock.yaml`、全分支 CI 和本文件；G6 的干净 clone、本地全门、分支 CI、`main` CI 与 Pages 部署均已通过。
+
+本机 `codex cloud list` 能访问 Cloud 命令面并返回 `No tasks found`，但这只能证明 CLI 可访问服务，不能证明本仓库已经被 Codex Cloud 授权或已创建环境。应用内浏览器访问环境页时处于未登录状态，且没有可用的 Chrome 扩展登录态。仓库选择和 GitHub 授权属于用户账号范围，不能通过本地 Git remote 或 GitHub CLI 登录态推定完成。
 
 OpenAI 官方流程要求：
 
@@ -51,7 +53,7 @@ OpenAI 官方流程要求：
 
 ## 唯一不可替代的最小动作
 
-当需要真正关联 Cloud 时，用户在 Codex Web 的环境设置中连接 GitHub，勾选 `13721277138-ctrl/biewangle`，并按上面的配置创建一个 Environment。完成后把 Environment 已创建这一事实告诉 Codex；后续可复现验证和首个 Cloud 任务再继续执行。
+第一步只需用户在已打开的 Codex Web 页面登录并回复“已登录”。随后 Codex继续检查环境页；若 GitHub 授权尚缺，再请用户在官方授权页勾选 `13721277138-ctrl/biewangle`，并按上面的配置创建一个 Environment。完成后可继续首个 Cloud 复现任务。
 
 不要把以下事实写成“Cloud 已连接”：
 

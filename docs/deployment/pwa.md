@@ -10,6 +10,8 @@
 
 当前仓库：`https://github.com/13721277138-ctrl/biewangle`
 
+2026-08-31 的 G6 完整发布基线为 `745bb19`：全分支 CI、`main` CI 和 Pages build/deploy 均成功；Pages 运行 `33355365530` 使用 `actions/upload-pages-artifact@v5`，check-run annotation 为 0。部署后在公网地址重新执行全部 8 条 E2E，8/8 通过。
+
 ## 构建与本地复验
 
 本机使用项目声明的 Node 24 与 pnpm 11.19.0：
@@ -48,4 +50,4 @@ GitHub 登录后，Codex 已完成创建远端、设置 Pages、推送分支、�
 PLAYWRIGHT_BASE_URL=https://13721277138-ctrl.github.io/biewangle/ pnpm --filter @biewangle/pwa e2e
 ```
 
-发布证据、工作流运行地址、端点 MIME、远端 E2E、安装性与最终 URL 记录在 `evidence/pwa/g3-deployment-2026-08-30.md`。
+最初生产发布证据、端点 MIME、安装性与 URL 记录在 `evidence/pwa/g3-deployment-2026-08-30.md`；G6 最新 CI、重新部署和公网 E2E 记录在 `evidence/final-delivery-report.md`。
