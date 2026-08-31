@@ -48,6 +48,7 @@ describe("official and personal template governance", () => {
 
   it("[TPL-003] soft-deletes and restores only the personal copy", () => {
     const official = officialTemplate("official.business_trip");
+    const officialBefore = structuredClone(official);
     const personal = derivePersonalTemplate(official, {}, NOW, {
       personalTemplateId: "personal-business",
     });
@@ -57,6 +58,6 @@ describe("official and personal template governance", () => {
     expect(deleted.deletedAt).toBe(ONE_HOUR_LATER);
     expect(restored.deletedAt).toBeUndefined();
     expect(restored.updatedAt).toBe("2026-09-01T10:00:00.000+08:00");
-    expect(official.templateId).toBe("official.business_trip");
+    expect(official).toEqual(officialBefore);
   });
 });

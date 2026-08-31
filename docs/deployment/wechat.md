@@ -113,3 +113,5 @@ pnpm miniprogram:verify
 这些账号动作不能由测试号或本地代码替代。在完成前，文档和 UI 都不得称为“微信正式上线”。
 
 完整实测记录见 `evidence/wechat/g5-full-v1-2026-08-30.md`；2026-08-31 的数据语义审计、新鲜门禁与重新上传见 `evidence/wechat/g5-semantic-audit-2026-08-31.md`。
+
+跨平台 P0 / P1 与 26 项最低不变量的统一索引见 `evidence/requirements-matrix.md`；最终真实交付阶段和外部阻塞见 `evidence/final-delivery-report.md`。

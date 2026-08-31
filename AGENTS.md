@@ -25,9 +25,26 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm verify:boundaries
+pnpm miniprogram:verify
 ```
 
-Use `pnpm e2e` only after Playwright browsers are installed. Use `pnpm miniprogram:verify` for the native WeChat project static gate.
+Use `pnpm e2e` only after the Playwright Chrome channel is installed. In a fresh Linux or Codex Cloud environment, install it with:
+
+```bash
+pnpm --filter @biewangle/pwa exec playwright install --with-deps chrome
+pnpm e2e
+```
+
+`pnpm miniprogram:verify` is the offline native WeChat static release gate. Official WeChat compilation, preview, upload, review and release require the macOS developer tools and the appropriate WeChat account permissions.
+
+## Codex Cloud
+
+- Pin Node.js 24 in the environment; the repository pins pnpm 11.19.0 in `packageManager`.
+- The setup command is `pnpm install --frozen-lockfile` once pnpm is available.
+- No repository secret or product runtime environment variable is required.
+- Read `README.md` and `docs/deployment/codex-cloud.md` before changing deployment state.
+- Treat `evidence/requirements-matrix.md` as the acceptance index and update evidence only from commands or terminal actions actually executed.
 
 ## Non-negotiable behavior
 

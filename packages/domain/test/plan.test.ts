@@ -51,6 +51,12 @@ describe("PlannedCheck snapshot and lifecycle contract", () => {
     });
     expect(started.run.sourcePlannedCheckId).toBe("plan-early");
     expect(rankUpcomingPlans([started.plan])).toEqual([]);
+    expect(
+      shouldRemindForPlan(started.plan, {
+        localDate: "2026-09-30",
+        localTime: "18:30",
+      }),
+    ).toBe(false);
   });
 
   it("[PLAN-003] keeps date-only plans as literal local calendar dates", () => {

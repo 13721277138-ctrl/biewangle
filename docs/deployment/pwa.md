@@ -4,7 +4,7 @@
 
 “别忘了”PWA 是纯静态、Local-first 应用。生产运行时不需要服务端、产品账号、云数据库、远程字体、Analytics、广告或密钥。用户数据只写入当前浏览器的 IndexedDB；部署更新不会自动同步或上传用户数据。
 
-当前首选部署目标为 GitHub Pages：仓库分支触发 `.github/workflows/deploy-pages.yml`，完成内容校验、单元测试、类型检查、生产构建、Chrome E2E、运行时边界扫描后，才上传 `pwa/dist` 并发布 HTTPS 页面。
+当前首选部署目标为 GitHub Pages：所有 push / pull request 先由 `.github/workflows/ci.yml` 执行完整仓库门禁；`main` 还会触发 `.github/workflows/deploy-pages.yml`，完成内容、边界、lint、类型、单元/合同、构建、微信静态门和 Chrome E2E 后，才上传 `pwa/dist` 并发布 HTTPS 页面。
 
 当前生产地址：`https://13721277138-ctrl.github.io/biewangle/`
 
@@ -17,11 +17,13 @@
 ```sh
 pnpm install --frozen-lockfile
 pnpm content:check
-pnpm test
+pnpm lint
 pnpm typecheck
+pnpm test
 pnpm build
-pnpm e2e
 pnpm verify:boundaries
+pnpm miniprogram:verify
+pnpm e2e
 ```
 
 GitHub Pages 项目站点部署在仓库子路径。可在本地用相同路径构建并复验：

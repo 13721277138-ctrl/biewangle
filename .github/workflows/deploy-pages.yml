@@ -18,6 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       VITE_BASE_PATH: /${{ github.event.repository.name }}/
     steps:
@@ -39,7 +40,7 @@ jobs:
         run: pnpm --filter @biewangle/pwa exec playwright install --with-deps chrome
 
       - name: Run production gate
-        run: pnpm content:check && pnpm test && pnpm typecheck && pnpm build && pnpm e2e && pnpm verify:boundaries
+        run: pnpm content:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm verify:boundaries && pnpm miniprogram:verify && pnpm e2e
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
