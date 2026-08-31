@@ -1,10 +1,5 @@
 const app = getApp();
-
-function stateLabel(state) {
-  if (state === "confirmed") return "已确认";
-  if (state === "notNeeded") return "本次不需要";
-  return "未确认";
-}
+const { projectRunView } = require("../../lib/run-view.js");
 
 function statusLabel(status) {
   if (status === "inProgress") return "进行中";
@@ -23,8 +18,10 @@ Page({
     editingItemId: "",
     editingNote: "",
     error: "",
+    expandedItemId: "",
     loading: true,
     run: null,
+    showTemporaryEditor: false,
     tempIsKey: false,
     tempTitle: "",
     viewMode: "all",
@@ -42,27 +39,9 @@ Page({
     try {
       await app.ready;
       const run = app.service.getRun(this.checkRunId);
-      const groupTitles = new Map(
-        run.runTemplateSnapshot.groups.map((group) => [group.groupId, group.title]),
-      );
-      const allItems = run.items
-        .slice()
-        .sort((left, right) => left.runSortOrder - right.runSortOrder)
-        .map((item, index, source) => ({
-          ...item,
-          groupTitle: groupTitles.get(item.groupId) || "本次临时项",
-          isConfirmed: item.state === "confirmed",
-          isFirst: index === 0,
-          isLast: index === source.length - 1,
-          isKey: item.importance === "key",
-          isNotNeeded: item.state === "notNeeded",
-          stateLabel: stateLabel(item.state),
-        }));
-      this.allItems = allItems;
-      const items = this.data.viewMode === "key"
-        ? allItems.filter((item) => item.isKey)
-        : allItems;
-      const unresolved = allItems.filter((item) => item.state === "unchecked");
+      const projection = projectRunView(run, this.data.viewMode);
+      this.rawRun = run;
+      this.allItems = projection.allItems;
       const closureReceipt = app.service.getRunClosureReceipt(this.checkRunId) || null;
       this.setData({
         error: "",
@@ -70,12 +49,13 @@ Page({
         run: {
           ...run,
           closureReceipt,
-          items,
+          groups: projection.groups,
+          items: projection.visibleItems,
           isInProgress: run.status === "inProgress",
-          keyCount: allItems.filter((item) => item.isKey).length,
+          keyCount: projection.keyCount,
           statusLabel: statusLabel(run.status),
-          unresolvedCount: unresolved.length,
-          unresolvedKeyCount: unresolved.filter((item) => item.importance === "key").length,
+          unresolvedCount: projection.unresolvedCount,
+          unresolvedKeyCount: projection.unresolvedKeyCount,
         },
       });
     } catch (error) {
@@ -110,10 +90,29 @@ Page({
 
   changeView(event) {
     const viewMode = event.currentTarget.dataset.view === "key" ? "key" : "all";
-    const items = viewMode === "key"
-      ? (this.allItems || []).filter((item) => item.isKey)
-      : this.allItems || [];
-    this.setData({ editingItemId: "", editingNote: "", viewMode, "run.items": items });
+    const projection = projectRunView(this.rawRun, viewMode);
+    this.allItems = projection.allItems;
+    this.setData({
+      editingItemId: "",
+      editingNote: "",
+      expandedItemId: "",
+      viewMode,
+      "run.groups": projection.groups,
+      "run.items": projection.visibleItems,
+    });
+  },
+
+  toggleItemTools(event) {
+    const itemId = event.currentTarget.dataset.itemId;
+    this.setData({
+      editingItemId: "",
+      editingNote: "",
+      expandedItemId: this.data.expandedItemId === itemId ? "" : itemId,
+    });
+  },
+
+  toggleTemporaryEditor() {
+    this.setData({ showTemporaryEditor: !this.data.showTemporaryEditor });
   },
 
   moveItem(event) {
@@ -150,12 +149,12 @@ Page({
     }
     await this.persist(
       () => app.service.addTemporaryItem(this.checkRunId, title, this.data.tempIsKey),
-      () => this.setData({ tempTitle: "", tempIsKey: false }),
+      () => this.setData({ showTemporaryEditor: false, tempTitle: "", tempIsKey: false }),
     );
   },
 
   beginNote(event) {
-    const item = this.data.run.items.find(
+    const item = (this.allItems || []).find(
       (candidate) => candidate.runItemId === event.currentTarget.dataset.itemId,
     );
     if (!item) return;

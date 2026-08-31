@@ -95,4 +95,30 @@ describe("native WeChat closure receipt page", () => {
     expect(markup).toContain("{{run.closureReceipt.message}}");
     expect(markup).toContain('bindtap="openHistoryFact"');
   });
+
+  it("keeps item tools and the temporary editor in reversible page-only state", () => {
+    const getRun = vi.fn();
+    vi.stubGlobal("getApp", () => ({ ready: Promise.resolve(), service: { getRun } }));
+    vi.stubGlobal("wx", {});
+    let definition: Record<string, any> | undefined;
+    vi.stubGlobal("Page", (candidate: Record<string, any>) => {
+      definition = candidate;
+    });
+    require(pageModulePath);
+    const page = instantiatePage(definition!);
+
+    expect(page.data.expandedItemId).toBe("");
+    expect(page.data.showTemporaryEditor).toBe(false);
+
+    page.toggleItemTools({ currentTarget: { dataset: { itemId: "daily.phone" } } });
+    expect(page.data.expandedItemId).toBe("daily.phone");
+    page.toggleItemTools({ currentTarget: { dataset: { itemId: "daily.phone" } } });
+    expect(page.data.expandedItemId).toBe("");
+
+    page.toggleTemporaryEditor();
+    expect(page.data.showTemporaryEditor).toBe(true);
+    page.toggleTemporaryEditor();
+    expect(page.data.showTemporaryEditor).toBe(false);
+    expect(getRun).not.toHaveBeenCalled();
+  });
 });
