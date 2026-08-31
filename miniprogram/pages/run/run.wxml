@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page run-page {{run && run.isInProgress ? 'page-with-dock' : ''}}">
   <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
   <view wx:if="{{loading}}" class="loading">正在恢复本次检查…</view>
 
@@ -6,8 +6,11 @@
     <view class="hero run-hero">
       <text class="eyebrow">现实 Run · {{run.statusLabel}}</text>
       <view class="title">{{run.runTemplateSnapshot.title}}</view>
-      <view class="subtitle">{{run.unresolvedCount}} 项未确认，其中 {{run.unresolvedKeyCount}} 个关键项</view>
-      <view class="trust-pill">每次操作先持久化成功，再更新页面事实</view>
+      <view class="run-summary">
+        <text>{{run.unresolvedCount}} 项未确认</text>
+        <text>关键 {{run.unresolvedKeyCount}} 项</text>
+      </view>
+      <view class="trust-pill">操作持久化成功后，页面才更新事实</view>
     </view>
 
     <view wx:if="{{run.closureReceipt}}" class="card closure-card">
@@ -26,67 +29,83 @@
 
     <block wx:else>
       <view class="view-switch" role="group" aria-label="检查项视图">
-      <button class="small-button {{viewMode == 'all' ? 'active-view' : 'secondary-button'}}" data-view="all" bindtap="changeView">全部</button>
-      <button class="small-button {{viewMode == 'key' ? 'active-view' : 'secondary-button'}}" data-view="key" bindtap="changeView">只看关键 {{run.keyCount}}</button>
+        <button class="small-button {{viewMode == 'all' ? 'active-view' : 'secondary-button'}}" data-view="all" bindtap="changeView">全部</button>
+        <button class="small-button {{viewMode == 'key' ? 'active-view' : 'secondary-button'}}" data-view="key" bindtap="changeView">只看关键 {{run.keyCount}}</button>
       </view>
 
-    <view class="section">
       <view wx:if="{{viewMode == 'key' && !run.items.length}}" class="empty">这次检查没有关键项；切回“全部”继续核对。</view>
-      <view wx:for="{{run.items}}" wx:key="runItemId" class="card item-card {{item.state}}">
-        <view class="item-group-label">{{item.groupTitle}}</view>
-        <view class="row-between item-heading">
-          <view class="item-title-wrap">
-            <text wx:if="{{item.isKey}}" class="key-badge">关键</text>
-            <text class="card-title">{{item.title}}</text>
-          </view>
-          <text class="state-label">{{item.stateLabel}}</text>
-        </view>
-        <view wx:if="{{item.condition}}" class="card-copy">条件：{{item.condition}}</view>
-        <view wx:if="{{item.hint}}" class="card-copy">提示：{{item.hint}}</view>
-        <view wx:if="{{item.isTemporary}}" class="temporary-label">本次临时项</view>
-        <view wx:if="{{item.oneTimeNote}}" class="private-note">私密本次备注：{{item.oneTimeNote}}</view>
 
-        <view wx:if="{{run.isInProgress}}" class="button-row item-actions">
-          <button class="{{item.isConfirmed ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{item.runItemId}}" bindtap="toggleConfirmed" loading="{{busy}}">{{item.isConfirmed ? '撤销确认' : '确认'}}</button>
-          <button class="{{item.isNotNeeded ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{item.runItemId}}" bindtap="markNotNeeded" loading="{{busy}}">{{item.isNotNeeded ? '恢复待查' : '本次不需要'}}</button>
+      <view wx:for="{{run.groups}}" wx:for-item="group" wx:key="renderKey" class="run-group">
+        <view class="run-group-heading">
+          <text class="run-group-title">{{group.title}}</text>
+          <text class="run-group-count">已处理 {{group.handledCount}} / {{group.itemCount}}</text>
         </view>
-        <view wx:if="{{run.isInProgress && viewMode == 'all'}}" class="order-actions">
-          <text class="order-label">本次顺序</text>
-          <button class="text-button" disabled="{{item.isFirst}}" data-item-id="{{item.runItemId}}" data-direction="-1" bindtap="moveItem">上移</button>
-          <button class="text-button" disabled="{{item.isLast}}" data-item-id="{{item.runItemId}}" data-direction="1" bindtap="moveItem">下移</button>
-        </view>
-        <button wx:if="{{run.isInProgress && editingItemId != item.runItemId}}" class="note-link" data-item-id="{{item.runItemId}}" bindtap="beginNote">{{item.oneTimeNote ? '编辑私密备注' : '添加本次私密备注'}}</button>
-        <view wx:if="{{run.isInProgress && editingItemId == item.runItemId}}" class="note-editor">
-          <textarea class="textarea" maxlength="500" value="{{editingNote}}" placeholder="仅留在本机；分享摘要默认不包含" bindinput="updateNote"></textarea>
-          <view class="button-row">
-            <button class="secondary-button small-button" bindtap="cancelNote">取消</button>
-            <button class="primary-button small-button" bindtap="saveNote" loading="{{busy}}">保存备注</button>
+        <view class="run-group-surface">
+          <view wx:for="{{group.items}}" wx:for-item="checkItem" wx:key="runItemId" class="run-item {{checkItem.state}}">
+            <view class="item-heading">
+              <view class="item-title-wrap">
+                <text wx:if="{{checkItem.isKey}}" class="key-badge">关键</text>
+                <text class="item-title">{{checkItem.title}}</text>
+              </view>
+              <text class="state-label">{{checkItem.stateLabel}}</text>
+            </view>
+
+            <view wx:if="{{checkItem.condition}}" class="item-copy">条件：{{checkItem.condition}}</view>
+            <view wx:if="{{checkItem.hint}}" class="item-copy">提示：{{checkItem.hint}}</view>
+            <view wx:if="{{checkItem.isTemporary}}" class="temporary-label">本次临时项</view>
+            <view wx:if="{{checkItem.oneTimeNote}}" class="private-note">私密本次备注：{{checkItem.oneTimeNote}}</view>
+
+            <view wx:if="{{run.isInProgress}}" class="button-row item-actions">
+              <button class="{{checkItem.isConfirmed ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{checkItem.runItemId}}" bindtap="toggleConfirmed" loading="{{busy}}">{{checkItem.isConfirmed ? '撤销确认' : '确认'}}</button>
+              <button class="{{checkItem.isNotNeeded ? 'primary-button' : 'secondary-button'}} small-button" data-item-id="{{checkItem.runItemId}}" bindtap="markNotNeeded" loading="{{busy}}">{{checkItem.isNotNeeded ? '恢复待查' : '本次不需要'}}</button>
+            </view>
+
+            <button wx:if="{{run.isInProgress}}" class="text-button item-tools-toggle" data-item-id="{{checkItem.runItemId}}" bindtap="toggleItemTools">
+              {{expandedItemId == checkItem.runItemId ? '收起调整' : (checkItem.oneTimeNote ? '调整与备注（已填写）' : '调整与备注')}}
+            </button>
+
+            <view wx:if="{{run.isInProgress && expandedItemId == checkItem.runItemId}}" class="item-tools">
+              <view wx:if="{{viewMode == 'all'}}" class="order-actions">
+                <text class="order-label">本次顺序</text>
+                <button class="text-button" disabled="{{checkItem.isFirst}}" data-item-id="{{checkItem.runItemId}}" data-direction="-1" bindtap="moveItem">上移</button>
+                <button class="text-button" disabled="{{checkItem.isLast}}" data-item-id="{{checkItem.runItemId}}" data-direction="1" bindtap="moveItem">下移</button>
+              </view>
+              <button wx:if="{{editingItemId != checkItem.runItemId}}" class="text-button note-link" data-item-id="{{checkItem.runItemId}}" bindtap="beginNote">{{checkItem.oneTimeNote ? '编辑私密备注' : '添加本次私密备注'}}</button>
+              <view wx:if="{{editingItemId == checkItem.runItemId}}" class="note-editor">
+                <textarea class="textarea" maxlength="500" value="{{editingNote}}" placeholder="仅留在本机；分享摘要默认不包含" bindinput="updateNote"></textarea>
+                <view class="button-row">
+                  <button class="secondary-button small-button" bindtap="cancelNote">取消</button>
+                  <button class="primary-button small-button" bindtap="saveNote" loading="{{busy}}">保存备注</button>
+                </view>
+              </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
 
-    <view wx:if="{{run.isInProgress}}" class="card add-card">
-      <view class="card-title">添加本次临时项</view>
-      <input class="input" maxlength="80" value="{{tempTitle}}" placeholder="例如：再看一眼门窗" bindinput="updateTempTitle" />
-      <view class="row-between switch-row">
-        <text>标记为关键项</text>
-        <switch checked="{{tempIsKey}}" color="#247463" bindchange="updateTempImportance" />
+      <view wx:if="{{run.isInProgress && showTemporaryEditor}}" class="card add-card">
+        <view class="card-title">添加本次临时项</view>
+        <input class="input" maxlength="80" value="{{tempTitle}}" placeholder="例如：再看一眼门窗" bindinput="updateTempTitle" />
+        <view class="row-between switch-row">
+          <text>标记为关键项</text>
+          <switch checked="{{tempIsKey}}" color="#247463" bindchange="updateTempImportance" />
+        </view>
+        <button class="secondary-button" bindtap="addTemporaryItem" loading="{{busy}}">加入本次检查</button>
       </view>
-      <button class="secondary-button" bindtap="addTemporaryItem" loading="{{busy}}">加入本次检查</button>
-    </view>
 
-      <view class="card truth-card">
-      <view class="card-title">结束语义</view>
-      <view class="card-copy">只有全部处理后才会记为“已完成”；否则会明确记录未确认数量，关键项还需二次确认。</view>
-      <view wx:if="{{run.isInProgress}}" class="button-stack">
+      <view class="run-footer">
+        <view class="run-footer-title">结束与分享</view>
+        <view class="run-footer-copy">只有全部处理后才会记为“已完成”；否则会如实记录未确认数量，关键项还需二次确认。</view>
+        <button wx:if="{{run.isInProgress}}" class="danger-button discard-button" bindtap="discardRun" loading="{{busy}}">放弃本次检查</button>
+        <view class="button-row share-actions">
+          <button class="secondary-button small-button" bindtap="copySummary">复制无备注摘要</button>
+          <button class="secondary-button small-button" open-type="share">微信分享入口</button>
+        </view>
+      </view>
+
+      <view wx:if="{{run.isInProgress}}" class="bottom-dock run-dock">
+        <button class="secondary-button" bindtap="toggleTemporaryEditor">{{showTemporaryEditor ? '收起临时项' : '临时加一项'}}</button>
         <button class="primary-button" bindtap="finishRun" loading="{{busy}}">结束本次检查</button>
-        <button class="danger-button" bindtap="discardRun" loading="{{busy}}">放弃本次检查</button>
-      </view>
-      <view class="button-row">
-        <button class="secondary-button small-button" bindtap="copySummary">复制无备注摘要</button>
-        <button class="secondary-button small-button" open-type="share">微信分享入口</button>
-      </view>
       </view>
     </block>
   </block>
