@@ -23,6 +23,7 @@ pnpm e2e
 - Setup script：
 
   ```sh
+  . "$NVM_DIR/nvm.sh"
   nvm install 24
   nvm alias default 24
   printf '24\n' > .nvmrc
@@ -36,6 +37,7 @@ pnpm e2e
 - Maintenance script：
 
   ```sh
+  . "$NVM_DIR/nvm.sh"
   nvm use 24
   nvm alias default 24
   printf '24\n' > .nvmrc
@@ -44,6 +46,7 @@ pnpm e2e
   pnpm install --frozen-lockfile
   ```
 
+- Codex Cloud 的自定义脚本在非交互 shell 中运行：`NVM_DIR` 存在，但 `nvm` 函数不会自动加载，因此 setup 与 maintenance 都必须先 source `"$NVM_DIR/nvm.sh"`。2026-08-31 的临时容器实测结果为 Node.js `v24.20.0`、pnpm `11.19.0`、setup 与 maintenance 均成功。
 - Environment variables / secrets：无
 - Agent internet access：默认关闭即可；依赖安装阶段按平台默认允许联网
 
