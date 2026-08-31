@@ -3,6 +3,7 @@ export * from "./config.js";
 export * from "./home.js";
 export * from "./migration.js";
 export * from "./plan.js";
+export * from "./readable-export.js";
 export * from "./reset.js";
 export * from "./run.js";
 export * from "./schema.js";

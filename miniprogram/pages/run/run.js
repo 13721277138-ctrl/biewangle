@@ -27,6 +27,7 @@ Page({
     run: null,
     tempIsKey: false,
     tempTitle: "",
+    viewMode: "all",
   },
 
   onLoad(options) {
@@ -41,24 +42,37 @@ Page({
     try {
       await app.ready;
       const run = app.service.getRun(this.checkRunId);
-      const items = run.items
+      const groupTitles = new Map(
+        run.runTemplateSnapshot.groups.map((group) => [group.groupId, group.title]),
+      );
+      const allItems = run.items
         .slice()
         .sort((left, right) => left.runSortOrder - right.runSortOrder)
-        .map((item) => ({
+        .map((item, index, source) => ({
           ...item,
+          groupTitle: groupTitles.get(item.groupId) || "本次临时项",
           isConfirmed: item.state === "confirmed",
+          isFirst: index === 0,
+          isLast: index === source.length - 1,
           isKey: item.importance === "key",
           isNotNeeded: item.state === "notNeeded",
           stateLabel: stateLabel(item.state),
         }));
-      const unresolved = items.filter((item) => item.state === "unchecked");
+      this.allItems = allItems;
+      const items = this.data.viewMode === "key"
+        ? allItems.filter((item) => item.isKey)
+        : allItems;
+      const unresolved = allItems.filter((item) => item.state === "unchecked");
+      const closureReceipt = app.service.getRunClosureReceipt(this.checkRunId) || null;
       this.setData({
         error: "",
         loading: false,
         run: {
           ...run,
+          closureReceipt,
           items,
           isInProgress: run.status === "inProgress",
+          keyCount: allItems.filter((item) => item.isKey).length,
           statusLabel: statusLabel(run.status),
           unresolvedCount: unresolved.length,
           unresolvedKeyCount: unresolved.filter((item) => item.importance === "key").length,
@@ -92,6 +106,32 @@ Page({
   markNotNeeded(event) {
     const itemId = event.currentTarget.dataset.itemId;
     return this.persist(() => app.service.markNotNeeded(this.checkRunId, itemId));
+  },
+
+  changeView(event) {
+    const viewMode = event.currentTarget.dataset.view === "key" ? "key" : "all";
+    const items = viewMode === "key"
+      ? (this.allItems || []).filter((item) => item.isKey)
+      : this.allItems || [];
+    this.setData({ editingItemId: "", editingNote: "", viewMode, "run.items": items });
+  },
+
+  moveItem(event) {
+    const itemId = event.currentTarget.dataset.itemId;
+    const direction = Number(event.currentTarget.dataset.direction);
+    const items = (this.allItems || []).slice();
+    const index = items.findIndex((item) => item.runItemId === itemId);
+    const target = index + direction;
+    if (index < 0 || target < 0 || target >= items.length) return;
+    const moved = items[index];
+    items[index] = items[target];
+    items[target] = moved;
+    return this.persist(() =>
+      app.service.reorderRunItems(
+        this.checkRunId,
+        items.map((item) => item.runItemId),
+      ),
+    );
   },
 
   updateTempTitle(event) {
@@ -147,7 +187,7 @@ Page({
         result = await app.service.closeRun(this.checkRunId, false, "complete");
       });
       if (committed && result.kind === "completed") {
-        wx.redirectTo({ url: "/pages/history/history" });
+        return;
       } else if (committed) {
         this.setData({ error: "检查事实已变化，未记录为完成；请重新核对当前项目。" });
       }
@@ -189,7 +229,6 @@ Page({
       this.setData({ error: "未形成有效的结束事实，请重新检查。" });
       return;
     }
-    wx.redirectTo({ url: "/pages/history/history" });
   },
 
   async discardRun() {
@@ -206,10 +245,20 @@ Page({
       result = await app.service.closeRun(this.checkRunId, false, "discard");
     });
     if (committed && result.kind === "discarded") {
-      wx.redirectTo({ url: "/pages/history/history" });
+      return;
     } else if (committed) {
       this.setData({ error: "没有形成“已放弃”事实，当前检查保持不变。" });
     }
+  },
+
+  openHistoryFact() {
+    wx.redirectTo({
+      url: `/pages/history-detail/history-detail?id=${encodeURIComponent(this.checkRunId)}`,
+    });
+  },
+
+  goHome() {
+    wx.reLaunch({ url: "/pages/home/home" });
   },
 
   async copySummary() {

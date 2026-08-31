@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   addTemporaryItem,
+  buildRunClosureReceipt,
   closeRun,
   filterRunItems,
   markNotNeeded,
@@ -177,6 +178,40 @@ describe("CheckRun immutable behavior contract", () => {
     expect(first.sourceTemplateIdentity).toEqual(second.sourceTemplateIdentity);
     expect(first.checkRunId).not.toBe(second.checkRunId);
     expect(first.items[0]!.runItemId).not.toBe(second.items[0]!.runItemId);
+  });
+
+  it("projects frozen completion and unresolved receipts from persisted run facts", () => {
+    const template = officialTemplate("official.daily_out");
+    const started = startRun(template, NOW, { checkRunId: "run-receipt" });
+    expect(buildRunClosureReceipt(started)).toBeUndefined();
+
+    const completed = closeRun(confirmEveryItem(started, toggleConfirmed), {
+      intent: "complete",
+      now: ONE_HOUR_LATER,
+      closedEventId: "close-receipt-completed",
+    });
+    expect(completed.kind).toBe("completed");
+    if (completed.kind !== "completed") return;
+    expect(buildRunClosureReceipt(completed.run)).toEqual({
+      kind: "completed",
+      title: "这份清单已全部处理",
+      message: "可以放心出发。",
+    });
+
+    const unresolved = closeRun(started, {
+      intent: "endWithUnresolved",
+      keyRiskConfirmed: true,
+      now: ONE_HOUR_LATER,
+      closedEventId: "close-receipt-unresolved",
+    });
+    expect(unresolved.kind).toBe("endedWithUnresolved");
+    if (unresolved.kind !== "endedWithUnresolved") return;
+    const lastClose = unresolved.run.closedEvents.at(-1)!;
+    expect(buildRunClosureReceipt(unresolved.run)).toEqual({
+      kind: "endedWithUnresolved",
+      title: "本次检查已结束",
+      message: `仍有${lastClose.unresolvedCount}项未确认，其中${lastClose.unresolvedKeyCount}项为关键项。`,
+    });
   });
 
   it("supports explicit temporary items, note-safe state toggling, and immutable reorder", () => {

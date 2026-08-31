@@ -52,6 +52,8 @@ function createWechatPlatform(wxApi) {
     return {
       clipboard: typeof api.setClipboardData === "function",
       calendar: typeof api.addPhoneCalendar === "function",
+      chatFileImport:
+        typeof api.chooseMessageFile === "function" && typeof api.getFileSystemManager === "function",
       fileShare: typeof api.shareFileMessage === "function",
       updateManager: typeof api.getUpdateManager === "function",
       subscriptionMessages: "unavailable",
@@ -77,6 +79,56 @@ function createWechatPlatform(wxApi) {
       return unavailable("当前微信版本不支持直接分享文件；可以改用复制备份文本。");
     }
     return callNative(api, "shareFileMessage", input || {});
+  }
+
+  function chooseBackupText(maxBytes) {
+    if (typeof api.chooseMessageFile !== "function" || typeof api.getFileSystemManager !== "function") {
+      return unavailable("当前微信版本不支持从聊天选择备份文件；当前数据未改变。");
+    }
+    return new Promise((resolve, reject) => {
+      api.chooseMessageFile({
+        count: 1,
+        type: "file",
+        extension: ["json"],
+        success: (result) => {
+          const file = result && Array.isArray(result.tempFiles) ? result.tempFiles[0] : undefined;
+          if (!file || typeof file.path !== "string" || typeof file.size !== "number") {
+            reject(new Error("没有读取到有效的微信聊天文件；当前数据未改变。"));
+            return;
+          }
+          if (file.size > maxBytes) {
+            const limitMb = Math.floor(maxBytes / (1024 * 1024));
+            reject(new Error(`备份文件超过 ${limitMb} MB 上限；当前数据未改变。`));
+            return;
+          }
+          let manager;
+          try {
+            manager = api.getFileSystemManager();
+          } catch (error) {
+            reject(error);
+            return;
+          }
+          manager.readFile({
+            filePath: file.path,
+            encoding: "utf8",
+            success: (readResult) => {
+              if (!readResult || typeof readResult.data !== "string") {
+                reject(new Error("备份文件不是可读取的 UTF-8 文本；当前数据未改变。"));
+                return;
+              }
+              resolve({
+                kind: "success",
+                name: typeof file.name === "string" ? file.name : "backup.json",
+                size: file.size,
+                text: readResult.data,
+              });
+            },
+            fail: reject,
+          });
+        },
+        fail: reject,
+      });
+    });
   }
 
   function activateUpdate() {
@@ -117,6 +169,7 @@ function createWechatPlatform(wxApi) {
     addCalendarEvent,
     calendarEventForPlan,
     capabilities,
+    chooseBackupText,
     copyText,
     shareFile,
     watchForUpdates,

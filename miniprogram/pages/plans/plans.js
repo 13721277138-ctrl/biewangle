@@ -34,6 +34,12 @@ Page({
     templates: [],
   },
 
+  onLoad(options) {
+    this.requestedTemplateId = options.template
+      ? decodeURIComponent(options.template)
+      : "";
+  },
+
   async onShow() {
     await this.refresh();
   },
@@ -42,16 +48,25 @@ Page({
     try {
       await app.ready;
       const snapshot = app.service.getSnapshot();
-      const templates = app.service.getVerticalTemplates().map((template) => ({
-        templateId: template.templateId,
-        title: template.title,
-      }));
+      const library = app.service.getTemplateLibrary();
+      const templates = library.official
+        .filter((entry) => !entry.hidden)
+        .map((entry) => ({
+          sourceId: entry.template.templateId,
+          title: entry.favorite ? `★ ${entry.template.title}` : entry.template.title,
+        }))
+        .concat(
+          library.personal.map((template) => ({
+            sourceId: template.personalTemplateId,
+            title: `个人｜${template.title}`,
+          })),
+        );
       const plans = snapshot.plannedChecks
         .filter((plan) => plan.status === "pending")
         .slice()
         .sort((left, right) => {
-          const leftWhen = `${left.scheduledDate}T${left.scheduledTime || "00:00"}`;
-          const rightWhen = `${right.scheduledDate}T${right.scheduledTime || "00:00"}`;
+          const leftWhen = `${left.scheduledDate}T${left.scheduledTime || "24:00"}`;
+          const rightWhen = `${right.scheduledDate}T${right.scheduledTime || "24:00"}`;
           return (
             leftWhen.localeCompare(rightWhen) ||
             left.createdAt.localeCompare(right.createdAt) ||
@@ -62,10 +77,13 @@ Page({
           ...plan,
           when: `${plan.scheduledDate}${plan.scheduledTime ? ` ${plan.scheduledTime}` : "（全天）"}`,
         }));
-      const selectedTemplateIndex = Math.min(
-        this.data.selectedTemplateIndex,
-        Math.max(templates.length - 1, 0),
-      );
+      const requestedIndex = this.requestedTemplateId
+        ? templates.findIndex((template) => template.sourceId === this.requestedTemplateId)
+        : -1;
+      const selectedTemplateIndex = requestedIndex >= 0
+        ? requestedIndex
+        : Math.min(this.data.selectedTemplateIndex, Math.max(templates.length - 1, 0));
+      this.requestedTemplateId = "";
       this.setData({
         error: "",
         loading: false,
@@ -114,7 +132,7 @@ Page({
     this.setData({ busy: true, error: "" });
     let plan;
     try {
-      plan = await app.service.createPlan(template.templateId, {
+      plan = await app.service.createPlan(template.sourceId, {
         createdTimeZoneId: timeZoneId(),
         scheduledDate: this.data.scheduledDate,
         scheduledTime: this.data.scheduledTime || undefined,

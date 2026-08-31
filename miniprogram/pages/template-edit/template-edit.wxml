@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="hero">
+    <text class="eyebrow">只修改个人副本</text>
+    <view class="title">{{modeLabel}}</view>
+    <view class="subtitle">官方原件、既有计划和已开始 Run 都不会被这次编辑追溯改写。</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在准备本地编辑器…</view>
+
+  <block wx:else>
+    <view class="card preview-card theme-{{themeColor}}">
+      <text class="preview-icon">{{icon}}</text>
+      <view>
+        <view class="card-title">{{title || '未命名模板'}}</view>
+        <view class="card-copy">{{itemCount}} 个检查项 · 仅保存在当前设备</view>
+      </view>
+    </view>
+
+    <view class="card editor-card">
+      <view class="field">
+        <text class="label">模板名称</text>
+        <input class="input" maxlength="80" value="{{title}}" placeholder="例如：晨间出门" bindinput="updateTitle" />
+      </view>
+      <view class="field">
+        <text class="label">检查项（每行一项）</text>
+        <textarea class="textarea items-textarea" maxlength="4000" value="{{itemLines}}" placeholder="钥匙&#10;耳机&#10;水杯" bindinput="updateItems"></textarea>
+        <view class="field-help">当前识别 {{itemCount}} 项；空行不会保存。</view>
+      </view>
+      <view class="picker-grid">
+        <view class="field picker-cell">
+          <text class="label">图标</text>
+          <picker range="{{icons}}" value="{{iconIndex}}" bindchange="selectIcon">
+            <view class="picker-value">{{icon}}</view>
+          </picker>
+        </view>
+        <view class="field picker-cell">
+          <text class="label">主题色</text>
+          <picker range="{{colors}}" value="{{themeColorIndex}}" bindchange="selectColor">
+            <view class="picker-value">{{themeColor}}</view>
+          </picker>
+        </view>
+      </view>
+      <view wx:if="{{itemCount > 60}}" class="notice">这份清单较长；仍可保存，但实际检查时建议精简。</view>
+      <button class="primary-button save-button" bindtap="save" loading="{{busy}}" disabled="{{busy || !title || itemCount == 0}}">保存个人模板</button>
+    </view>
+  </block>
+</view>

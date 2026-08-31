@@ -1,0 +1,49 @@
+<view class="page">
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在读取冻结的历史事实…</view>
+
+  <block wx:elif="{{run}}">
+    <view class="hero">
+      <text class="eyebrow">历史事实 · {{run.statusLabel}}</text>
+      <view class="title">{{run.runTemplateSnapshot.title}}</view>
+      <view class="subtitle">结束于 {{run.closedAt}}</view>
+      <view class="trust-pill">既有历史只读；重新开始会创建不同 ID 的新 Run</view>
+    </view>
+
+    <view class="card fact-card">
+      <view class="fact-score">{{run.totalCount - run.uncheckedCount}} / {{run.totalCount}}</view>
+      <view class="card-copy">未确认 {{run.uncheckedCount}} 项，其中关键 {{run.uncheckedKeyCount}} 项</view>
+      <view class="card-copy">原 Run ID：{{run.checkRunId}}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-heading">
+        <text class="section-title">逐项事实</text>
+      </view>
+      <view wx:for="{{run.items}}" wx:key="runItemId" class="card history-item {{item.state}}">
+        <view class="row-between">
+          <view class="history-item-title">
+            <text wx:if="{{item.isKey}}" class="badge key-badge">关键</text>
+            <text>{{item.title}}</text>
+          </view>
+          <text class="state">{{item.stateLabel}}</text>
+        </view>
+        <view wx:if="{{item.condition}}" class="card-copy">条件：{{item.condition}}</view>
+        <view wx:if="{{item.hint}}" class="card-copy">提示：{{item.hint}}</view>
+        <view wx:if="{{item.isTemporary}}" class="temporary">本次临时项</view>
+        <view wx:if="{{item.oneTimeNote}}" class="private-note">本机私密备注：{{item.oneTimeNote}}</view>
+      </view>
+    </view>
+
+    <view class="card action-card">
+      <view class="card-title">后续操作</view>
+      <view class="card-copy">“重开原 Run”只在结束后 2 小时内保留同一事实身份；“重新开始”始终基于冻结快照创建全新未勾选 Run。</view>
+      <button wx:if="{{run.canReopen}}" class="secondary-button" bindtap="reopenRun" loading="{{busy}}">尝试重开原 Run</button>
+      <button class="primary-button" bindtap="restartRun" loading="{{busy}}">从这份快照重新开始</button>
+      <view class="button-row">
+        <button class="secondary-button small-button" bindtap="copySummary">复制无备注摘要</button>
+        <button class="secondary-button small-button" open-type="share">微信分享入口</button>
+      </view>
+    </view>
+  </block>
+</view>

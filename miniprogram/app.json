@@ -4,7 +4,13 @@
     "pages/run/run",
     "pages/plans/plans",
     "pages/history/history",
-    "pages/data/data"
+    "pages/data/data",
+    "pages/templates/templates",
+    "pages/template-detail/template-detail",
+    "pages/template-edit/template-edit",
+    "pages/search/search",
+    "pages/more-runs/more-runs",
+    "pages/history-detail/history-detail"
   ],
   "window": {
     "backgroundColor": "#f5f3ec",

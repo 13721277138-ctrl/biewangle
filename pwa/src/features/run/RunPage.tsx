@@ -1,5 +1,6 @@
 import {
   addTemporaryItem,
+  buildRunClosureReceipt,
   closeRun,
   filterRunItems,
   markNotNeeded,
@@ -51,20 +52,16 @@ function closedRunFrom(result: CloseRunResult): CheckRun | undefined {
 }
 
 function ClosedRun({ run }: { run: CheckRun }) {
-  const lastEvent = run.closedEvents.at(-1);
-  const completed = run.status === "completed";
+  const receipt = buildRunClosureReceipt(run)!;
+  const completed = receipt.kind === "completed";
   return (
     <section className="page run-page closed-run-page">
       <div className={completed ? "completion-orb" : "completion-orb warning"}>
         {completed ? <Check size={36} /> : <AlertTriangle size={34} />}
       </div>
       <p className="eyebrow">{run.runTemplateSnapshot.title}</p>
-      <h1>{completed ? "这份清单已全部处理" : "本次检查已结束"}</h1>
-      <p className="completion-copy">
-        {completed
-          ? "可以放心出发。"
-          : `仍有 ${lastEvent?.unresolvedCount ?? 0} 项未确认，其中 ${lastEvent?.unresolvedKeyCount ?? 0} 项为关键项。`}
-      </p>
+      <h1>{receipt.title}</h1>
+      <p className="completion-copy">{receipt.message}</p>
       <div className="completion-actions">
         <Link className="primary-button link-button" to={`/history/${run.checkRunId}`}>查看本次事实</Link>
         <Link className="secondary-button link-button" to="/history">查看历史</Link>
@@ -131,6 +128,16 @@ export function RunPage() {
   const visibleItems = useMemo(
     () => (run ? filterRunItems(run, view) : []),
     [run, view],
+  );
+  const groupTitles = useMemo(
+    () =>
+      new Map(
+        run?.runTemplateSnapshot.groups.map((group) => [
+          group.groupId,
+          group.title,
+        ]) ?? [],
+      ),
+    [run],
   );
 
   if (!run) {
@@ -301,6 +308,9 @@ export function RunPage() {
                 {item.state === "confirmed" ? <Check size={18} /> : <Circle size={18} />}
               </span>
               <span className="item-copy">
+                <small className="item-group-label">
+                  {groupTitles.get(item.groupId) ?? "本次临时项"}
+                </small>
                 <strong>{item.title}</strong>
                 {item.condition ? <small>{item.condition}</small> : null}
                 {item.isTemporary ? <small>本次临时项</small> : null}

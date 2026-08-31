@@ -149,8 +149,58 @@ describe("WechatDurableStore", () => {
     await store.commit(latest);
     storage.values.set(STORAGE_KEYS.slotB, { schemaVersion: 999 });
 
-    expect(storage.values.get(STORAGE_KEYS.active)).toBe("b");
     expect(await store.load()).toEqual(previous);
+    expect(storage.values.get(STORAGE_KEYS.active)).toBe("a");
+  });
+
+  it("recovers the newest valid slot when the active pointer is missing", async () => {
+    const { WechatDurableStore, STORAGE_KEYS } = loadStoreModule();
+    const storage = new FakeStorage();
+    const store = new WechatDurableStore({
+      storage,
+      validate: validateBusinessInvariants,
+      createInitial: () => appSnapshot(),
+    });
+    const previous = appSnapshot({ updatedAt: "2026-09-01T08:09:00.000+08:00" });
+    const latest = appSnapshot({ updatedAt: "2026-09-01T08:10:00.000+08:00" });
+    storage.values.set(STORAGE_KEYS.slotA, previous);
+    storage.values.set(STORAGE_KEYS.slotB, latest);
+
+    expect(storage.values.has(STORAGE_KEYS.active)).toBe(false);
+    expect(await store.load()).toEqual(latest);
+    expect(storage.values.get(STORAGE_KEYS.active)).toBe("b");
+  });
+
+  it("recovers the remaining valid slot when the active pointer is invalid", async () => {
+    const { WechatDurableStore, STORAGE_KEYS } = loadStoreModule();
+    const storage = new FakeStorage();
+    const store = new WechatDurableStore({
+      storage,
+      validate: validateBusinessInvariants,
+      createInitial: () => appSnapshot(),
+    });
+    const valid = appSnapshot({ updatedAt: "2026-09-01T08:12:00.000+08:00" });
+    storage.values.set(STORAGE_KEYS.active, "corrupt-pointer");
+    storage.values.set(STORAGE_KEYS.slotA, { schemaVersion: 999 });
+    storage.values.set(STORAGE_KEYS.slotB, valid);
+
+    expect(await store.load()).toEqual(valid);
+    expect(storage.values.get(STORAGE_KEYS.active)).toBe("b");
+  });
+
+  it("does not silently initialize empty data when an invalid pointer still has corrupt slots", async () => {
+    const { WechatDurableStore, STORAGE_KEYS } = loadStoreModule();
+    const storage = new FakeStorage();
+    const store = new WechatDurableStore({
+      storage,
+      validate: validateBusinessInvariants,
+      createInitial: () => appSnapshot(),
+    });
+    storage.values.set(STORAGE_KEYS.active, "corrupt-pointer");
+    storage.values.set(STORAGE_KEYS.slotA, { schemaVersion: 999 });
+    storage.values.set(STORAGE_KEYS.slotB, { schemaVersion: 998 });
+
+    await expect(store.load()).rejects.toThrow("无法通过完整性校验");
   });
 
   it("does not write any slot when the candidate fails validation", async () => {

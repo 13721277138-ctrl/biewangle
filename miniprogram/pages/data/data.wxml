@@ -21,6 +21,7 @@
         <view><text>{{facts.personalTemplates}}</text><label>个人模板</label></view>
       </view>
       <view class="card-copy">schema v{{facts.schemaVersion}} · 最近事实写入 {{facts.updatedAt}}</view>
+      <view class="card-copy">最近完整备份：{{facts.lastBackupAt || '尚未生成'}}</view>
     </view>
 
     <view class="card backup-card">
@@ -29,7 +30,9 @@
       <view class="button-stack">
         <button class="primary-button" bindtap="shareBackupFile">作为 JSON 文件分享</button>
         <button class="secondary-button" bindtap="copyBackup">复制完整备份文本</button>
+        <button class="secondary-button" bindtap="copyReadableExport">复制人类可读文本</button>
       </view>
+      <view class="card-copy">可读文本不包含本次私密备注，也不能用于整体恢复；恢复必须使用 JSON 完整备份。</view>
       <view wx:if="{{preview}}" class="backup-receipt">
         <view>刚刚生成（不等于已异地保存）</view>
         <text>{{preview.exportedAt}}</text>
@@ -37,12 +40,35 @@
       </view>
     </view>
 
+    <view class="card import-card">
+      <view class="card-title">从微信聊天恢复 JSON 备份</view>
+      <view class="card-copy">先选择不超过 10 MB 的 Backup Envelope。选择与预览不会写入；确认恢复时严格执行“保护当前数据 → 再解析校验 → 双槽原子提交”。</view>
+      <button class="secondary-button import-button" bindtap="chooseBackup" loading="{{busy}}">从聊天选择 JSON 文件</button>
+      <view wx:if="{{importPreview}}" class="import-preview">
+        <view class="preview-name">{{importFileName}} · {{importPreview.sizeKb}} KB</view>
+        <view>导出时间：{{importPreview.exportedAt}}</view>
+        <view>个人模板 {{importPreview.personalTemplates}} · 计划 {{importPreview.plans}} · Run {{importPreview.runs}}</view>
+        <button class="danger-button" bindtap="restoreSelected" loading="{{busy}}">用这份备份替换当前数据</button>
+      </view>
+    </view>
+
     <view class="card">
       <view class="card-title">平台能力实况</view>
       <view class="capability-row"><text>复制</text><text>{{capabilities.clipboard ? '可用' : '不可用'}}</text></view>
       <view class="capability-row"><text>文件分享</text><text>{{capabilities.fileShare ? '可用' : '不可用，使用复制'}}</text></view>
+      <view class="capability-row"><text>聊天文件导入</text><text>{{capabilities.chatFileImport ? '可用' : '不可用'}}</text></view>
       <view class="capability-row"><text>系统日历</text><text>{{capabilities.calendar ? '可尝试' : '不可用，计划仍留本机'}}</text></view>
       <view class="capability-row"><text>订阅消息</text><text>未配置，不伪装可用</text></view>
+    </view>
+
+    <view class="card reset-card">
+      <view class="card-title">清空全部本地数据</view>
+      <view class="danger-note">这会清空个人模板、计划、Run、历史与本机设置。请先导出备份；执行时仍会在本地创建保护副本，但保护副本不等于异地备份。</view>
+      <view class="field">
+        <text class="label">输入“全部重置”</text>
+        <input class="input" value="{{resetPhrase}}" placeholder="全部重置" bindinput="updateResetPhrase" />
+      </view>
+      <button class="danger-button reset-button" bindtap="resetAll" loading="{{busy}}" disabled="{{busy}}">创建保护副本并清空</button>
     </view>
   </block>
 </view>

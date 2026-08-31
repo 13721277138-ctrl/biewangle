@@ -2,6 +2,56 @@
   margin-bottom: 14rpx;
 }
 
+.closure-card {
+  padding: 38rpx 30rpx;
+  border-color: #b9d2ca;
+  text-align: center;
+}
+
+.closure-mark {
+  display: inline-block;
+  margin-bottom: 20rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: #e3f1eb;
+  color: #247463;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.closure-title {
+  color: #173f36;
+  font-size: 42rpx;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.closure-message {
+  margin-top: 18rpx;
+  color: #52645f;
+  font-size: 28rpx;
+  line-height: 1.65;
+}
+
+.closure-actions {
+  margin-top: 30rpx;
+}
+
+.view-switch {
+  display: flex;
+  margin: 0 -8rpx 22rpx;
+}
+
+.view-switch button {
+  flex: 1;
+  margin: 0 8rpx;
+}
+
+.active-view {
+  background: #274d44;
+  color: #ffffff;
+}
+
 .item-card {
   padding: 24rpx;
   border-left: 8rpx solid #c4cbc7;
@@ -19,6 +69,14 @@
 
 .item-heading {
   align-items: flex-start;
+}
+
+.item-group-label {
+  margin-bottom: 10rpx;
+  color: #75807c;
+  font-size: 21rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
 }
 
 .item-title-wrap {
@@ -63,6 +121,23 @@
 
 .item-actions button {
   min-height: 74rpx;
+}
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 8rpx;
+}
+
+.order-label {
+  margin-right: auto;
+  color: #75807c;
+  font-size: 21rpx;
+}
+
+.order-actions button {
+  width: 100rpx;
 }
 
 .note-link {

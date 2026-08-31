@@ -2,6 +2,14 @@ const APP_VERSION = "1.1.0";
 const SCHEMA_VERSION = 1;
 const OFFICIAL_CONTENT_VERSION = 1;
 const REOPEN_WINDOW_HOURS = 2;
+const STALE_AFTER_HOURS = 24;
+const SEARCH_WEIGHTS = Object.freeze({
+  title: 500,
+  aliases: 400,
+  itemTitle: 300,
+  applicability: 200,
+  hint: 100,
+});
 
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -37,13 +45,19 @@ function assertOptionalNonEmptyString(value, description) {
 }
 
 function assertInteger(value, minimum, description) {
-  assert(Number.isInteger(value) && value >= minimum, `${description}必须是有效整数。`);
+  assert(Number.isSafeInteger(value) && value >= minimum, `${description}必须是有效整数。`);
 }
 
 function assertIsoDateTime(value, description) {
-  const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+  const pattern = /^(\d{4})-(\d{2})-(\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
+  const match = typeof value === "string" ? pattern.exec(value) : null;
+  const year = match ? Number(match[1]) : 0;
+  const month = match ? Number(match[2]) : 0;
+  const day = match ? Number(match[3]) : 0;
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   assert(
-    typeof value === "string" && pattern.test(value) && Number.isFinite(Date.parse(value)),
+    match !== null && month >= 1 && month <= 12 && day >= 1 && day <= daysInMonth[month - 1],
     `${description}必须是带时区的 ISO 日期时间。`,
   );
 }
@@ -54,6 +68,25 @@ function assertOptionalIsoDateTime(value, description) {
 
 function assertUnique(values, description) {
   assert(new Set(values).size === values.length, `${description}存在重复标识。`);
+}
+
+function factsMatch(left, right) {
+  if (left === right) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((entry, index) => factsMatch(entry, right[index]))
+    );
+  }
+  if (!isRecord(left) || !isRecord(right)) return false;
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every((key) => hasOwn(right, key) && factsMatch(left[key], right[key]))
+  );
 }
 
 function validateTemplateItem(item, description) {
@@ -235,6 +268,47 @@ function validateRun(run, description) {
   assertOptionalIsoDateTime(run.deletedAt, `${description}删除时间`);
 }
 
+function validateRunSnapshotItems(run) {
+  const frozenItems = run.runTemplateSnapshot.groups.reduce(
+    (entries, group) =>
+      entries.concat(group.items.map((item) => ({ groupId: group.groupId, item }))),
+    [],
+  );
+  const frozenById = new Map(
+    frozenItems.map((entry) => [entry.item.itemId, entry]),
+  );
+  const sourcedItems = run.items.filter((item) => !item.isTemporary);
+
+  assert(
+    sourcedItems.length === frozenItems.length,
+    `检查 ${run.checkRunId} 的运行项与冻结快照数量不一致。`,
+  );
+
+  run.items.forEach((runItem) => {
+    if (runItem.isTemporary) {
+      assert(
+        runItem.sourceItemId === undefined,
+        `检查 ${run.checkRunId} 的临时项不应声称冻结来源。`,
+      );
+      return;
+    }
+
+    const sourceItemId = runItem.sourceItemId;
+    const frozen = sourceItemId ? frozenById.get(sourceItemId) : undefined;
+    assert(
+      sourceItemId &&
+        frozen &&
+        runItem.runItemId === `${run.checkRunId}:${sourceItemId}` &&
+        runItem.groupId === frozen.groupId &&
+        runItem.title === frozen.item.title &&
+        runItem.importance === frozen.item.importance &&
+        runItem.condition === frozen.item.condition &&
+        runItem.hint === frozen.item.hint,
+      `检查 ${run.checkRunId} 的运行项与冻结快照不一致。`,
+    );
+  });
+}
+
 function validateClosedRun(run) {
   if (run.status === "inProgress") return;
   const lastClose = run.closedEvents[run.closedEvents.length - 1];
@@ -314,20 +388,36 @@ function validateSnapshot(candidate) {
       run.items.filter((item) => item.sourceItemId !== undefined).map((item) => item.sourceItemId),
       `检查 ${run.checkRunId} 的来源项目`,
     );
+    validateRunSnapshotItems(run);
     assertUnique(run.items.map((item) => String(item.runSortOrder)), `检查 ${run.checkRunId} 的排序`);
     const orders = run.items.map((item) => item.runSortOrder).sort((left, right) => left - right);
     assert(orders.every((order, index) => order === index), `检查 ${run.checkRunId} 的排序不是连续序列。`);
     assertUnique(run.closedEvents.map((event) => event.closedEventId), `检查 ${run.checkRunId} 的关闭事件`);
+    const expectedCloseCount = run.status === "inProgress" ? run.reopenCount : run.reopenCount + 1;
+    const priorCloseEvents =
+      run.status === "inProgress" ? run.closedEvents : run.closedEvents.slice(0, -1);
+    const hasImpossibleCloseFact = run.closedEvents.some(
+      (event) =>
+        event.unresolvedKeyCount > event.unresolvedCount ||
+        (event.type === "completed" && event.unresolvedCount !== 0) ||
+        (event.type === "endedWithUnresolved" && event.unresolvedCount === 0),
+    );
     assert(
-      run.reopenCount <= run.closedEvents.length && (run.reopenCount === 0 || run.lastReopenedAt !== undefined),
-      `检查 ${run.checkRunId} 的重开记录不一致。`,
+      run.closedEvents.length === expectedCloseCount &&
+        (run.lastReopenedAt !== undefined) === (run.reopenCount > 0) &&
+        priorCloseEvents.every((event) => event.type !== "discarded") &&
+        !hasImpossibleCloseFact,
+      `检查 ${run.checkRunId} 的关闭与重开事件链不一致。`,
     );
     validateClosedRun(run);
     if (run.sourcePlannedCheckId) {
       const sourcePlan = plansById.get(run.sourcePlannedCheckId);
       assert(
-        sourcePlan && sourcePlan.startedCheckRunId === run.checkRunId,
-        `检查 ${run.checkRunId} 与来源计划的引用不一致。`,
+        sourcePlan &&
+          sourcePlan.startedCheckRunId === run.checkRunId &&
+          factsMatch(sourcePlan.sourceTemplateIdentity, run.sourceTemplateIdentity) &&
+          factsMatch(sourcePlan.plannedTemplateSnapshot, run.runTemplateSnapshot),
+        `检查 ${run.checkRunId} 与来源计划的引用或冻结事实不一致。`,
       );
     }
   });
@@ -482,6 +572,30 @@ function markNotNeeded(run, itemId, now) {
   return updateItemState(run, itemId, item.state === "notNeeded" ? "unchecked" : "notNeeded", now);
 }
 
+function reorderRunItems(run, orderedRunItemIds, now) {
+  assertInProgress(run);
+  const expected = new Set(run.items.map((item) => item.runItemId));
+  const received = new Set(orderedRunItemIds);
+  assert(
+    received.size === orderedRunItemIds.length &&
+      received.size === expected.size &&
+      Array.from(expected).every((id) => received.has(id)),
+    "排序必须且只能包含本次检查的全部项目。",
+  );
+  const byId = new Map(run.items.map((item) => [item.runItemId, item]));
+  return Object.assign({}, run, {
+    items: orderedRunItemIds.map((runItemId, runSortOrder) =>
+      Object.assign({}, byId.get(runItemId), { runSortOrder }),
+    ),
+    lastInteractedAt: now,
+  });
+}
+
+function filterRunItems(run, view) {
+  const ordered = run.items.slice().sort((left, right) => left.runSortOrder - right.runSortOrder);
+  return view === "key" ? ordered.filter((item) => item.importance === "key") : ordered;
+}
+
 function addTemporaryItem(run, input, now, options) {
   assertInProgress(run);
   const title = input.title.trim();
@@ -527,6 +641,32 @@ function unresolvedCounts(run) {
   return {
     unresolvedCount: unresolved.length,
     unresolvedKeyCount: unresolved.filter((item) => item.importance === "key").length,
+  };
+}
+
+function buildRunClosureReceipt(run) {
+  if (run.status === "inProgress") return undefined;
+  const lastClose = run.closedEvents[run.closedEvents.length - 1];
+  if (!lastClose || lastClose.type !== run.status) return undefined;
+
+  if (run.status === "completed") {
+    return {
+      kind: "completed",
+      title: "这份清单已全部处理",
+      message: "可以放心出发。",
+    };
+  }
+  if (run.status === "endedWithUnresolved") {
+    return {
+      kind: "endedWithUnresolved",
+      title: "本次检查已结束",
+      message: `仍有${lastClose.unresolvedCount}项未确认，其中${lastClose.unresolvedKeyCount}项为关键项。`,
+    };
+  }
+  return {
+    kind: "discarded",
+    title: "本次检查已放弃",
+    message: "已如实保留“已放弃”事实，不会计作完成。",
   };
 }
 
@@ -594,6 +734,22 @@ function reopenRun(run, now) {
   };
 }
 
+function restartFromHistory(historyRun, now, options) {
+  return startRunFromSnapshot(
+    historyRun.sourceTemplateIdentity,
+    historyRun.runTemplateSnapshot,
+    now,
+    options || {},
+  );
+}
+
+function isStaleCandidate(run, now) {
+  return (
+    run.status === "inProgress" &&
+    Date.parse(now) - Date.parse(run.lastInteractedAt) >= STALE_AFTER_HOURS * 60 * 60 * 1000
+  );
+}
+
 function createPlannedCheck(source, options) {
   const plan = {
     plannedCheckId: options.plannedCheckId,
@@ -624,6 +780,141 @@ function startPlannedCheck(plan, now, options) {
 
 function cancelPlannedCheck(plan) {
   return plan.status === "pending" ? Object.assign({}, plan, { status: "canceled" }) : clone(plan);
+}
+
+function rankUpcomingPlans(plans) {
+  function sortKey(plan) {
+    return `${plan.scheduledDate}T${plan.scheduledTime !== undefined ? plan.scheduledTime : "24:00"}`;
+  }
+  return plans
+    .filter((plan) => plan.status === "pending")
+    .map((plan) => clone(plan))
+    .sort(
+      (left, right) =>
+        sortKey(left).localeCompare(sortKey(right)) ||
+        left.createdAt.localeCompare(right.createdAt) ||
+        left.plannedCheckId.localeCompare(right.plannedCheckId),
+    );
+}
+
+function dueOrNearPlanSortValue(plan, now) {
+  if (plan.status === "canceled") return undefined;
+  function wallTimeMilliseconds(date, time) {
+    const dateParts = date.split("-").map(Number);
+    const timeParts = time.split(":").map(Number);
+    return Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1]);
+  }
+  const current = wallTimeMilliseconds(now.localDate, now.localTime);
+  const scheduled = wallTimeMilliseconds(plan.scheduledDate, plan.scheduledTime || "23:59");
+  return scheduled - current <= 24 * 60 * 60 * 1000 ? scheduled : undefined;
+}
+
+function rankContinueRuns(runs, plans, now) {
+  const planById = new Map(plans.map((plan) => [plan.plannedCheckId, plan]));
+  function urgency(run) {
+    if (!run.sourcePlannedCheckId) return undefined;
+    const plan = planById.get(run.sourcePlannedCheckId);
+    return plan ? dueOrNearPlanSortValue(plan, now) : undefined;
+  }
+  return runs
+    .filter((run) => run.status === "inProgress")
+    .map((run) => clone(run))
+    .sort((left, right) => {
+      const leftUrgency = urgency(left);
+      const rightUrgency = urgency(right);
+      const leftPrioritized = leftUrgency !== undefined;
+      const rightPrioritized = rightUrgency !== undefined;
+      if (leftPrioritized !== rightPrioritized) return leftPrioritized ? -1 : 1;
+      if (leftUrgency !== undefined && rightUrgency !== undefined && leftUrgency !== rightUrgency) {
+        return leftUrgency - rightUrgency;
+      }
+      return (
+        right.lastInteractedAt.localeCompare(left.lastInteractedAt) ||
+        right.startedAt.localeCompare(left.startedAt) ||
+        left.checkRunId.localeCompare(right.checkRunId)
+      );
+    });
+}
+
+function includesQuery(value, query) {
+  return typeof value === "string" && value.toLocaleLowerCase("zh-CN").includes(query);
+}
+
+function searchTemplates(templates, rawQuery) {
+  const query = String(rawQuery || "").trim().toLocaleLowerCase("zh-CN");
+  if (!query) return [];
+  return templates
+    .map((template) => {
+      const matches = [];
+      if (includesQuery(template.title, query)) matches.push("title");
+      if (template.searchAliases.some((alias) => includesQuery(alias, query))) matches.push("aliases");
+      const items = template.groups.reduce((all, group) => all.concat(group.items), []);
+      if (items.some((item) => includesQuery(item.title, query))) matches.push("itemTitle");
+      if (includesQuery(template.applicability, query)) matches.push("applicability");
+      if (items.some((item) => includesQuery(item.hint, query))) matches.push("hint");
+      if (matches.length === 0) return undefined;
+      return {
+        template: clone(template),
+        score: Math.max.apply(null, matches.map((field) => SEARCH_WEIGHTS[field])),
+        matches,
+      };
+    })
+    .filter((result) => result !== undefined)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        (left.template.featuredOrder === null ? Number.POSITIVE_INFINITY : left.template.featuredOrder) -
+          (right.template.featuredOrder === null ? Number.POSITIVE_INFINITY : right.template.featuredOrder) ||
+        left.template.title.localeCompare(right.template.title, "zh-CN") ||
+        left.template.templateId.localeCompare(right.template.templateId),
+    );
+}
+
+function derivePersonalTemplate(official, edits, now, options) {
+  const template = {
+    personalTemplateId: options.personalTemplateId,
+    derivedFromTemplateId: official.templateId,
+    derivedFromContentVersion: official.contentVersion,
+    title: edits.title !== undefined ? edits.title : official.title,
+    groups: clone(edits.groups !== undefined ? edits.groups : official.groups),
+  };
+  if (edits.icon) template.icon = edits.icon;
+  if (edits.themeColor) template.themeColor = edits.themeColor;
+  template.createdAt = now;
+  template.updatedAt = now;
+  return template;
+}
+
+function softDeletePersonalTemplate(template, now) {
+  return Object.assign({}, template, { deletedAt: now, updatedAt: now });
+}
+
+function restorePersonalTemplate(template, now) {
+  const restored = Object.assign({}, template, { updatedAt: now });
+  delete restored.deletedAt;
+  return restored;
+}
+
+function prepareReset(current, now) {
+  return {
+    protectiveCopyLabel: "before-reset",
+    sourceUpdatedAt: current.updatedAt,
+    next: {
+      schemaVersion: current.schemaVersion,
+      minimumWriterVersion: current.minimumWriterVersion,
+      appVersion: current.appVersion,
+      officialContentVersion: current.officialContentVersion,
+      personalTemplates: [],
+      plannedChecks: [],
+      checkRuns: [],
+      settings: {
+        favoriteTemplateIds: [],
+        hiddenOfficialTemplateIds: [],
+        backupNudgeDismissed: false,
+      },
+      updatedAt: now,
+    },
+  };
 }
 
 function exportBackup(snapshot, sourcePlatform, exportedAt) {
@@ -678,6 +969,52 @@ function parseAndValidateBackup(raw) {
   return clone(Object.assign({}, envelope, { data }));
 }
 
+function readableStatusLabel(status) {
+  if (status === "completed") return "已完成";
+  if (status === "endedWithUnresolved") return "有未确认项结束";
+  if (status === "discarded") return "已放弃";
+  return "进行中";
+}
+
+function buildReadableExport(snapshot) {
+  const lines = [
+    "# 别忘了 · 人类可读导出",
+    "",
+    `导出数据更新时间：${snapshot.updatedAt}`,
+    "",
+    "## 个人模板",
+  ];
+  const activeTemplates = snapshot.personalTemplates.filter((template) => !template.deletedAt);
+  if (activeTemplates.length === 0) lines.push("- 无");
+  activeTemplates.forEach((template) => {
+    lines.push("", `### ${template.title}`);
+    template.groups.forEach((group) => {
+      lines.push(`- ${group.title}`);
+      group.items.forEach((item) => lines.push(`  - ${item.title}`));
+    });
+  });
+
+  lines.push("", "## 待处理计划");
+  const plans = snapshot.plannedChecks.filter((plan) => plan.status === "pending");
+  if (plans.length === 0) lines.push("- 无");
+  plans.forEach((plan) => {
+    lines.push(
+      `- ${plan.scheduledDate}${plan.scheduledTime ? ` ${plan.scheduledTime}` : " 全天"} · ${plan.plannedTemplateSnapshot.title}`,
+    );
+  });
+
+  lines.push("", "## 检查历史摘要");
+  const history = snapshot.checkRuns.filter((run) => run.status !== "inProgress");
+  if (history.length === 0) lines.push("- 无");
+  history.forEach((run) => {
+    lines.push(
+      `- ${run.lastInteractedAt} · ${run.runTemplateSnapshot.title} · ${readableStatusLabel(run.status)}`,
+    );
+  });
+  lines.push("", "本文件便于阅读，不包含本次私密备注，也不用于完整恢复；恢复请使用 JSON 完整备份。");
+  return lines.join("\n");
+}
+
 function buildRunShareText(run) {
   const counts = unresolvedCounts(run);
   const lines = [
@@ -702,18 +1039,31 @@ module.exports = {
   OFFICIAL_CONTENT_VERSION,
   SCHEMA_VERSION,
   addTemporaryItem,
+  buildRunClosureReceipt,
+  buildReadableExport,
   buildRunShareText,
   cancelPlannedCheck,
   clone,
   closeRun,
   createInitialSnapshot,
   createPlannedCheck,
+  derivePersonalTemplate,
   exportBackup,
+  filterRunItems,
+  isStaleCandidate,
   markNotNeeded,
   parseAndValidateBackup,
+  prepareReset,
+  rankContinueRuns,
+  rankUpcomingPlans,
+  reorderRunItems,
   reopenRun,
+  restartFromHistory,
+  restorePersonalTemplate,
+  searchTemplates,
   setOneTimeNote,
   snapshotTemplate,
+  softDeletePersonalTemplate,
   startPlannedCheck,
   startRun,
   startRunFromSnapshot,

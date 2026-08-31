@@ -1,0 +1,59 @@
+.detail-hero {
+  margin-bottom: 22rpx;
+}
+
+.governance-card {
+  border-color: #b8d2ca;
+}
+
+.group-card {
+  padding-bottom: 8rpx;
+}
+
+.group-title {
+  margin-bottom: 8rpx;
+  color: #247463;
+  font-size: 27rpx;
+  font-weight: 720;
+}
+
+.detail-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #e5e9e5;
+}
+
+.detail-item:last-child {
+  border-bottom: 0;
+}
+
+.detail-item-title {
+  color: #233631;
+  font-size: 28rpx;
+  font-weight: 650;
+}
+
+.key-dot {
+  margin-right: 12rpx;
+  padding: 4rpx 9rpx;
+  border-radius: 9rpx;
+  background: #fff0d5;
+  color: #8a5b0b;
+  font-size: 19rpx;
+}
+
+.item-copy {
+  margin-top: 8rpx;
+  color: #68746f;
+  font-size: 23rpx;
+  line-height: 1.5;
+}
+
+.sticky-actions {
+  display: flex;
+  margin: 30rpx -8rpx 0;
+}
+
+.sticky-actions button {
+  flex: 1;
+  margin: 0 8rpx;
+}

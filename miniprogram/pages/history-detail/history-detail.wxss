@@ -1,0 +1,59 @@
+.fact-card {
+  border-color: #b7d1c9;
+  background: #f2f8f5;
+  text-align: center;
+}
+
+.fact-score {
+  color: #247463;
+  font-size: 58rpx;
+  font-weight: 780;
+}
+
+.history-item {
+  border-left: 8rpx solid #c1c8c4;
+}
+
+.history-item.confirmed {
+  border-left-color: #247463;
+}
+
+.history-item.notNeeded {
+  border-left-color: #8f8a7d;
+}
+
+.history-item-title {
+  flex: 1;
+  color: #233631;
+  font-size: 28rpx;
+  font-weight: 650;
+}
+
+.state {
+  color: #397062;
+  font-size: 23rpx;
+}
+
+.key-badge {
+  background: #fff0d5;
+  color: #8a5b0b;
+}
+
+.temporary {
+  margin-top: 10rpx;
+  color: #80622c;
+  font-size: 22rpx;
+}
+
+.private-note {
+  margin-top: 14rpx;
+  padding: 14rpx;
+  border-radius: 14rpx;
+  background: #f0eef7;
+  color: #554c6a;
+  font-size: 23rpx;
+}
+
+.action-card button {
+  margin-top: 16rpx;
+}

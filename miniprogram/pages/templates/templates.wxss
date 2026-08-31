@@ -1,0 +1,37 @@
+.library-actions {
+  display: flex;
+  margin: 0 -8rpx;
+}
+
+.library-actions button {
+  flex: 1;
+  margin: 0 8rpx;
+}
+
+.personal-card {
+  border-color: #afd0c7;
+  background: #f6fbf8;
+}
+
+.official-card.is-hidden {
+  opacity: 0.72;
+  border-style: dashed;
+}
+
+.hidden-badge {
+  background: #f0ece4;
+  color: #756858;
+}
+
+.card-title-spaced {
+  margin-top: 16rpx;
+}
+
+.deleted-section > button {
+  width: 100%;
+}
+
+.deleted-card {
+  margin-top: 18rpx;
+  background: #faf8f3;
+}

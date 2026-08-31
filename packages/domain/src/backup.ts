@@ -120,6 +120,104 @@ function validateClosedRun(run: CheckRun): void {
   }
 }
 
+function validateRunSnapshotItems(run: CheckRun): void {
+  const frozenItems = run.runTemplateSnapshot.groups.flatMap((group) =>
+    group.items.map((item) => ({ groupId: group.groupId, item })),
+  );
+  const frozenById = new Map(
+    frozenItems.map((entry) => [entry.item.itemId, entry]),
+  );
+  const sourcedItems = run.items.filter((item) => !item.isTemporary);
+
+  if (sourcedItems.length !== frozenItems.length) {
+    throw new BackupValidationError(
+      "businessInvariantViolation",
+      `检查 ${run.checkRunId} 的运行项与冻结快照数量不一致。`,
+    );
+  }
+
+  for (const runItem of run.items) {
+    if (runItem.isTemporary) {
+      if (runItem.sourceItemId !== undefined) {
+        throw new BackupValidationError(
+          "businessInvariantViolation",
+          `检查 ${run.checkRunId} 的临时项不应声称冻结来源。`,
+        );
+      }
+      continue;
+    }
+
+    const sourceItemId = runItem.sourceItemId;
+    const frozen = sourceItemId ? frozenById.get(sourceItemId) : undefined;
+    if (
+      !sourceItemId ||
+      !frozen ||
+      runItem.runItemId !== `${run.checkRunId}:${sourceItemId}` ||
+      runItem.groupId !== frozen.groupId ||
+      runItem.title !== frozen.item.title ||
+      runItem.importance !== frozen.item.importance ||
+      runItem.condition !== frozen.item.condition ||
+      runItem.hint !== frozen.item.hint
+    ) {
+      throw new BackupValidationError(
+        "businessInvariantViolation",
+        `检查 ${run.checkRunId} 的运行项与冻结快照不一致。`,
+      );
+    }
+  }
+}
+
+function factsMatch(left: unknown, right: unknown): boolean {
+  if (left === right) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((entry, index) => factsMatch(entry, right[index]))
+    );
+  }
+  if (!isRecord(left) || !isRecord(right)) return false;
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every(
+      (key) =>
+        Object.hasOwn(right, key) && factsMatch(left[key], right[key]),
+    )
+  );
+}
+
+function validateRunEventLineage(run: CheckRun): void {
+  const expectedCloseCount =
+    run.status === "inProgress" ? run.reopenCount : run.reopenCount + 1;
+  const hasReopenedAt = run.lastReopenedAt !== undefined;
+  const priorCloseEvents =
+    run.status === "inProgress"
+      ? run.closedEvents
+      : run.closedEvents.slice(0, -1);
+  const hasImpossibleCloseFact = run.closedEvents.some(
+    (event) =>
+      event.unresolvedKeyCount > event.unresolvedCount ||
+      (event.type === "completed" && event.unresolvedCount !== 0) ||
+      (event.type === "endedWithUnresolved" &&
+        event.unresolvedCount === 0),
+  );
+
+  if (
+    run.closedEvents.length !== expectedCloseCount ||
+    hasReopenedAt !== (run.reopenCount > 0) ||
+    priorCloseEvents.some((event) => event.type === "discarded") ||
+    hasImpossibleCloseFact
+  ) {
+    throw new BackupValidationError(
+      "businessInvariantViolation",
+      `检查 ${run.checkRunId} 的关闭与重开事件链不一致。`,
+    );
+  }
+}
+
 export function validateBusinessInvariants(
   candidate: AppSnapshot,
 ): AppSnapshot {
@@ -180,6 +278,7 @@ export function validateBusinessInvariants(
       ),
       `检查 ${run.checkRunId} 的来源项目`,
     );
+    validateRunSnapshotItems(run);
     assertUnique(
       run.items.map((item) => String(item.runSortOrder)),
       `检查 ${run.checkRunId} 的排序`,
@@ -197,22 +296,25 @@ export function validateBusinessInvariants(
       run.closedEvents.map((event) => event.closedEventId),
       `检查 ${run.checkRunId} 的关闭事件`,
     );
-    if (
-      run.reopenCount > run.closedEvents.length ||
-      (run.reopenCount > 0 && run.lastReopenedAt === undefined)
-    ) {
-      throw new BackupValidationError(
-        "businessInvariantViolation",
-        `检查 ${run.checkRunId} 的重开记录不一致。`,
-      );
-    }
+    validateRunEventLineage(run);
     validateClosedRun(run);
     if (run.sourcePlannedCheckId) {
       const sourcePlan = plansById.get(run.sourcePlannedCheckId);
-      if (!sourcePlan || sourcePlan.startedCheckRunId !== run.checkRunId) {
+      if (
+        !sourcePlan ||
+        sourcePlan.startedCheckRunId !== run.checkRunId ||
+        !factsMatch(
+          sourcePlan.sourceTemplateIdentity,
+          run.sourceTemplateIdentity,
+        ) ||
+        !factsMatch(
+          sourcePlan.plannedTemplateSnapshot,
+          run.runTemplateSnapshot,
+        )
+      ) {
         throw new BackupValidationError(
           "businessInvariantViolation",
-          `检查 ${run.checkRunId} 与来源计划的引用不一致。`,
+          `检查 ${run.checkRunId} 与来源计划的引用或冻结事实不一致。`,
         );
       }
     }

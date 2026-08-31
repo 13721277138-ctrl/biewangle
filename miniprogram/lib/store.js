@@ -32,6 +32,51 @@ class WechatDurableStore {
     return this.validate(clone(candidate));
   }
 
+  async activateRecoveredSlot(slot, snapshot) {
+    try {
+      await this.storage.set(STORAGE_KEYS.active, slot);
+    } catch (error) {
+      const wrapped = new Error("找到可恢复的本地数据，但无法修复活动指针。");
+      wrapped.cause = error;
+      throw wrapped;
+    }
+    return clone(snapshot);
+  }
+
+  async recoverWithoutPointer() {
+    const valid = [];
+    const failures = [];
+    let storedSlotCount = 0;
+
+    for (const slot of ["a", "b"]) {
+      try {
+        const candidate = await this.storage.get(this.slotKey(slot));
+        if (candidate === undefined) continue;
+        storedSlotCount += 1;
+        valid.push({ slot, snapshot: this.validate(clone(candidate)) });
+      } catch (error) {
+        failures.push({ slot, error });
+      }
+    }
+
+    if (valid.length > 0) {
+      valid.sort((left, right) => {
+        const timeDifference =
+          Date.parse(right.snapshot.updatedAt) - Date.parse(left.snapshot.updatedAt);
+        return timeDifference || left.slot.localeCompare(right.slot);
+      });
+      return this.activateRecoveredSlot(valid[0].slot, valid[0].snapshot);
+    }
+
+    if (storedSlotCount === 0 && failures.length === 0) {
+      return this.validate(this.createInitial());
+    }
+
+    const wrapped = new Error("活动指针丢失，且本地快照无法通过完整性校验。");
+    wrapped.cause = failures;
+    throw wrapped;
+  }
+
   async load() {
     let active;
     try {
@@ -42,21 +87,21 @@ class WechatDurableStore {
       throw wrapped;
     }
 
-    if (active !== "a" && active !== "b") {
-      return this.validate(this.createInitial());
-    }
+    if (active !== "a" && active !== "b") return this.recoverWithoutPointer();
 
     try {
       return clone(await this.readValidated(active));
     } catch (activeError) {
       const fallback = active === "a" ? "b" : "a";
+      let recovered;
       try {
-        return clone(await this.readValidated(fallback));
+        recovered = await this.readValidated(fallback);
       } catch (fallbackError) {
         const wrapped = new Error("当前本地数据无法通过完整性校验。");
         wrapped.cause = { activeError, fallbackError };
         throw wrapped;
       }
+      return this.activateRecoveredSlot(fallback, recovered);
     }
   }
 

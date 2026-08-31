@@ -68,6 +68,12 @@ describe("native WeChat trusted vertical slice", () => {
     const finalClose = await resumedService.closeRun(started.checkRunId, true);
     expect(finalClose).toMatchObject({ kind: "endedWithUnresolved" });
     expect((await store.load()).checkRuns[0]).toMatchObject({ status: "endedWithUnresolved" });
+    const persistedClose = (await store.load()).checkRuns[0]!.closedEvents.at(-1)!;
+    expect(resumedService.getRunClosureReceipt(started.checkRunId)).toEqual({
+      kind: "endedWithUnresolved",
+      title: "本次检查已结束",
+      message: `仍有${persistedClose.unresolvedCount}项未确认，其中${persistedClose.unresolvedKeyCount}项为关键项。`,
+    });
   });
 
   it("does not advance service state when durable persistence fails", async () => {

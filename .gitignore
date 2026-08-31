@@ -8,3 +8,4 @@ test-results/
 .worktrees/
 *.log
 miniprogram/project.private.config.json
+evidence/wechat/*preview-qr*

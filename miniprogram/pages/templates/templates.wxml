@@ -1,0 +1,81 @@
+<view class="page">
+  <view class="hero">
+    <text class="eyebrow">官方原件 + 个人副本</text>
+    <view class="title">模板库</view>
+    <view class="subtitle">官方模板只能收藏、隐藏或另存个人副本；永久编辑只发生在个人模板上。</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在读取本地模板…</view>
+
+  <block wx:else>
+    <view class="library-actions">
+      <button class="secondary-button" bindtap="openSearch">本地搜索</button>
+      <button class="primary-button" bindtap="createTemplate">新建个人模板</button>
+    </view>
+
+    <view wx:if="{{personal.length}}" class="section">
+      <view class="section-heading">
+        <text class="section-title">我的模板</text>
+        <text class="muted">{{personal.length}} 个 · 仅本机</text>
+      </view>
+      <view wx:for="{{personal}}" wx:key="personalTemplateId" class="card personal-card">
+        <view class="row-between">
+          <view>
+            <text class="badge">个人</text>
+            <text wx:if="{{item.derivedFromTemplateId}}" class="badge">来自官方副本</text>
+          </view>
+          <text class="muted">{{item.itemCount}} 项</text>
+        </view>
+        <view class="card-title card-title-spaced">{{item.title}}</view>
+        <view class="inline-actions">
+          <button class="primary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="startTemplate" loading="{{busy}}">开始</button>
+          <button class="secondary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="openDetail">详情</button>
+          <button class="secondary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="editPersonal">编辑</button>
+          <button class="secondary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="copyPersonal">复制</button>
+          <button class="danger-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="deletePersonal" loading="{{busy}}">删除</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-heading">
+        <text class="section-title">13 个官方模板</text>
+        <text class="muted">内容版本 1</text>
+      </view>
+      <view wx:for="{{official}}" wx:key="templateId" class="card official-card {{item.hidden ? 'is-hidden' : ''}}">
+        <view class="row-between">
+          <view>
+            <text class="badge">官方原件</text>
+            <text wx:if="{{item.favorite}}" class="badge">已收藏</text>
+            <text wx:if="{{item.hidden}}" class="badge hidden-badge">已隐藏入口</text>
+          </view>
+          <text class="muted">{{item.itemCount}} 项</text>
+        </view>
+        <view class="card-title card-title-spaced">{{item.title}}</view>
+        <view class="card-copy">{{item.applicability}}</view>
+        <view class="inline-actions">
+          <button class="primary-button small-button" data-template-id="{{item.templateId}}" bindtap="startTemplate" loading="{{busy}}">开始</button>
+          <button class="secondary-button small-button" data-template-id="{{item.templateId}}" bindtap="openDetail">详情</button>
+          <button class="secondary-button small-button" data-template-id="{{item.templateId}}" bindtap="toggleFavorite" loading="{{busy}}">{{item.favorite ? '取消收藏' : '收藏'}}</button>
+          <button class="secondary-button small-button" data-template-id="{{item.templateId}}" bindtap="toggleHidden" loading="{{busy}}">{{item.hidden ? '恢复入口' : '隐藏入口'}}</button>
+          <button class="secondary-button small-button" data-template-id="{{item.templateId}}" bindtap="deriveOfficial">另存个人副本</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="section deleted-section">
+      <button class="secondary-button" bindtap="toggleDeleted">{{showDeleted ? '收起' : '查看'}}已删除个人模板（{{deletedPersonal.length}}）</button>
+      <view wx:if="{{showDeleted && !deletedPersonal.length}}" class="empty">没有已删除的个人模板。</view>
+      <view wx:if="{{showDeleted}}" wx:for="{{deletedPersonal}}" wx:key="personalTemplateId" class="card deleted-card">
+        <view class="row-between">
+          <view>
+            <view class="card-title">{{item.title}}</view>
+            <view class="card-copy">软删除于 {{item.deletedAt}} · {{item.itemCount}} 项</view>
+          </view>
+          <button class="primary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="restorePersonal" loading="{{busy}}">恢复</button>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

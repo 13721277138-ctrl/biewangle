@@ -1,4 +1,5 @@
 import {
+  buildReadableExport,
   exportBackup,
   parseAndValidateBackup,
   prepareReset,
@@ -37,41 +38,6 @@ function downloadText(text: string, filename: string, type: string) {
   anchor.click();
   anchor.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
-function readableExport(snapshot: AppSnapshot): string {
-  const lines = [
-    "# 别忘了 · 人类可读导出",
-    "",
-    `导出数据更新时间：${snapshot.updatedAt}`,
-    "",
-    "## 个人模板",
-  ];
-  const activeTemplates = snapshot.personalTemplates.filter((template) => !template.deletedAt);
-  if (activeTemplates.length === 0) lines.push("- 无");
-  for (const template of activeTemplates) {
-    lines.push("", `### ${template.title}`);
-    for (const group of template.groups) {
-      lines.push(`- ${group.title}`);
-      for (const item of group.items) lines.push(`  - ${item.title}`);
-    }
-  }
-  lines.push("", "## 待处理计划");
-  const plans = snapshot.plannedChecks.filter((plan) => plan.status === "pending");
-  if (plans.length === 0) lines.push("- 无");
-  for (const plan of plans) {
-    lines.push(
-      `- ${plan.scheduledDate}${plan.scheduledTime ? ` ${plan.scheduledTime}` : " 全天"} · ${plan.plannedTemplateSnapshot.title}`,
-    );
-  }
-  lines.push("", "## 检查历史摘要");
-  const history = snapshot.checkRuns.filter((run) => run.status !== "inProgress");
-  if (history.length === 0) lines.push("- 无");
-  for (const run of history) {
-    lines.push(`- ${run.lastInteractedAt} · ${run.runTemplateSnapshot.title} · ${run.status}`);
-  }
-  lines.push("", "本文件便于阅读，不用于完整恢复；恢复请使用 JSON 完整备份。");
-  return lines.join("\n");
 }
 
 export function DataPage() {
@@ -277,7 +243,7 @@ export function DataPage() {
                 type="button"
                 onClick={() =>
                   downloadText(
-                    readableExport(snapshot),
+                    buildReadableExport(snapshot),
                     `别忘了-readable-${runtime.localNow().localDate}.md`,
                     "text/markdown;charset=utf-8",
                   )

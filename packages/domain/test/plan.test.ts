@@ -107,4 +107,26 @@ describe("PlannedCheck snapshot and lifecycle contract", () => {
       "plan-b",
     ]);
   });
+
+  it("places a same-day date-only plan after plans with explicit times", () => {
+    const source = officialTemplate("official.daily_out");
+    const dateOnly = createPlannedCheck(source, {
+      plannedCheckId: "plan-date-only",
+      scheduledDate: "2026-09-02",
+      createdTimeZoneId: "Asia/Shanghai",
+      now: NOW,
+    });
+    const timed = createPlannedCheck(source, {
+      plannedCheckId: "plan-timed",
+      scheduledDate: "2026-09-02",
+      scheduledTime: "18:30",
+      createdTimeZoneId: "Asia/Shanghai",
+      now: ONE_HOUR_LATER,
+    });
+
+    expect(rankUpcomingPlans([dateOnly, timed]).map((plan) => plan.plannedCheckId)).toEqual([
+      "plan-timed",
+      "plan-date-only",
+    ]);
+  });
 });

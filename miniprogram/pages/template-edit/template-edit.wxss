@@ -1,0 +1,51 @@
+.preview-card {
+  display: flex;
+  align-items: center;
+  border-color: #b9d2ca;
+  background: #edf7f2;
+}
+
+.preview-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 92rpx;
+  height: 92rpx;
+  margin-right: 22rpx;
+  border-radius: 26rpx;
+  background: #247463;
+  color: #ffffff;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.theme-ocean .preview-icon { background: #346d86; }
+.theme-clay .preview-icon { background: #9a604d; }
+.theme-plum .preview-icon { background: #765773; }
+.theme-graphite .preview-icon { background: #4c5754; }
+
+.items-textarea {
+  min-height: 430rpx;
+}
+
+.field-help {
+  margin-top: 10rpx;
+  color: #6d7773;
+  font-size: 22rpx;
+}
+
+.picker-grid {
+  display: flex;
+  margin: 0 -8rpx;
+}
+
+.picker-cell {
+  flex: 1;
+  margin-left: 8rpx;
+  margin-right: 8rpx;
+}
+
+.save-button {
+  margin-top: 28rpx;
+  width: 100%;
+}

@@ -1,0 +1,50 @@
+.search-hero {
+  margin-bottom: 22rpx;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 10rpx 8rpx 22rpx;
+  border: 2rpx solid #9abeb4;
+  border-radius: 26rpx;
+  background: #ffffff;
+}
+
+.search-input {
+  flex: 1;
+  min-height: 78rpx;
+  font-size: 29rpx;
+}
+
+.clear-button {
+  width: 100rpx;
+}
+
+.search-empty {
+  margin-top: 26rpx;
+}
+
+.create-button {
+  margin-top: 22rpx;
+}
+
+.result-count {
+  margin: 28rpx 0 16rpx;
+  color: #52645e;
+  font-size: 25rpx;
+}
+
+.result-title {
+  margin-top: 16rpx;
+}
+
+.match-label {
+  color: #60716b;
+  font-size: 21rpx;
+}
+
+.personal-result {
+  border-color: #afd0c7;
+  background: #f6fbf8;
+}

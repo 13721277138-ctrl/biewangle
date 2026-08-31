@@ -54,7 +54,9 @@ Page({
   },
 
   openRun(event) {
-    wx.navigateTo({ url: `/pages/run/run?id=${encodeURIComponent(event.currentTarget.dataset.runId)}` });
+    wx.navigateTo({
+      url: `/pages/history-detail/history-detail?id=${encodeURIComponent(event.currentTarget.dataset.runId)}`,
+    });
   },
 
   async reopenRun(event) {

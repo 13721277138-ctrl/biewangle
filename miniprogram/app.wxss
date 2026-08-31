@@ -218,3 +218,45 @@ button::after {
   color: #66736e;
   text-align: center;
 }
+
+.link-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-button {
+  min-height: 64rpx;
+  padding: 0 12rpx;
+  background: transparent;
+  color: #247463;
+  font-size: 24rpx;
+}
+
+.badge {
+  display: inline-block;
+  margin-right: 10rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 999rpx;
+  background: #eaf3ef;
+  color: #245c50;
+  font-size: 21rpx;
+  font-weight: 680;
+}
+
+.danger-note {
+  color: #98453b;
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 12rpx -6rpx -4rpx;
+}
+
+.inline-actions button {
+  flex: 1 1 180rpx;
+  margin: 8rpx 6rpx;
+}

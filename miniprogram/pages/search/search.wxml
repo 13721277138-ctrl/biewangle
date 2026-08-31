@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="hero search-hero">
+    <text class="eyebrow">无需网络或 AI</text>
+    <view class="title">搜索模板</view>
+    <view class="subtitle">只在本机按模板名称、别名、检查项、适用说明和提示做字面匹配。</view>
+  </view>
+
+  <view class="search-box">
+    <input class="search-input" focus="{{true}}" value="{{query}}" placeholder="试试：护照、医保卡、保险箱" bindinput="updateQuery" />
+    <button wx:if="{{query}}" class="text-button clear-button" bindtap="clearQuery">清空</button>
+  </view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+
+  <view wx:if="{{!hasQuery}}" class="empty search-empty">输入你担心忘记的物品或场景。</view>
+  <view wx:elif="{{total == 0}}" class="empty search-empty">
+    <view>没有找到本地模板。</view>
+    <button class="primary-button create-button" bindtap="createTemplate">新建个人模板</button>
+  </view>
+
+  <block wx:else>
+    <view class="result-count">找到 {{total}} 个模板</view>
+    <view wx:for="{{official}}" wx:key="templateId" class="card result-card">
+      <view class="row-between">
+        <text class="badge">官方 · {{item.score}} 分</text>
+        <text class="match-label">命中：{{item.matchLabel}}</text>
+      </view>
+      <view class="card-title result-title">{{item.title}}</view>
+      <view class="card-copy">{{item.applicability}}</view>
+      <view class="button-row">
+        <button class="primary-button small-button" data-template-id="{{item.templateId}}" bindtap="startTemplate" loading="{{busy}}">开始</button>
+        <button class="secondary-button small-button" data-template-id="{{item.templateId}}" bindtap="openDetail">详情</button>
+      </view>
+    </view>
+    <view wx:for="{{personal}}" wx:key="personalTemplateId" class="card result-card personal-result">
+      <text class="badge">个人模板 · 本机内容</text>
+      <view class="card-title result-title">{{item.title}}</view>
+      <view class="button-row">
+        <button class="primary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="startTemplate" loading="{{busy}}">开始</button>
+        <button class="secondary-button small-button" data-template-id="{{item.personalTemplateId}}" bindtap="openDetail">详情</button>
+      </view>
+    </view>
+  </block>
+</view>

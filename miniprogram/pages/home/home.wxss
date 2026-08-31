@@ -1,3 +1,13 @@
+.hero-actions {
+  display: flex;
+  margin: 0 -8rpx 22rpx;
+}
+
+.hero-actions button {
+  flex: 1;
+  margin: 0 8rpx;
+}
+
 .quick-nav {
   display: flex;
   margin: 0 -8rpx 16rpx;
@@ -8,18 +18,80 @@
   margin: 0 8rpx;
 }
 
+.section-kicker {
+  margin-bottom: 5rpx;
+  color: #247463;
+  font-size: 21rpx;
+  font-weight: 700;
+}
+
 .continue-card {
-  border-color: #abd0c5;
-  background: #f0f8f4;
+  border-color: #9dc9bd;
+  background: #edf7f2;
 }
 
-.compact-card {
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
+.continue-copy {
+  flex: 1;
+  padding-right: 16rpx;
 }
 
-.template-meta {
-  margin: 18rpx 0 20rpx;
-  color: #357262;
+.more-link {
+  width: 100%;
+  text-align: left;
+}
+
+.plan-card {
+  display: flex;
+  align-items: center;
+}
+
+.plan-copy {
+  flex: 1;
+  padding-right: 16rpx;
+}
+
+.plan-when {
+  margin-top: 8rpx;
+  color: #247463;
   font-size: 24rpx;
+  font-weight: 680;
+}
+
+.quick-template-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -7rpx;
+}
+
+.quick-template {
+  display: flex;
+  flex: 1 1 280rpx;
+  align-items: center;
+  justify-content: space-between;
+  margin: 7rpx;
+  padding: 18rpx 20rpx;
+  border: 1rpx solid #c6d7d1;
+  background: #ffffff;
+  color: #27443c;
+  text-align: left;
+}
+
+.quick-kind {
+  margin-right: 14rpx;
+  color: #247463;
+  font-size: 20rpx;
+}
+
+.quick-title {
+  flex: 1;
+  font-size: 26rpx;
+  font-weight: 680;
+}
+
+.template-card {
+  padding-top: 22rpx;
+}
+
+.template-title {
+  margin-top: 16rpx;
 }

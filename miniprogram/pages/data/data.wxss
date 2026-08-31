@@ -33,6 +33,35 @@
   border-color: #abd0c5;
 }
 
+.import-card {
+  border-color: #c8c3d4;
+}
+
+.import-button {
+  margin-top: 20rpx;
+  width: 100%;
+}
+
+.import-preview {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border-radius: 18rpx;
+  background: #f3f1f8;
+  color: #554f65;
+  font-size: 24rpx;
+  line-height: 1.7;
+}
+
+.preview-name {
+  color: #3f3851;
+  font-weight: 700;
+}
+
+.import-preview button {
+  margin-top: 16rpx;
+  width: 100%;
+}
+
 .backup-receipt {
   margin-top: 20rpx;
   padding: 18rpx;
@@ -58,4 +87,14 @@
 
 .capability-row:last-child {
   border-bottom: 0;
+}
+
+.reset-card {
+  border-color: #dfbbb5;
+  background: #fffaf8;
+}
+
+.reset-button {
+  margin-top: 20rpx;
+  width: 100%;
 }

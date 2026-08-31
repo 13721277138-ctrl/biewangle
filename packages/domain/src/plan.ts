@@ -74,7 +74,7 @@ export function cancelPlannedCheck(plan: PlannedCheck): PlannedCheck {
 }
 
 function planSortKey(plan: PlannedCheck): string {
-  return `${plan.scheduledDate}T${plan.scheduledTime ?? "00:00"}`;
+  return `${plan.scheduledDate}T${plan.scheduledTime ?? "24:00"}`;
 }
 
 export function rankUpcomingPlans(

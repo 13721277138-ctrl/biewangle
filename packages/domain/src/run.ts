@@ -15,6 +15,12 @@ export type StartableTemplate = OfficialTemplate | PersonalTemplate;
 
 export type RunItemView = "all" | "key";
 
+export interface RunClosureReceipt {
+  kind: Exclude<CheckRun["status"], "inProgress">;
+  title: string;
+  message: string;
+}
+
 export class DomainTransitionError extends Error {
   constructor(
     public readonly code:
@@ -240,13 +246,14 @@ export function addTemporaryItem(
   options: { runItemId?: string } = {},
 ): CheckRun {
   assertInProgress(run);
+  const title = input.title.trim();
   const runItemId =
     options.runItemId ??
-    deterministicId("temporary", now, `${run.checkRunId}:${input.title}`);
+    deterministicId("temporary", now, `${run.checkRunId}:${title}`);
   const item: CheckRunItem = {
     runItemId,
     groupId: input.groupId ?? "temporary",
-    title: input.title.trim(),
+    title,
     importance: input.importance ?? "normal",
     ...(input.condition ? { condition: input.condition } : {}),
     ...(input.hint ? { hint: input.hint } : {}),
@@ -334,6 +341,34 @@ export function unresolvedCounts(run: CheckRun): {
     unresolvedCount: unchecked.length,
     unresolvedKeyCount: unchecked.filter((item) => item.importance === "key")
       .length,
+  };
+}
+
+export function buildRunClosureReceipt(
+  run: CheckRun,
+): RunClosureReceipt | undefined {
+  if (run.status === "inProgress") return undefined;
+  const lastClose = run.closedEvents.at(-1);
+  if (!lastClose || lastClose.type !== run.status) return undefined;
+
+  if (run.status === "completed") {
+    return {
+      kind: "completed",
+      title: "这份清单已全部处理",
+      message: "可以放心出发。",
+    };
+  }
+  if (run.status === "endedWithUnresolved") {
+    return {
+      kind: "endedWithUnresolved",
+      title: "本次检查已结束",
+      message: `仍有${lastClose.unresolvedCount}项未确认，其中${lastClose.unresolvedKeyCount}项为关键项。`,
+    };
+  }
+  return {
+    kind: "discarded",
+    title: "本次检查已放弃",
+    message: "已如实保留“已放弃”事实，不会计作完成。",
   };
 }
 
