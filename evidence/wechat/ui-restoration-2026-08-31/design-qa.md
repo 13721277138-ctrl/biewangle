@@ -4,6 +4,8 @@
 
 `iOS default-font result: passed`
 
+`HarmonyOS default-font result: passed`
+
 `final result: pending Android evidence`
 
 本轮把相同设备和状态下的新截图同时与以下两类来源对照：
@@ -12,6 +14,8 @@
 2. 整改前同视口证据：`evidence/wechat/ui-audit-2026-08-31/01-home.png` 至 `04-run.png`。
 
 iOS 默认字体档未发现仍需阻断的 P0、P1 或 P2。Android 默认字体证据尚未捕获，因此整体最终状态保持 pending，不把 iOS 结果外推为 Android 或真机结论。
+
+随后在 HUAWEI Mate 70 Pro / HarmonyOS、376 × 809、默认字体 16 下复拍首页和普通 Run。两页同样未发现 P0、P1 或 P2，但 HarmonyOS 结果作为独立平台证据记录，不代替严格 Android。
 
 ## 审计环境
 
@@ -103,6 +107,18 @@ iOS 默认字体档未发现仍需阻断的 P0、P1 或 P2。Android 默认字�
 
 回执如实显示仍有 11 项未确认、其中 1 项为关键项，与关闭事件回读一致。
 
+### 10. Huawei / HarmonyOS 首页
+
+![Huawei HarmonyOS 首页](10-home-harmonyos.png)
+
+与 iOS 同屏对照后，标题、按钮和模板行未出现中文基线漂移、截断或横向溢出。HarmonyOS 状态栏高度不同，但内容从平台安全区下方正常开始。
+
+### 11. Huawei / HarmonyOS Run
+
+![Huawei HarmonyOS Run](11-run-harmonyos.png)
+
+390 宽 iOS 与 376 宽 HarmonyOS 均能完整显示 Header、视图切换和至少四个项目标题。状态按钮恰好 44px 高；关键徽标、标题和状态 top offset 最大差值约 0.05px。
+
 ## 相对冻结概念图的保留差异
 
 以下差异属于冻结业务要求带来的必要实现，不列为视觉缺陷：
@@ -113,7 +129,8 @@ iOS 默认字体档未发现仍需阻断的 P0、P1 或 P2。Android 默认字�
 
 ## 剩余项
 
-- 阻断项：Android 默认字体下的首页和普通 Run 复拍尚未完成。
+- 已补充：Huawei / HarmonyOS 默认字体下的首页和普通 Run 均通过。
+- 阻断项：系统明确为 Android 的首页和普通 Run 复拍尚未完成。
 - 工具事实：官方 wechatide CLI 没有模拟设备切换接口；Computer Use 服务无法启动。
-- 下一动作：用户在开发者工具把设备切为 Android 后，自动重新打开首页与普通 Run，生成 `10-home-android.png`、`11-run-android.png`，对比字体基线、按钮居中、安全区、换行和横向溢出。
+- 下一动作：用户在开发者工具把设备切为 Android 后，自动重新打开首页与普通 Run，生成 `12-home-android.png`、`13-run-android.png`，对比字体基线、按钮居中、安全区、换行和横向溢出。
 - Android 通过后，才能把本文 `final result` 改为 `passed` 并执行体验版上传。

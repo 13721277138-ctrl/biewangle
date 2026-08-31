@@ -5,6 +5,7 @@
 - 本地仓库全门禁：通过。
 - 官方微信开发者工具 WXML / WXSS：11 页、22 次编译全部通过。
 - 官方 iOS 模拟器：核心流程与 9 个要求状态已重新编译、操作和截图。
+- 官方 Huawei / HarmonyOS 模拟器：首页与普通 Run 复拍、触控尺寸和字体基线均通过。
 - 官方手机预览：二维码打包与自动推送均成功，包体 `189356 bytes`。
 - Android 模拟器复拍：等待把开发者工具设备切到 Android；本机 Computer Use 服务连续两次无法启动，官方 CLI 没有设备切换接口。
 - 体验版上传：在 Android 视觉复拍完成前暂不执行。
@@ -83,6 +84,25 @@ orientation        portrait
 ```
 
 官方截图接口输出原始 PNG，单张像素尺寸为 `734 x 1588`；设备逻辑视口仍以运行时返回的 `390 x 844` 为准。
+
+## Huawei / HarmonyOS 模拟器环境
+
+用户在开发者工具设备下拉框选择华为后，官方运行时明确返回：
+
+```text
+model             HUAWEI Mate 70 Pro
+system            HarmonyOS
+platform          devtools
+window            376 x 742
+screen            376 x 809
+pixelRatio         3.5
+fontSizeSetting    16（默认档）
+language           zh_CN
+SDKVersion         3.17.2
+orientation        portrait
+```
+
+该配置用于华为/鸿蒙兼容证据，不冒充 Android。原始截图输出为 `738 x 1586` PNG。
 
 ## 真实页面链与事实回读
 
@@ -170,6 +190,19 @@ receipt.message      可以放心出发。
 
 全部达到至少 44px 的触控高度。首个关键徽标、项目标题与状态文字的 top offset 分别为 `200.664`、`200.039`、`200.039`，最大差值小于 1px；未再观察到旧版明显的行内基线错位。
 
+华为/鸿蒙下的同类实测：
+
+```text
+单项状态按钮      156.5 x 44 px
+视图切换按钮      169.0 x 44 px
+底部 Dock 按钮    170.0 x 44 px
+关键徽标 top      198.086 px
+项目标题 top      198.133 px
+状态文字 top      198.086 px
+```
+
+按钮恰好达到 44px 底线；三类行内文字最大 top 差值约 `0.05px`。首页和 Run 均未见横向溢出、按钮文字偏心、异常换行或 Dock 遮挡。
+
 ## 控制台与网络
 
 ```text
@@ -193,7 +226,7 @@ scene                   1001
 
 ## 当前未完成边界
 
-1. Android 默认字体截图等待用户在开发者工具 GUI 中切换设备；官方 CLI 不提供该动作。
+1. Huawei / HarmonyOS 已通过；严格 Android 默认字体截图仍等待用户在开发者工具 GUI 中再选择一台系统明确为 Android 的设备，官方 CLI 不提供设备切换动作。
 2. Computer Use 服务启动两次均返回 `Sky Computer Use service startup request failed`，因此没有绕过限制使用非官方点击脚本。
 3. Android 复拍与对比通过前，不上传新的体验构建。
 4. 本证据不声称真机文件分享、聊天文件选择、系统日历授权、平台审核或正式发布完成。
