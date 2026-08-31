@@ -7,7 +7,9 @@ function markup(path: string) {
 }
 
 function boundHandlers(source: string) {
-  return [...source.matchAll(/bindtap="([A-Za-z_$][\w$]*)"/gu)].map((match) => match[1]);
+  return [...source.matchAll(/bindtap="([A-Za-z_$][\w$]*)"/gu)]
+    .map((match) => match[1])
+    .filter((handler): handler is string => handler !== undefined);
 }
 
 describe("native WeChat presentation structure", () => {
