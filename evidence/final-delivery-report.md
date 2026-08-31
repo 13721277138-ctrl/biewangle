@@ -11,12 +11,12 @@
 - PWA 最新完整代码已部署到 GitHub Pages，并在公网重新运行 8/8 E2E；
 - 微信端已完成原生 11 页、13 模板、官方模拟器业务闭环、手机自动预览推送和测试号 `1.1.0` 体验构建重新上传；
 - GitHub 默认分支包含 lockfile、`AGENTS.md`、全分支 CI、Pages 发布门和可复现说明；
-- Codex Cloud 的代码侧已经就绪，但用户账号尚未在 Codex Web 登录并授权该 GitHub 仓库，因此不声称 Cloud Environment 已连接；
+- Codex Cloud 已真实关联仓库并创建 `biewangle-v1.1-node24` 环境；首个只读完整门禁任务为 `READY / no diff`；
 - iPhone/iPad 主屏、Mac Add to Dock、微信物理手机完整回归、正式小程序审核/发布仍是外部终端或账号动作，不以自动化推定通过。
 
 因此，本报告声明的是：
 
-> **G6 代码与证据交付已达到当前环境/权限允许的最高真实状态；PWA 已公网发布；微信已到测试号体验构建；全终端与微信正式上线仍有明确外部阻塞。**
+> **G6 代码与证据交付及 Codex Cloud 复现环境已达到当前环境/权限允许的最高真实状态；PWA 已公网发布；微信已到测试号体验构建；全终端与微信正式上线仍有明确外部阻塞。**
 
 不声明“所有平台正式上线”或“所有 P1 真机门完成”。
 
@@ -42,13 +42,15 @@
 - 远端：`origin = https://github.com/13721277138-ctrl/biewangle.git`
 - 默认分支：`main`
 - 开发分支：`codex/v1.1-implementation`
-- 已验证产品/发布基线：`745bb19`（包含完整 G5、G6 CI 和 Pages artifact v5）
+- 已验证产品/发布基线：`47a5e90`（包含完整 G5/G6、Pages artifact v5、Node 24 Cloud 钉住点与实测引导文档）
 - `main` 与开发分支在报告生成前均已快进到该基线；无强推、无历史改写。
 - 报告提交只增加/更新证据文档，不改变已验证产品运行时。
 
 关键提交：
 
 ```text
+47a5e90 docs: record verified Cloud bootstrap
+1b3cb5f ci: pin Codex Cloud runtime
 745bb19 ci: update pages artifact runtime
 92acc97 ci: add reproducible g6 delivery gates
 29e6e7b feat(wechat): complete native v1 delivery chain
@@ -131,6 +133,15 @@ GitHub 干净 Ubuntu 验证：
 - `main` 全仓 CI：[`33355365538`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33355365538)，success；
 - `main` Pages：[`33355365530`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33355365530)，build + deploy success；
 - Pages artifact 升级为 `actions/upload-pages-artifact@v5` 后，build / deploy / CI 三个 check-run annotation 均为 0。
+
+Codex Cloud 首次只读复现：
+
+- Environment：[`biewangle-v1.1-node24`](https://chatgpt.com/codex/cloud/settings/environment/6a956037720c8191b93874a0a9d38999)；
+- Task：[`task_e_6a95609835a48332905b04202b683d1d`](https://chatgpt.com/codex/tasks/task_e_6a95609835a48332905b04202b683d1d)，`READY / no diff`；
+- `main` HEAD `47a5e900087b8eb5946dc6b54f9c141c3f32349b`；
+- Node.js `v24.20.0`、pnpm `11.19.0`；
+- 27/27 测试文件、148/148 测试、8/8 E2E、11 页/13 模板门禁全部退出状态 `0`；
+- 最终 `git status --short` 为空，未修改文件、未提交、未开 PR。
 
 ## 5. Domain contract 结果
 
@@ -254,11 +265,10 @@ upload 1.1.0           success  package=177252 bytes
 
 ## 14. 外部真实阻塞
 
-1. Codex Web 内嵌浏览器未登录；无法核对 GitHub 授权或创建 Cloud Environment。
-2. 当前没有可由 Codex 操作并留证的 iPhone/iPad 主屏 Web App 完整回归。
-3. 当前 Mac 是 macOS 13.3.1，不能执行 Sonoma 14+ 的 Safari Add to Dock。
-4. 微信测试号可以体验构建，但缺正式小程序主体、生产 AppID、开发/审核/发布权限。
-5. 微信文件分享、聊天文件选择、系统日历和物理手机切后台恢复需要真实用户手势。
+1. 当前没有可由 Codex 操作并留证的 iPhone/iPad 主屏 Web App 完整回归。
+2. 当前 Mac 是 macOS 13.3.1，不能执行 Sonoma 14+ 的 Safari Add to Dock。
+3. 微信测试号可以体验构建，但缺正式小程序主体、生产 AppID、开发/审核/发布权限。
+4. 微信文件分享、聊天文件选择、系统日历和物理手机切后台恢复需要真实用户手势。
 
 这些阻塞均不能靠代码、模拟器、CLI 登录或 README 替代。
 
@@ -272,7 +282,7 @@ upload 1.1.0           success  package=177252 bytes
 
 1. **GitHub Pages 深链服务器状态为 404**：直接 `curl -I https://13721277138-ctrl.github.io/biewangle/templates/new` 可见 404；浏览器加载仓库的 `404.html` 后恢复目标路由，E2E 已通过。对用户操作无白屏，但服务器型爬虫仍看到 404。
 2. **本地数据可能被平台清理**：清站点数据、卸载小程序、设备故障或系统存储回收会删除事实。用完整 JSON 异地备份降低风险；这是 Local-first 平台边界，不是云同步承诺。
-3. **微信 2026-08-31 UI 自动化子通道挂起**：官方编译/预览/上传成功，但 `automation_evaluate` / simulator screenshot 子通道不返回；关闭重开仍复现，本机 Computer Use 服务也无法启动。本次不伪造新截图，使用 2026-08-30 官方模拟器证据 + 页面测试 + 2026-08-31 官方重新打包。
+3. **微信视觉密度与字体基线需要整改**：2026-08-31 恢复官方 `simulator_screenshot` 后，在 iPhone 12/13 (Pro) 390 × 844、默认微信字体档重新捕获首页 → 模板库 → 模板详情 → Run。当前实现存在非标准数值字重、原生按钮内容基线约束不足、卡片/边框过重和纵向密度过低；Run 一屏约显示 2.5 项。完整证据见 [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)。这不是数据语义缺陷，但会降低核对效率，并在较大字体档/Android 字体度量下带来换行与错位风险。
 
 ### 证据缺口
 
@@ -282,11 +292,10 @@ upload 1.1.0           success  package=177252 bytes
 
 按优先级：
 
-1. **Codex Cloud**：在已打开的 Codex Web 页面登录；登录后告知 Codex继续。下一步再由 Codex检查 GitHub 授权，仅在授权弹窗出现时请用户点击一次。
-2. **PWA 真机**：在 iPhone/iPad Safari 打开生产 URL，添加到主屏，从图标完成一次 Run + 离线重开；把结果告诉 Codex。
-3. **微信真机**：在当前开发者微信打开已推送的体验预览，按 `docs/deployment/wechat.md` 的最低回归走一次；文件/聊天/日历动作由用户手势完成。
-4. **Mac 独立形态**：在 macOS Sonoma 14+ 的 Safari 添加到程序坞并完成一次核心检查；当前这台 Mac 无法替代。
-5. **微信正式上线（只有确实要上线时）**：提供/选定正式小程序 AppID，把当前开发者加入该主体并授予所需权限；随后 Codex重新跑门、真机、上传、审核前检查，再把最终审核/发布点击交给有权限账号。
+1. **PWA 真机**：在 iPhone/iPad Safari 打开生产 URL，添加到主屏，从图标完成一次 Run + 离线重开；把结果告诉 Codex。
+2. **微信真机**：在当前开发者微信打开已推送的体验预览，按 `docs/deployment/wechat.md` 的最低回归走一次；文件/聊天/日历动作由用户手势完成。
+3. **Mac 独立形态**：在 macOS Sonoma 14+ 的 Safari 添加到程序坞并完成一次核心检查；当前这台 Mac 无法替代。
+4. **微信正式上线（只有确实要上线时）**：提供/选定正式小程序 AppID，把当前开发者加入该主体并授予所需权限；随后 Codex重新跑门、真机、上传、审核前检查，再把最终审核/发布点击交给有权限账号。
 
 不需要用户手工复制代码、执行普通构建、创建 Git 仓库、配置 Pages 或自行整理测试报告。
 
@@ -316,6 +325,8 @@ PWA 公网版本从 2026-08-31 起可以进入稳定验证期；微信正式版�
 - [`pwa/g3-full-v1-2026-08-30.md`](pwa/g3-full-v1-2026-08-30.md)
 - [`wechat/g5-full-v1-2026-08-30.md`](wechat/g5-full-v1-2026-08-30.md)
 - [`wechat/g5-semantic-audit-2026-08-31.md`](wechat/g5-semantic-audit-2026-08-31.md)
+- [`codex-cloud-smoke-2026-08-31.md`](codex-cloud-smoke-2026-08-31.md)
+- [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)
 - [`../docs/deployment/pwa.md`](../docs/deployment/pwa.md)
 - [`../docs/deployment/wechat.md`](../docs/deployment/wechat.md)
 - [`../docs/deployment/codex-cloud.md`](../docs/deployment/codex-cloud.md)

@@ -64,28 +64,26 @@ pnpm e2e
 
 截至 2026-08-31，远端默认分支 `main` 已包含根级 `AGENTS.md`、`pnpm-lock.yaml`、全分支 CI 和本文件；G6 的干净 clone、本地全门、分支 CI、`main` CI 与 Pages 部署均已通过。
 
-本机 `codex cloud list` 能访问 Cloud 命令面并返回 `No tasks found`，但这只能证明 CLI 可访问服务，不能证明本仓库已经被 Codex Cloud 授权或已创建环境。应用内浏览器访问环境页时处于未登录状态，且没有可用的 Chrome 扩展登录态。仓库选择和 GitHub 授权属于用户账号范围，不能通过本地 Git remote 或 GitHub CLI 登录态推定完成。
+Codex Web 已登录并完成 GitHub 仓库授权核对，真实创建环境：
 
-OpenAI 官方流程要求：
+- Environment：`biewangle-v1.1-node24`
+- Environment ID：`6a956037720c8191b93874a0a9d38999`
+- Repository：`13721277138-ctrl/biewangle`
+- Container cache：启用
+- Agent internet access：关闭
+- Environment variables / secrets：无
 
-1. 登录 Codex；
-2. 连接 GitHub，并明确选择 Codex 可访问的仓库；
-3. 为该仓库创建 Environment；
-4. 选择环境开始第一项 Cloud 任务。
+首次只读复现任务 `task_e_6a95609835a48332905b04202b683d1d` 已在 `main` 的 `47a5e900087b8eb5946dc6b54f9c141c3f32349b` 上完成。Cloud 报告 Node.js `v24.20.0`、pnpm `11.19.0`，27/27 测试文件、148/148 测试、8/8 E2E、11 页/13 模板静态门全部退出状态为 `0`；最终 `git status --short` 为空，Cloud 状态 `READY`、diff 为 `no diff`。
+
+完整证据见 [`../../evidence/codex-cloud-smoke-2026-08-31.md`](../../evidence/codex-cloud-smoke-2026-08-31.md)。
 
 官方说明：
 
 - [Codex cloud](https://learn.chatgpt.com/docs/cloud)
 - [Cloud environments](https://learn.chatgpt.com/docs/environments/cloud-environment)
 
-## 唯一不可替代的最小动作
+## 后续使用
 
-第一步只需用户在已打开的 Codex Web 页面登录并回复“已登录”。随后 Codex继续检查环境页；若 GitHub 授权尚缺，再请用户在官方授权页勾选 `13721277138-ctrl/biewangle`，并按上面的配置创建一个 Environment。完成后可继续首个 Cloud 复现任务。
+新 Cloud 任务直接选择 `biewangle-v1.1-node24` 与目标分支。若只做复现验证，应继续明确要求不修改文件、不创建提交、不打开 PR，并在报告末尾运行 `git status --short`。
 
-不要把以下事实写成“Cloud 已连接”：
-
-- 本地仓库有 `origin`；
-- GitHub CLI 已登录；
-- CI 已通过；
-- `codex cloud list` 没有报错；
-- 文档中写了 setup 命令。
+环境或 lockfile 发生实质变化时，应重新运行一次完整门禁；只有 Cloud 任务实际完成且逐项退出状态可检查，才写成“Cloud 已验证”。本地 `origin`、GitHub CLI 登录、CI 通过或仅能列出 Cloud 任务都不能单独替代这项证据。
