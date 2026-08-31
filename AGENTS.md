@@ -19,6 +19,7 @@ The Markdown content library is authoritative over generated template JSON. Do n
 ## Setup and verification
 
 ```bash
+pnpm runtime:check
 pnpm install --frozen-lockfile
 pnpm content:check
 pnpm lint
@@ -40,7 +41,7 @@ pnpm e2e
 
 ## Codex Cloud
 
-- Pin Node.js 24 in the environment; the repository pins pnpm 11.19.0 in `packageManager`.
+- Pin Node.js 24 in the environment; the repository pins it in `.nvmrc`, rejects other majors through `engines.node`, and pins pnpm 11.19.0 in `packageManager`.
 - The setup command is `pnpm install --frozen-lockfile` once pnpm is available.
 - No repository secret or product runtime environment variable is required.
 - Read `README.md` and `docs/deployment/codex-cloud.md` before changing deployment state.

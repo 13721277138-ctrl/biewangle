@@ -45,6 +45,7 @@ PWA 与微信 UI 分开实现；只共享领域合同、内容和测试 fixture�
 需要 Node.js 24.x 与 pnpm 11.19.0。
 
 ```sh
+pnpm runtime:check
 pnpm install --frozen-lockfile
 pnpm --filter @biewangle/pwa dev
 ```

@@ -5,6 +5,7 @@
 本仓库不需要产品密钥、数据库或运行时环境变量。Codex Cloud 容器只需检出仓库、使用 Node.js 24 和 pnpm 11.19.0，然后执行：
 
 ```sh
+pnpm runtime:check
 pnpm install --frozen-lockfile
 ```
 
@@ -18,15 +19,38 @@ pnpm e2e
 建议 Cloud 环境配置：
 
 - Repository：`13721277138-ctrl/biewangle`
-- Runtime：Node.js `24`
-- Setup script：`npm install --global pnpm@11.19.0 && pnpm install --frozen-lockfile`
-- Maintenance script：`pnpm install --frozen-lockfile`
+- Runtime：Universal 镜像；若网页的显式 Node 选项暂时只到 `22`，把它当作引导运行时，并由下面的 setup 恢复仓库冻结的 Node.js `24`
+- Setup script：
+
+  ```sh
+  nvm install 24
+  nvm alias default 24
+  printf '24\n' > .nvmrc
+  nvm use 24
+  npm install --global pnpm@11.19.0
+  pnpm runtime:check
+  pnpm install --frozen-lockfile
+  pnpm --filter @biewangle/pwa exec playwright install --with-deps chrome
+  ```
+
+- Maintenance script：
+
+  ```sh
+  nvm use 24
+  nvm alias default 24
+  printf '24\n' > .nvmrc
+  npm install --global pnpm@11.19.0
+  pnpm runtime:check
+  pnpm install --frozen-lockfile
+  ```
+
 - Environment variables / secrets：无
 - Agent internet access：默认关闭即可；依赖安装阶段按平台默认允许联网
 
 仓库已包含：
 
 - 根级 `AGENTS.md`；
+- `.nvmrc`、`engines.node` 与 `runtime:check` 三重 Node.js 24 钉住点；
 - `pnpm-lock.yaml` 和精确 pnpm 版本；
 - 所有分支 push / pull request 的 GitHub CI；
 - 纯静态 PWA 构建；
