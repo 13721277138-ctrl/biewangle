@@ -14,7 +14,7 @@
   margin-bottom: 8rpx;
   color: #247463;
   font-size: 27rpx;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 .detail-item {
@@ -29,7 +29,7 @@
 .detail-item-title {
   color: #233631;
   font-size: 28rpx;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .key-dot {

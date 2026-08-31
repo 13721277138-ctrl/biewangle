@@ -15,7 +15,7 @@
   margin-top: 12rpx;
   color: #247463;
   font-size: 28rpx;
-  font-weight: 680;
+  font-weight: 600;
 }
 
 .note-link {

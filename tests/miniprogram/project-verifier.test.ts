@@ -33,6 +33,42 @@ describe("native WeChat static project verifier", () => {
     expect(result.packageBytes).toBeLessThanOrEqual(2 * 1024 * 1024);
   });
 
+  it("rejects unstable font weights and an uncentered native button foundation", () => {
+    const root = mkdtempSync(join(tmpdir(), "biewangle-miniprogram-visual-verifier-"));
+    temporaryRoots.push(root);
+    const project = join(root, "miniprogram");
+    const pageDirectory = join(project, "pages", "unsafe");
+    const generatedDirectory = join(project, "generated");
+    mkdirSync(pageDirectory, { recursive: true });
+    mkdirSync(generatedDirectory, { recursive: true });
+    writeFileSync(join(project, "project.config.json"), JSON.stringify({
+      appid: "wx325ab0bf02863343",
+      compileType: "miniprogram",
+      miniprogramRoot: "./",
+    }));
+    writeFileSync(join(project, "app.json"), JSON.stringify({ pages: ["pages/unsafe/unsafe"] }));
+    writeFileSync(join(project, "app.js"), "App({ onLaunch() {} });\n");
+    writeFileSync(
+      join(project, "app.wxss"),
+      "page {}\nbutton { min-height: 70rpx; font-weight: 650; }\n",
+    );
+    writeFileSync(join(pageDirectory, "unsafe.js"), "Page({});\n");
+    writeFileSync(join(pageDirectory, "unsafe.json"), "{}\n");
+    writeFileSync(join(pageDirectory, "unsafe.wxml"), "<view>unsafe visual fixture</view>\n");
+    writeFileSync(join(pageDirectory, "unsafe.wxss"), ".x { font-weight: 760; }\n");
+    writeFileSync(
+      join(generatedDirectory, "official-templates.js"),
+      "module.exports = { templates: [] };\n",
+    );
+
+    const result = verifyMiniprogram(root, { expectedRoutes: ["pages/unsafe/unsafe"] });
+
+    expect(result.issues.map((issue) => issue.code)).toEqual(expect.arrayContaining([
+      "nonstandard-font-weight",
+      "button-foundation",
+    ]));
+  });
+
   it("rejects web-view, network APIs and a WXML handler missing from its page", () => {
     const root = mkdtempSync(join(tmpdir(), "biewangle-miniprogram-verifier-"));
     temporaryRoots.push(root);

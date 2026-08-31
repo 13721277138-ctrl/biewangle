@@ -54,7 +54,7 @@
   margin-top: 8rpx;
   color: #247463;
   font-size: 24rpx;
-  font-weight: 680;
+  font-weight: 600;
 }
 
 .quick-template-grid {
@@ -85,7 +85,7 @@
 .quick-title {
   flex: 1;
   font-size: 26rpx;
-  font-weight: 680;
+  font-weight: 600;
 }
 
 .template-card {

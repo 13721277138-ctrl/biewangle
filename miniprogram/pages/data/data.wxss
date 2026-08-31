@@ -20,7 +20,7 @@
 .fact-grid text {
   color: #247463;
   font-size: 40rpx;
-  font-weight: 760;
+  font-weight: 700;
 }
 
 .fact-grid label {

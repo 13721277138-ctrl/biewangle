@@ -10,13 +10,13 @@
   margin-top: 8rpx;
   color: #247463;
   font-size: 24rpx;
-  font-weight: 680;
+  font-weight: 600;
 }
 
 .fact-count {
   color: #244d43;
   font-size: 36rpx;
-  font-weight: 760;
+  font-weight: 700;
 }
 
 .fact-line {

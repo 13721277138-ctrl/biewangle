@@ -22,7 +22,7 @@
 .closure-title {
   color: #173f36;
   font-size: 42rpx;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.3;
 }
 

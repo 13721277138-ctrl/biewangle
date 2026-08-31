@@ -27,6 +27,7 @@ export const REQUIRED_ROUTES = Object.freeze([
 const PAGE_EXTENSIONS = Object.freeze(["js", "json", "wxml", "wxss"]);
 const TEXT_EXTENSIONS = new Set([".js", ".json", ".wxml", ".wxss"]);
 const MAX_MAIN_PACKAGE_BYTES = 2 * 1024 * 1024;
+const STANDARD_FONT_WEIGHTS = new Set([400, 500, 600, 700]);
 
 function walk(target) {
   if (!existsSync(target)) return [];
@@ -104,6 +105,35 @@ function scanRuntimeFile(content, displayPath, issues) {
   ];
   for (const [code, pattern, message] of checks) {
     if (pattern.test(content)) issues.push(issue(code, displayPath, message));
+  }
+}
+
+function scanVisualFile(content, displayPath, issues) {
+  for (const match of content.matchAll(/font-weight\s*:\s*(\d{3})\s*;/gu)) {
+    const weight = Number(match[1]);
+    if (!STANDARD_FONT_WEIGHTS.has(weight)) {
+      issues.push(issue(
+        "nonstandard-font-weight",
+        displayPath,
+        `font-weight ${weight} is outside 400/500/600/700`,
+      ));
+    }
+  }
+}
+
+function verifyButtonFoundation(content, displayPath, issues) {
+  const block = /(?:^|\n)button\s*\{([^}]*)\}/u.exec(content)?.[1] || "";
+  const minHeight = /min-height\s*:\s*(\d+)rpx\s*;/u.exec(block)?.[1];
+  const centered = /display\s*:\s*flex\s*;/u.test(block)
+    && /align-items\s*:\s*center\s*;/u.test(block)
+    && /justify-content\s*:\s*center\s*;/u.test(block);
+  const explicitLineHeight = /line-height\s*:\s*(?:\d+(?:\.\d+)?|\d+rpx)\s*;/u.test(block);
+  if (!centered || !explicitLineHeight || !minHeight || Number(minHeight) < 88) {
+    issues.push(issue(
+      "button-foundation",
+      displayPath,
+      "root button rule must use centered flex content, explicit line-height, and min-height >= 88rpx",
+    ));
   }
 }
 
@@ -209,7 +239,12 @@ export function verifyMiniprogram(projectRoot, options = {}) {
     if (extname(file) === ".json") readJson(file, displayPath, issues);
     if (extname(file) === ".js") compileJavaScript(file, displayPath, issues);
     if (TEXT_EXTENSIONS.has(extname(file))) {
-      scanRuntimeFile(readFileSync(file, "utf8"), displayPath, issues);
+      const content = readFileSync(file, "utf8");
+      scanRuntimeFile(content, displayPath, issues);
+      if (extname(file) === ".wxss") scanVisualFile(content, displayPath, issues);
+      if (displayPath === "miniprogram/app.wxss") {
+        verifyButtonFoundation(content, displayPath, issues);
+      }
     }
   }
   if (packageBytes > MAX_MAIN_PACKAGE_BYTES) {
