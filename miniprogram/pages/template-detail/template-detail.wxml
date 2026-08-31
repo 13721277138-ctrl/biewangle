@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page detail-page page-with-dock">
   <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
   <view wx:if="{{loading}}" class="loading">正在读取模板快照…</view>
 
@@ -13,7 +13,7 @@
     <view wx:if="{{template.isOfficial}}" class="card governance-card">
       <view class="card-title">官方原件治理</view>
       <view class="card-copy">收藏和隐藏只改变本机入口；“另存个人副本”才允许永久编辑。</view>
-      <view class="inline-actions">
+      <view class="inline-actions governance-actions">
         <button class="secondary-button small-button" bindtap="toggleFavorite" loading="{{busy}}">{{template.favorite ? '取消收藏' : '收藏'}}</button>
         <button class="secondary-button small-button" bindtap="toggleHidden" loading="{{busy}}">{{template.hidden ? '恢复入口' : '隐藏入口'}}</button>
         <button class="secondary-button small-button" bindtap="deriveOfficial">另存个人副本</button>
@@ -23,7 +23,7 @@
     <view wx:else class="card governance-card">
       <view class="card-title">个人模板管理</view>
       <view class="card-copy">编辑只影响以后新建的运行；已经开始的运行和计划仍使用各自冻结快照。</view>
-      <view class="inline-actions">
+      <view class="inline-actions governance-actions">
         <button class="secondary-button small-button" bindtap="editPersonal">编辑</button>
         <button class="secondary-button small-button" bindtap="copyPersonal">复制</button>
         <button class="danger-button small-button" bindtap="deletePersonal" loading="{{busy}}">删除</button>
@@ -35,24 +35,27 @@
         <text class="section-title">检查项目</text>
         <text class="muted">{{template.groups.length}} 组</text>
       </view>
-      <view wx:for="{{template.groups}}" wx:key="groupId" class="card group-card">
-        <view class="group-title">{{item.title}}</view>
-        <view wx:for="{{item.items}}" wx:for-item="checkItem" wx:key="itemId" class="detail-item">
-          <view class="row-between">
+      <view wx:for="{{template.groups}}" wx:for-item="group" wx:key="groupId" class="detail-group">
+        <view class="group-heading">
+          <text class="group-title">{{group.title}}</text>
+          <text class="group-count">{{group.items.length}} 项</text>
+        </view>
+        <view class="list-surface detail-list">
+          <view wx:for="{{group.items}}" wx:for-item="checkItem" wx:key="itemId" class="list-row detail-item">
             <view class="detail-item-title">
               <text wx:if="{{checkItem.isKey}}" class="key-dot">关键</text>
-              <text>{{checkItem.title}}</text>
+              <text class="detail-title-text">{{checkItem.title}}</text>
             </view>
+            <view wx:if="{{checkItem.condition}}" class="item-copy">条件：{{checkItem.condition}}</view>
+            <view wx:if="{{checkItem.hint}}" class="item-copy">提示：{{checkItem.hint}}</view>
           </view>
-          <view wx:if="{{checkItem.condition}}" class="item-copy">条件：{{checkItem.condition}}</view>
-          <view wx:if="{{checkItem.hint}}" class="item-copy">提示：{{checkItem.hint}}</view>
         </view>
       </view>
     </view>
 
     <view wx:if="{{template.userTip}}" class="notice">{{template.userTip}}</view>
 
-    <view class="sticky-actions">
+    <view class="bottom-dock detail-dock">
       <button class="secondary-button" bindtap="createPlan">安排计划</button>
       <button class="primary-button" bindtap="startTemplate" loading="{{busy}}">开始检查</button>
     </view>

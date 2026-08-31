@@ -1,21 +1,49 @@
+.templates-page {
+  padding-top: 20rpx;
+}
+
+.library-hero {
+  margin-bottom: 18rpx;
+}
+
 .library-actions {
   display: flex;
-  margin: 0 -8rpx;
+  margin: 0 -6rpx;
 }
 
 .library-actions button {
   flex: 1;
-  margin: 0 8rpx;
+  margin: 0 6rpx;
 }
 
-.personal-card {
-  border-color: #afd0c7;
-  background: #f6fbf8;
+.personal-list {
+  border-color: #b9d2ca;
 }
 
-.official-card.is-hidden {
-  opacity: 0.72;
-  border-style: dashed;
+.template-library-row {
+  padding-top: 20rpx;
+  padding-bottom: 12rpx;
+}
+
+.template-library-row.is-hidden {
+  border-left: 6rpx solid #9a9589;
+  background: #f7f7f3;
+}
+
+.library-row-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.library-row-meta .row-meta {
+  margin-left: 12rpx;
+}
+
+.badge-wrap {
+  min-width: 0;
+  flex: 1;
 }
 
 .hidden-badge {
@@ -23,15 +51,37 @@
   color: #756858;
 }
 
-.card-title-spaced {
-  margin-top: 16rpx;
+.library-row-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 6rpx;
+}
+
+.library-row-actions .primary-button {
+  flex: 1;
+}
+
+.library-row-actions .text-button {
+  width: 190rpx;
+  flex-shrink: 0;
 }
 
 .deleted-section > button {
   width: 100%;
 }
 
-.deleted-card {
-  margin-top: 18rpx;
+.deleted-empty,
+.deleted-list {
+  margin-top: 14rpx;
+}
+
+.deleted-row {
+  display: flex;
+  align-items: center;
   background: #faf8f3;
+}
+
+.deleted-row button {
+  flex-shrink: 0;
+  margin-left: 16rpx;
 }
