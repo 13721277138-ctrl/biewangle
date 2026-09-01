@@ -9,7 +9,7 @@
 - A 类 9 项不可降级产品硬门全部有自动合同和适用终端证据；
 - 26 项最低关键不变量逐条映射并全绿；
 - PWA 最新完整代码已部署到 GitHub Pages，并在公网重新运行 8/8 E2E；
-- 微信端已完成原生 11 页、13 模板、官方模拟器业务闭环、iOS/HarmonyOS/Android 核心页与 Android 次级 7 页默认字体视觉复验、手机自动预览推送和测试号 `1.1.0` 体验构建重新上传；
+- 微信端已完成原生 11 页、13 模板、官方模拟器业务闭环、iOS/HarmonyOS/Android 默认字体复验、Android 最大字体 `26` 的全 11 页视觉/语义复验、手机自动预览推送和测试号 `1.1.0` 体验构建重新上传；
 - GitHub 默认分支包含 lockfile、`AGENTS.md`、全分支 CI、Pages 发布门和可复现说明；
 - Codex Cloud 已真实关联仓库并创建 `biewangle-v1.1-node24` 环境；首个只读完整门禁任务为 `READY / no diff`；
 - iPhone/iPad 主屏、Mac Add to Dock、微信物理手机完整回归、正式小程序审核/发布仍是外部终端或账号动作，不以自动化推定通过。
@@ -42,13 +42,14 @@
 - 远端：`origin = https://github.com/13721277138-ctrl/biewangle.git`
 - 默认分支：`main`
 - 开发分支：`codex/v1.1-implementation`
-- 当前代码与证据检查点：`bd308fb`（包含跨 iOS/HarmonyOS/Android 官方模拟器证据、Android 次级 7 页审计、模板展示 token 中文标签修复与最新体验构建事实）
-- `main` 与开发分支均以纯快进方式包含该检查点；无强推、无历史改写。
-- 本报告后续只记录该检查点的 GitHub CI / Pages 结果，不改变已验证产品运行时。
+- 本轮最大字体审计开始前的已发布检查点：`91d889c`（包含跨 iOS/HarmonyOS/Android 官方模拟器证据、Android 次级 7 页审计、模板展示 token 中文标签修复、完整发布门与最新体验构建事实）
+- 审计开始时 `main`、开发分支与对应远端均以纯快进方式包含该检查点；无强推、无历史改写。
+- 最大字体审计没有发现产品代码缺陷，也没有改变已经上传的 `1.1.0` 包内容；因此不重复上传同一体验构建。
 
 关键提交：
 
 ```text
+91d889c docs: record verified secondary page release gates
 bd308fb docs: record Android secondary page audit
 cd99d0b fix(wechat): localize template presentation tokens
 dfe96f9 docs: complete WeChat visual restoration evidence
@@ -241,7 +242,7 @@ Codex Cloud 首次只读复现（历史基线 `47a5e90`，不外推为视觉提�
 原生工程 → Node 静态发布门 → 官方逐页编译 → 官方模拟器完整业务闭环
 → 预览二维码打包 → 手机自动预览推送 → 测试号 1.1.0 体验构建上传
 → 数据语义专项修复 → 微信视觉整改 → iOS/HarmonyOS/Android 默认字体复验
-→ 官方重新预览 / 重新上传
+→ 官方重新预览 / 重新上传 → Android 最大字体 26 全 11 页复验
 ```
 
 2026-09-01 官方稳定版开发者工具 `2.02.2608060`：
@@ -294,12 +295,13 @@ upload 1.1.0           success  package=190569 bytes
 
 1. **GitHub Pages 深链服务器状态为 404**：直接 `curl -I https://13721277138-ctrl.github.io/biewangle/templates/new` 可见 404；浏览器加载仓库的 `404.html` 后恢复目标路由，E2E 已通过。对用户操作无白屏，但服务器型爬虫仍看到 404。
 2. **本地数据可能被平台清理**：清站点数据、卸载小程序、设备故障或系统存储回收会删除事实。用完整 JSON 异地备份降低风险；这是 Local-first 平台边界，不是云同步承诺。
-3. **微信视觉密度与字体基线整改已通过官方模拟器阻断复验**：整改前问题记录仍保留在 [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)；整改后证据见 [`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)。iPhone 12/13 (Pro)、HUAWEI Mate 70 Pro / HarmonyOS、Nexus 5X / Android 默认字体下未发现 P0/P1/P2；Run 核心按钮为 44–48px，行内关键徽标/标题/状态最大 top 差值低于 1px。该结论不替代较大微信字体档、物理手机、屏幕阅读器或系统用户手势验证。
+3. **微信视觉密度与字体基线整改已通过官方模拟器阻断复验**：整改前问题记录仍保留在 [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)；整改后证据见 [`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)。iPhone 12/13 (Pro)、HUAWEI Mate 70 Pro / HarmonyOS、Nexus 5X / Android 默认字体下未发现 P0/P1/P2；Run 核心按钮为 44–48px，行内关键徽标/标题/状态最大 top 差值低于 1px。该结论不替代物理手机、屏幕阅读器或系统用户手势验证。
 4. **Android 次级页面已补齐默认字体复验**：计划、历史、历史详情、数据、搜索、模板编辑和全部进行中共 7 页逐张证据见 [`wechat/secondary-pages-android-2026-09-01/audit.md`](wechat/secondary-pages-android-2026-09-01/audit.md)。其中模板编辑器内部 token 直出这一项 P2 已按测试先行修复；中文标签变化不改写 `icon` / `themeColor` 存储值。
+5. **Android 最大字体已覆盖全部 11 页**：Nexus 5X / `fontSizeSetting=26` 下 14 张接受截图、搜索事实、数据事实、console/network 与工具状态恢复见 [`wechat/large-font-android-2026-09-01/audit.md`](wechat/large-font-android-2026-09-01/audit.md)。未发现需改实现的 P0/P1/P2；物理手机大字体与 TalkBack / VoiceOver 仍保留为外部证据缺口。
 
 ### 证据缺口
 
-- iPhone/iPad 主屏、Mac Add to Dock、微信物理手机完整流程和屏幕阅读器尚无真实终端记录；矩阵保持 `partial-external` / `blocked-external`。
+- iPhone/iPad 主屏、Mac Add to Dock、微信物理手机大字体完整流程和屏幕阅读器尚无真实终端记录；矩阵保持 `partial-external` / `blocked-external`。
 
 ## 16. 用户只需完成的最小动作
 
@@ -341,6 +343,7 @@ PWA 公网版本从 2026-08-31 起可以进入稳定验证期；微信正式版�
 - [`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)
 - [`wechat/ui-restoration-2026-08-31/tool-results.md`](wechat/ui-restoration-2026-08-31/tool-results.md)
 - [`wechat/secondary-pages-android-2026-09-01/audit.md`](wechat/secondary-pages-android-2026-09-01/audit.md)
+- [`wechat/large-font-android-2026-09-01/audit.md`](wechat/large-font-android-2026-09-01/audit.md)
 - [`codex-cloud-smoke-2026-08-31.md`](codex-cloud-smoke-2026-08-31.md)
 - [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)
 - [`../docs/deployment/pwa.md`](../docs/deployment/pwa.md)
