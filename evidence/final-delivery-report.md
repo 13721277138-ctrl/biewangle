@@ -9,7 +9,7 @@
 - A 类 9 项不可降级产品硬门全部有自动合同和适用终端证据；
 - 26 项最低关键不变量逐条映射并全绿；
 - PWA 最新完整代码已部署到 GitHub Pages，并在公网重新运行 8/8 E2E；
-- 微信端已完成原生 11 页、13 模板、官方模拟器业务闭环、iOS/HarmonyOS/Android 默认字体视觉整改复验、手机自动预览推送和测试号 `1.1.0` 体验构建重新上传；
+- 微信端已完成原生 11 页、13 模板、官方模拟器业务闭环、iOS/HarmonyOS/Android 核心页与 Android 次级 7 页默认字体视觉复验、手机自动预览推送和测试号 `1.1.0` 体验构建重新上传；
 - GitHub 默认分支包含 lockfile、`AGENTS.md`、全分支 CI、Pages 发布门和可复现说明；
 - Codex Cloud 已真实关联仓库并创建 `biewangle-v1.1-node24` 环境；首个只读完整门禁任务为 `READY / no diff`；
 - iPhone/iPad 主屏、Mac Add to Dock、微信物理手机完整回归、正式小程序审核/发布仍是外部终端或账号动作，不以自动化推定通过。
@@ -125,10 +125,10 @@ install               PASS（pnpm 11.19.0，frozen lockfile）
 content:check         PASS（Markdown = shared JSON = 微信派生 JS）
 lint                  PASS
 typecheck             PASS
-test                  PASS（30 files, 157 tests）
+test                  PASS（31 files, 158 tests）
 build                 PASS（1962 modules；35 precache entries；573.51 KiB）
 verify:boundaries     PASS（41 authored files, 40 production files）
-miniprogram:verify    PASS（11 pages, 13 templates, 246670 bytes）
+miniprogram:verify    PASS（11 pages, 13 templates, 247764 bytes）
 e2e local             PASS（8 / 8）
 e2e public            PASS（8 / 8，约 1.0 min）
 git diff --check      PASS
@@ -245,9 +245,9 @@ Codex Cloud 首次只读复现（历史基线 `47a5e90`，不外推为视觉提�
 2026-09-01 官方稳定版开发者工具 `2.02.2608060`：
 
 ```text
-create_preview_qrcode  success  package=189356 bytes
-auto_preview           success  package=189356 bytes
-upload 1.1.0           success  package=189855 bytes
+create_preview_qrcode  success  package=190070 bytes
+auto_preview           success  package=190070 bytes
+upload 1.1.0           success  package=190569 bytes
 ```
 
 没有达到：
@@ -286,13 +286,14 @@ upload 1.1.0           success  package=189855 bytes
 
 ### 产品运行时
 
-本轮 157 测试、双端合同、官方微信工具和 8/8 E2E 未发现仍可稳定复现的 P0 产品缺陷。
+本轮 158 测试、双端合同、官方微信工具和 8/8 E2E 未发现仍可稳定复现的 P0 产品缺陷。
 
 仍有以下已知平台限制：
 
 1. **GitHub Pages 深链服务器状态为 404**：直接 `curl -I https://13721277138-ctrl.github.io/biewangle/templates/new` 可见 404；浏览器加载仓库的 `404.html` 后恢复目标路由，E2E 已通过。对用户操作无白屏，但服务器型爬虫仍看到 404。
 2. **本地数据可能被平台清理**：清站点数据、卸载小程序、设备故障或系统存储回收会删除事实。用完整 JSON 异地备份降低风险；这是 Local-first 平台边界，不是云同步承诺。
 3. **微信视觉密度与字体基线整改已通过官方模拟器阻断复验**：整改前问题记录仍保留在 [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)；整改后证据见 [`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)。iPhone 12/13 (Pro)、HUAWEI Mate 70 Pro / HarmonyOS、Nexus 5X / Android 默认字体下未发现 P0/P1/P2；Run 核心按钮为 44–48px，行内关键徽标/标题/状态最大 top 差值低于 1px。该结论不替代较大微信字体档、物理手机、屏幕阅读器或系统用户手势验证。
+4. **Android 次级页面已补齐默认字体复验**：计划、历史、历史详情、数据、搜索、模板编辑和全部进行中共 7 页逐张证据见 [`wechat/secondary-pages-android-2026-09-01/audit.md`](wechat/secondary-pages-android-2026-09-01/audit.md)。其中模板编辑器内部 token 直出这一项 P2 已按测试先行修复；中文标签变化不改写 `icon` / `themeColor` 存储值。
 
 ### 证据缺口
 
@@ -337,6 +338,7 @@ PWA 公网版本从 2026-08-31 起可以进入稳定验证期；微信正式版�
 - [`wechat/g5-semantic-audit-2026-08-31.md`](wechat/g5-semantic-audit-2026-08-31.md)
 - [`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)
 - [`wechat/ui-restoration-2026-08-31/tool-results.md`](wechat/ui-restoration-2026-08-31/tool-results.md)
+- [`wechat/secondary-pages-android-2026-09-01/audit.md`](wechat/secondary-pages-android-2026-09-01/audit.md)
 - [`codex-cloud-smoke-2026-08-31.md`](codex-cloud-smoke-2026-08-31.md)
 - [`wechat/ui-audit-2026-08-31/audit.md`](wechat/ui-audit-2026-08-31/audit.md)
 - [`../docs/deployment/pwa.md`](../docs/deployment/pwa.md)
