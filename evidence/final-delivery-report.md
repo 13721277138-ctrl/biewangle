@@ -42,13 +42,21 @@
 - 远端：`origin = https://github.com/13721277138-ctrl/biewangle.git`
 - 默认分支：`main`
 - 开发分支：`codex/v1.1-implementation`
-- 已验证产品/发布基线：`47a5e90`（包含完整 G5/G6、Pages artifact v5、Node 24 Cloud 钉住点与实测引导文档）
-- `main` 与开发分支在报告生成前均已快进到该基线；无强推、无历史改写。
-- 报告提交只增加/更新证据文档，不改变已验证产品运行时。
+- 微信视觉整改实现与证据检查点：`dfe96f9`（包含跨 iOS/HarmonyOS/Android 官方模拟器证据与最新体验构建事实）
+- `main` 与开发分支均以纯快进方式包含该检查点；无强推、无历史改写。
+- 本报告后续只记录该检查点的 GitHub CI / Pages 结果，不改变已验证产品运行时。
 
 关键提交：
 
 ```text
+dfe96f9 docs: complete WeChat visual restoration evidence
+50434d6 docs: add HarmonyOS visual evidence
+8d8f919 docs: record WeChat iOS visual restoration evidence
+628da86 feat(wechat): unify native visual hierarchy
+14e76cf feat(wechat): simplify home and template flows
+eb12c72 feat(wechat): restore dense run experience
+af00e96 refactor(wechat): project dense run groups
+e1a7e47 test(wechat): enforce visual foundation
 47a5e90 docs: record verified Cloud bootstrap
 1b3cb5f ci: pin Codex Cloud runtime
 745bb19 ci: update pages artifact runtime
@@ -129,12 +137,13 @@ credential scan       PASS（安全测试中的故意假密钥 fixture 排除后
 
 GitHub 干净 Ubuntu 验证：
 
-- 分支首次 G6：[`33354953545`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33354953545)，success；
-- `main` 全仓 CI：[`33355365538`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33355365538)，success；
-- `main` Pages：[`33355365530`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33355365530)，build + deploy success；
-- Pages artifact 升级为 `actions/upload-pages-artifact@v5` 后，build / deploy / CI 三个 check-run annotation 均为 0。
+- 视觉整改开发分支 CI：[`33454860954`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33454860954)，success；
+- `main` 全仓 CI：[`33454980793`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33454980793)，success；
+- `main` Pages：[`33454980752`](https://github.com/13721277138-ctrl/biewangle/actions/runs/33454980752)，build + deploy success；
+- `dfe96f9` 的 branch verify、main verify、Pages build、Pages deploy 四个 check-run annotation 均为 0；
+- Pages 完成后重新请求生产首页、manifest、Service Worker 与 192 图标，均返回 HTTP 200 和预期 MIME。
 
-Codex Cloud 首次只读复现：
+Codex Cloud 首次只读复现（历史基线 `47a5e90`，不外推为视觉提交已在 Cloud 重跑）：
 
 - Environment：[`biewangle-v1.1-node24`](https://chatgpt.com/codex/cloud/settings/environment/6a956037720c8191b93874a0a9d38999)；
 - Task：[`task_e_6a95609835a48332905b04202b683d1d`](https://chatgpt.com/codex/tasks/task_e_6a95609835a48332905b04202b683d1d)，`READY / no diff`；
