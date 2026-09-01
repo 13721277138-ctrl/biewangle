@@ -1,7 +1,28 @@
 const app = getApp();
 
-const ICONS = Object.freeze(["check", "bag", "home", "heart", "briefcase"]);
-const COLORS = Object.freeze(["jade", "ocean", "clay", "plum", "graphite"]);
+const ICONS = Object.freeze([
+  Object.freeze({ label: "勾选", value: "check" }),
+  Object.freeze({ label: "行李", value: "bag" }),
+  Object.freeze({ label: "居家", value: "home" }),
+  Object.freeze({ label: "心愿", value: "heart" }),
+  Object.freeze({ label: "公事", value: "briefcase" }),
+]);
+const COLORS = Object.freeze([
+  Object.freeze({ label: "玉绿", value: "jade" }),
+  Object.freeze({ label: "海蓝", value: "ocean" }),
+  Object.freeze({ label: "陶棕", value: "clay" }),
+  Object.freeze({ label: "梅紫", value: "plum" }),
+  Object.freeze({ label: "石墨", value: "graphite" }),
+]);
+
+function optionIndex(options, value) {
+  return Math.max(options.findIndex((option) => option.value === value), 0);
+}
+
+function optionLabel(options, value) {
+  const option = options.find((candidate) => candidate.value === value);
+  return option ? option.label : value;
+}
 
 function itemLines(template) {
   return template.groups
@@ -23,6 +44,7 @@ Page({
     error: "",
     icon: "check",
     iconIndex: 0,
+    iconLabel: "勾选",
     icons: ICONS,
     itemCount: 0,
     itemLines: "",
@@ -30,6 +52,7 @@ Page({
     modeLabel: "新建个人模板",
     themeColor: "jade",
     themeColorIndex: 0,
+    themeColorLabel: "玉绿",
     title: "",
   },
 
@@ -56,7 +79,8 @@ Page({
       this.setData({
         error: "",
         icon,
-        iconIndex: Math.max(ICONS.indexOf(icon), 0),
+        iconIndex: optionIndex(ICONS, icon),
+        iconLabel: optionLabel(ICONS, icon),
         itemCount: countLines(lines),
         itemLines: lines,
         loading: false,
@@ -68,7 +92,8 @@ Page({
               ? "另存官方副本"
               : "新建个人模板",
         themeColor,
-        themeColorIndex: Math.max(COLORS.indexOf(themeColor), 0),
+        themeColorIndex: optionIndex(COLORS, themeColor),
+        themeColorLabel: optionLabel(COLORS, themeColor),
         title: template ? template.title : "",
       });
     } catch (error) {
@@ -89,12 +114,18 @@ Page({
 
   selectIcon(event) {
     const iconIndex = Number(event.detail.value);
-    this.setData({ icon: ICONS[iconIndex], iconIndex });
+    const option = ICONS[iconIndex] || ICONS[0];
+    this.setData({ icon: option.value, iconIndex, iconLabel: option.label });
   },
 
   selectColor(event) {
     const themeColorIndex = Number(event.detail.value);
-    this.setData({ themeColor: COLORS[themeColorIndex], themeColorIndex });
+    const option = COLORS[themeColorIndex] || COLORS[0];
+    this.setData({
+      themeColor: option.value,
+      themeColorIndex,
+      themeColorLabel: option.label,
+    });
   },
 
   async save() {

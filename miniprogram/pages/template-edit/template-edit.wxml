@@ -10,7 +10,7 @@
 
   <block wx:else>
     <view class="preview-surface theme-{{themeColor}}">
-      <text class="preview-icon">{{icon}}</text>
+      <text class="preview-icon">{{iconLabel}}</text>
       <view class="preview-copy">
         <view class="row-title">{{title || '未命名模板'}}</view>
         <view class="row-copy">{{itemCount}} 个检查项 · 仅保存在当前设备</view>
@@ -30,14 +30,14 @@
       <view class="picker-grid">
         <view class="field picker-cell">
           <text class="label">图标</text>
-          <picker range="{{icons}}" value="{{iconIndex}}" bindchange="selectIcon">
-            <view class="picker-value">{{icon}}</view>
+          <picker range="{{icons}}" range-key="label" value="{{iconIndex}}" bindchange="selectIcon">
+            <view class="picker-value">{{iconLabel}}</view>
           </picker>
         </view>
         <view class="field picker-cell">
           <text class="label">主题色</text>
-          <picker range="{{colors}}" value="{{themeColorIndex}}" bindchange="selectColor">
-            <view class="picker-value">{{themeColor}}</view>
+          <picker range="{{colors}}" range-key="label" value="{{themeColorIndex}}" bindchange="selectColor">
+            <view class="picker-value">{{themeColorLabel}}</view>
           </picker>
         </view>
       </view>
