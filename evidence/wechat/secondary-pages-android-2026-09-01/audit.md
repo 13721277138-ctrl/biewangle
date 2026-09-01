@@ -208,6 +208,19 @@ description            别忘了 V1.1 微信次级页面视觉复验与模板标
 
 第一次尝试把二维码输出到 `/tmp` 文件时，官方工具因输出路径校验返回错误；没有生成包、没有上传。按工具自身推荐改用 `qr-format=window` 后一次通过，随后自动预览与体验版上传均成功。
 
+## GitHub 与 PWA 发布回归
+
+实现与证据检查点 `bd308fb` 已以纯快进方式进入开发分支和 `main`，随后真实检查：
+
+```text
+development verify  PASS（GitHub Actions 33457974546）
+main verify         PASS（GitHub Actions 33457974342）
+Pages build/deploy  PASS（GitHub Actions 33457974318）
+check annotations   PASS（verify / verify / build / deploy 均为 0）
+```
+
+Pages 部署后重新请求生产首页、manifest、Service Worker 和 192 图标，四个端点均返回 HTTP 200 与预期 MIME。该回归用于确认微信改动与证据提交没有破坏共享仓库的 PWA 发布链；不把 PWA 自动验证外推为微信物理手机验证。
+
 ## 剩余边界
 
 1. 物理 iPhone / Android 微信的全部 11 页手动回归仍需真实用户手势；本轮模拟器证据不能替代。

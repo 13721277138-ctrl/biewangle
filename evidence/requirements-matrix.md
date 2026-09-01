@@ -117,10 +117,11 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 
 ## GitHub / Codex Cloud 复现状态
 
-- 视觉整改检查点 `dfe96f9` 的开发分支 CI `33454860954`：success；
-- 同一检查点的 `main` CI `33454980793`：success；
-- 同一检查点的 `main` Pages build/deploy `33454980752`：success；
+- Android 次级页面审计与模板标签修复检查点 `bd308fb` 的开发分支 CI `33457974546`：success；
+- 同一检查点的 `main` CI `33457974342`：success；
+- 同一检查点的 `main` Pages build/deploy `33457974318`：success；
 - branch verify、main verify、Pages build、Pages deploy 四个 check-run annotation 均为 0；
+- Pages 部署完成后重新请求生产首页、manifest、Service Worker 与 192 图标，均为 HTTP 200 和预期 MIME；
 - 最新公网完整 E2E：8/8；
 - 默认分支包含 `AGENTS.md`、lockfile、CI、复现与证据文档；
 - Codex Cloud 已关联仓库并创建 `biewangle-v1.1-node24` 环境；首次只读完整门禁任务为 `READY / no diff`，证据见 `evidence/codex-cloud-smoke-2026-08-31.md`。本轮视觉提交仍以 GitHub CI 和本地新鲜门禁为准，不把旧 Cloud 烟测外推为新提交已在 Cloud 重跑。
