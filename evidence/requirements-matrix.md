@@ -1,6 +1,6 @@
 # V1.1 P0 / P1 与 26 项最低不变量证据矩阵
 
-更新日期：2026-08-31（Asia/Shanghai）
+更新日期：2026-09-01（Asia/Shanghai）
 
 本文件只把本轮真实执行过的命令、浏览器、微信开发者工具或已留存终端证据标为已验证。状态词：
 
@@ -11,18 +11,20 @@
 
 ## 新鲜全仓门禁
 
-2026-08-31 在 Node.js 24.19.0、pnpm 11.19.0 本地工作树实际执行：
+2026-09-01 在 Node.js 24、pnpm 11.19.0 本地工作树从冻结锁文件实际执行：
 
 ```text
-pnpm install --frozen-lockfile  PASS（lockfile unchanged）
+pnpm runtime:check             PASS（Node.js 24 / pnpm 11.19.0）
+pnpm install --frozen-lockfile  PASS（Already up to date）
 pnpm content:check              PASS（Markdown = shared JSON = 微信派生 JS）
 pnpm lint                       PASS
 pnpm typecheck                  PASS
-pnpm test                       PASS（27 files, 148 tests）
+pnpm test                       PASS（30 files, 157 tests）
 pnpm build                      PASS（35 precache entries, 573.51 KiB）
 pnpm verify:boundaries          PASS（41 authored files, 40 production files）
-pnpm miniprogram:verify         PASS（11 pages, 13 templates, 233138 bytes）
+pnpm miniprogram:verify         PASS（11 pages, 13 templates, 246670 bytes）
 pnpm e2e                        PASS（8 / 8）
+git diff --check                PASS
 ```
 
 ## A 类 P0：产品不可降级硬门
@@ -45,9 +47,9 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 
 | Requirement | PWA | 微信 | 自动测试 / 合同 | 真实终端证据 | 状态 |
 |---|---|---|---|---|---|
-| B-001 手机单手核心检查 | 375/390 px 无横向溢出，触控目标与底部导航通过 | 原生短路径首页→Run，模拟器逐页操作 | responsive E2E、PWA vertical slice、微信 full-v1 | Chrome 手机视口与微信官方模拟器已验证；物理手机完整 Run 尚无人工记录 | `partial-external` |
+| B-001 手机单手核心检查 | 375/390 px 无横向溢出，触控目标与底部导航通过 | 原生短路径首页→Run；iOS、HarmonyOS、Android 默认字体模拟器通过 | responsive E2E、PWA vertical slice、微信 full-v1、视觉整改审计 | Chrome 手机视口与微信官方模拟器已验证；物理手机完整 Run 尚无人工记录 | `partial-external` |
 | B-002 PWA Offline-first Core | Service Worker 预缓存 + IndexedDB 冷启动 | 不适用 | `pwa/e2e/offline.spec.ts`、生产构建 | 公网 HTTPS 完整断网冷启动通过 | `verified` |
-| B-003 微信原生核心体验 | 不适用 | 11 个原生页面、无 `web-view`、13 模板完整链 | miniprogram verifier、微信 full-v1、native conformance | 官方逐页编译、模拟器业务闭环、手机自动预览推送、测试号 `1.1.0` 体验构建上传 | `partial-external`（物理手机完整走查待用户） |
+| B-003 微信原生核心体验 | 不适用 | 11 个原生页面、无 `web-view`、13 模板完整链 | miniprogram verifier、微信 full-v1、native conformance | 官方逐页编译、模拟器业务闭环、iOS/HarmonyOS/Android 视觉复验、手机自动预览推送、测试号 `1.1.0` 体验构建上传 | `partial-external`（物理手机完整走查待用户） |
 | B-004 PWA 安装形态 | manifest、图标、standalone、SW 与安装性无错误 | 不适用 | build + offline/installability 检查 | 公网 Chrome CDP 安装性通过；iPhone 主屏和 Mac Add to Dock 未真实点击，当前 Mac 为 macOS 13.3.1 | `partial-external` |
 | B-005 备份 / 导出 | JSON、Markdown、10 MB 导入、保护恢复/重置 | JSON、可读文本、聊天文件导入/分享适配 | DATA contracts、readable export、双端 FullV1 | PWA 公网 E2E；微信官方模拟器备份/清空/恢复 | `verified` |
 | B-006 基础可访问性 | WCAG A/AA、键盘焦点、reduced motion、非颜色唯一状态 | 原生文案与控件不只依赖颜色；无独立屏幕阅读器实测 | `pwa/e2e/accessibility.spec.ts`、静态边界 | 公网 PWA axe/键盘通过；微信屏幕阅读器真机待补 | `partial-external` |
@@ -96,9 +98,9 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 | iPhone/iPad 主屏 Web App | 当前没有可检查的真实设备操作记录 | `blocked-external` | 需要用户设备 |
 | Mac Safari 普通网页 | 当前 G6 未形成独立 Safari 操作记录 | `blocked-external` | 需要用户终端操作 |
 | Mac Add to Dock | 当前 macOS 13.3.1 低于 Sonoma 14 | `blocked-external` | `evidence/g0/platform-capability-matrix-2026-08-29.md` |
-| 微信开发者工具 | 11 页官方编译、真实模拟器业务闭环 | `verified` | `evidence/wechat/g5-full-v1-2026-08-30.md` |
-| 微信手机预览 | 自动预览已推送到当前开发者微信，未伪造手机完整走查 | `partial-external` | `evidence/wechat/g5-semantic-audit-2026-08-31.md` |
-| 微信体验构建 | 测试号 `1.1.0` 已上传并在语义审计后重新上传 | `verified` | 同上 |
+| 微信开发者工具 | 11 页官方编译、真实模拟器业务闭环；iOS/HarmonyOS/Android 默认字体视觉复验通过 | `verified` | `evidence/wechat/ui-restoration-2026-08-31/tool-results.md` |
+| 微信手机预览 | `189356 bytes` 自动预览已推送到当前开发者微信，未伪造手机完整走查 | `partial-external` | `evidence/wechat/ui-restoration-2026-08-31/tool-results.md` |
+| 微信体验构建 | 测试号 `1.1.0` 在视觉与语义复验后上传成功，包体 `189855 bytes` | `verified` | `evidence/wechat/ui-restoration-2026-08-31/tool-results.md` |
 | 微信正式审核 / 发布 | 无正式主体、生产 AppID 与审核发布权限 | `blocked-external` | 需要账号所有者 |
 
 ## 证据入口
@@ -107,6 +109,8 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 - PWA 公网部署：[`pwa/g3-deployment-2026-08-30.md`](pwa/g3-deployment-2026-08-30.md)
 - 微信完整 V1：[`wechat/g5-full-v1-2026-08-30.md`](wechat/g5-full-v1-2026-08-30.md)
 - 微信数据语义专项：[`wechat/g5-semantic-audit-2026-08-31.md`](wechat/g5-semantic-audit-2026-08-31.md)
+- 微信视觉整改复验：[`wechat/ui-restoration-2026-08-31/design-qa.md`](wechat/ui-restoration-2026-08-31/design-qa.md)
+- 微信视觉整改工具事实：[`wechat/ui-restoration-2026-08-31/tool-results.md`](wechat/ui-restoration-2026-08-31/tool-results.md)
 - 平台能力矩阵：[`g0/platform-capability-matrix-2026-08-29.md`](g0/platform-capability-matrix-2026-08-29.md)
 - 最终交付状态：[`final-delivery-report.md`](final-delivery-report.md)
 
@@ -117,6 +121,6 @@ A 类 9 项全部有当前运行证据，未以 README、build 或工具“能�
 - `main` Pages build/deploy `33355365530`：success，annotation 0；
 - 最新公网完整 E2E：8/8；
 - 默认分支包含 `AGENTS.md`、lockfile、CI、复现与证据文档；
-- `codex cloud list` 返回 `No tasks found`，Codex Web 环境页未登录，因此 Cloud Environment 状态仍为 `blocked-external`，没有误标为已连接。
+- Codex Cloud 已关联仓库并创建 `biewangle-v1.1-node24` 环境；首次只读完整门禁任务为 `READY / no diff`，证据见 `evidence/codex-cloud-smoke-2026-08-31.md`。本轮视觉提交仍以 GitHub CI 和本地新鲜门禁为准，不把旧 Cloud 烟测外推为新提交已在 Cloud 重跑。
 
 未完成的 B 类真实终端动作会继续保留 `partial-external` / `blocked-external`，不因 26 项自动不变量全绿而改写为“全终端完成”。

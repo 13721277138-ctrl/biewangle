@@ -6,9 +6,9 @@
 - 官方微信开发者工具 WXML / WXSS：11 页、22 次编译全部通过。
 - 官方 iOS 模拟器：核心流程与 9 个要求状态已重新编译、操作和截图。
 - 官方 Huawei / HarmonyOS 模拟器：首页与普通 Run 复拍、触控尺寸和字体基线均通过。
+- 官方 Nexus 5X / Android 模拟器：首页与普通 Run 复拍、触控尺寸、字体基线和关键筛选事实均通过。
 - 官方手机预览：二维码打包与自动推送均成功，包体 `189356 bytes`。
-- Android 模拟器复拍：等待把开发者工具设备切到 Android；本机 Computer Use 服务连续两次无法启动，官方 CLI 没有设备切换接口。
-- 体验版上传：在 Android 视觉复拍完成前暂不执行。
+- 体验版上传：视觉阻断审计通过后，测试号 `1.1.0` 上传成功，包体 `189855 bytes`。
 
 本记录不包含登录 openid、头像地址、扫码票据或预览二维码。短期二维码保存在 Git 忽略路径，不进入仓库。
 
@@ -104,6 +104,25 @@ orientation        portrait
 
 该配置用于华为/鸿蒙兼容证据，不冒充 Android。原始截图输出为 `738 x 1586` PNG。
 
+## Android 模拟器环境
+
+用户在开发者工具设备下拉框改选 Nexus 5X 后，官方运行时明确返回：
+
+```text
+model             Nexus 5X
+system            Android 5.0
+platform          devtools
+window            411 x 663
+screen            411 x 731
+pixelRatio         2.625
+fontSizeSetting    16（默认档）
+language           zh_CN
+SDKVersion         3.17.2
+orientation        portrait
+```
+
+原始首页和 Run 截图均为 `888 x 1580` PNG。设备切换后的第一次首页截图只绘制出平台导航栏；同一时刻页面 data、WXML、元素尺寸、scrollTop=0 和控制台均正常，说明选择器就绪早于 Android 渲染面首帧。该帧已拒收；等待 2 秒后重新捕获的 `12-home-android.png` 与 `13-run-android.png` 已逐张打开检查并接受。
+
 ## 真实页面链与事实回读
 
 ### 页面导航
@@ -127,6 +146,8 @@ pages/run/run?id=<new run id>
 - 初始 `unresolvedCount=12`、`unresolvedKeyCount=2`。
 
 切换“只看关键”后，页面只渲染 2 项，但页头事实仍为 `12 / 2`，证明筛选只改变可见投影，不改总计数。
+
+Android Nexus 5X 下再次执行同一筛选，官方回读为 `viewMode=key`、可见 2 项、`unresolvedCount=12`、`unresolvedKeyCount=2`；恢复“全部”后 `viewMode=all`。本次只改变页面实例的展示状态，没有写入 Run 或模板事实。
 
 ### 三态持久化
 
@@ -203,6 +224,21 @@ receipt.message      可以放心出发。
 
 按钮恰好达到 44px 底线；三类行内文字最大 top 差值约 `0.05px`。首页和 Run 均未见横向溢出、按钮文字偏心、异常换行或 Dock 遮挡。
 
+Nexus 5X / Android 下的同类实测：
+
+```text
+单项状态按钮      173.0 x 48 px
+视图切换按钮      185.5 x 48 px
+底部 Dock 按钮    186.5 x 48 px
+关键徽标 top      209.180 px
+项目标题 top      209.055 px
+状态文字 top      209.055 px
+Run 页面宽度      411 px
+首个分组宽度      377 px（left=17px）
+```
+
+三类按钮均超过 44px 触控底线，行内文字最大 top 差值约 `0.13px`。首页与 Run 截图未见横向溢出、按钮文字偏心、异常换行或 Dock 遮挡；更短的 Android 视口仍可同时看到 Header、视图切换、前三项和底部 Dock。
+
 ## 控制台与网络
 
 ```text
@@ -224,9 +260,21 @@ scene                   1001
 
 自动预览已经推送到当前开发者微信。二维码是短期访问凭证，保存在 Git 忽略路径，不作为公开证据提交。
 
+## 体验版上传
+
+阻断式 iOS / HarmonyOS / Android 默认字体视觉审计全部通过后，使用官方工具上传：
+
+```text
+version       1.1.0
+description   别忘了 V1.1 微信视觉整改与数据语义一致性复验
+result        PASS
+package       189855 bytes
+```
+
+上传对象仍是独立小程序测试号，只代表体验构建，不代表公众平台审核或正式发布。
+
 ## 当前未完成边界
 
-1. Huawei / HarmonyOS 已通过；严格 Android 默认字体截图仍等待用户在开发者工具 GUI 中再选择一台系统明确为 Android 的设备，官方 CLI 不提供设备切换动作。
-2. Computer Use 服务启动两次均返回 `Sky Computer Use service startup request failed`，因此没有绕过限制使用非官方点击脚本。
-3. Android 复拍与对比通过前，不上传新的体验构建。
-4. 本证据不声称真机文件分享、聊天文件选择、系统日历授权、平台审核或正式发布完成。
+1. 官方模拟器默认字体的 iOS、HarmonyOS、Android 视觉审计均已通过；这不替代物理手机完整回归或较大微信字体档。
+2. Computer Use 服务启动失败，因此设备切换由用户在开发者工具 GUI 完成；其余截图、事实回读、测量和上传均由官方 wechatide 通道执行。
+3. 本证据不声称真机文件分享、聊天文件选择、系统日历授权、平台审核或正式发布完成。
